@@ -23,9 +23,7 @@ function getTimeRemaining() {
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
@@ -62,12 +60,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#e5e5e5] bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-
         {/* LOGO */}
-        <Link
-          href="/campamento"
-          className="flex shrink-0 items-center"
-        >
+        <Link href="/campamento" className="flex shrink-0 items-center">
           <Image
             src="/logo.png"
             alt="Gracia Camp"
@@ -101,10 +95,8 @@ export default function Header() {
 
         {/* DERECHA */}
         <div className="flex items-center gap-3">
-
           {!time.expired && (
             <div className="hidden items-center gap-4 rounded-2xl border border-gray-100 bg-white px-5 py-3 shadow-lg md:inline-flex">
-
               {/* ICONO */}
               <div className="flex flex-col items-center">
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -117,12 +109,7 @@ export default function Header() {
                     fill="none"
                   />
 
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="14"
-                    fill="#fef3c7"
-                  />
+                  <circle cx="20" cy="20" r="14" fill="#fef3c7" />
 
                   <line
                     x1="20"
@@ -144,12 +131,7 @@ export default function Header() {
                     strokeLinecap="round"
                   />
 
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="2"
-                    fill="#dc2626"
-                  />
+                  <circle cx="20" cy="20" r="2" fill="#dc2626" />
 
                   <path
                     d="M28 28 Q30 24 32 26 Q34 22 30 20 Q28 18 26 22 Q24 26 28 28Z"
@@ -177,10 +159,7 @@ export default function Header() {
                   { value: time.minutes, label: "mins." },
                   { value: time.seconds, label: "segs." },
                 ].map((item, index) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center gap-2"
-                  >
+                  <div key={item.label} className="flex items-center gap-2">
                     <div className="text-center">
                       <div className="text-3xl font-bold leading-none tabular-nums text-[#1a1a1a]">
                         {String(item.value).padStart(2, "0")}
@@ -216,7 +195,9 @@ export default function Header() {
             type="button"
             onClick={() => setIsMenuOpen((value) => !value)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-[#e5e5e5] text-[#1e3a5c] lg:hidden"
-            aria-label="Abrir menú"
+            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMenuOpen}
+            aria-controls="menu-principal-mobile"
           >
             <span className="text-xl leading-none">
               {isMenuOpen ? "×" : "☰"}
@@ -227,9 +208,11 @@ export default function Header() {
 
       {/* MENU MOBILE */}
       {isMenuOpen && (
-        <div className="border-t border-[#e5e5e5] bg-white px-4 py-4 lg:hidden">
+        <div
+          id="menu-principal-mobile"
+          className="border-t border-[#e5e5e5] bg-white px-4 py-4 lg:hidden"
+        >
           <nav className="mx-auto grid max-w-7xl gap-2">
-
             {navItems.map((item) => {
               const isActive = pathname === item.href;
 

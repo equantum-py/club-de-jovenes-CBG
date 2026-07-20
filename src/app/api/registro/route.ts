@@ -24,10 +24,12 @@ type RegistroPayload = {
 
 const SHEET_RANGE = "Registros!A:S";
 const SHEET_TAB_NAME = "Registros";
+const MAX_FIELD_LENGTH = 500;
+const MAX_REQUEST_BYTES = 20_000;
 
 function normalizeValue(value: string, fallback = "-") {
-  const trimmed = (value ?? "").trim();
-  return trimmed.length > 0 ? trimmed : fallback;
+  const trimmed = (value ?? "").replace(/[\u0000-\u001F\u007F]/g, " ").trim();
+  return trimmed.length > 0 ? trimmed.slice(0, MAX_FIELD_LENGTH) : fallback;
 }
 
 function validatePayload(payload: Partial<RegistroPayload>) {
@@ -42,9 +44,23 @@ function validatePayload(payload: Partial<RegistroPayload>) {
     "formaPago",
   ];
 
+  const edadNumero = Number(payload.edad);
+
+  if (!Number.isNaN(edadNumero) && edadNumero < 18) {
+    requiredFields.push("nombrePadreMadre", "telefonoPadreMadre");
+  }
+
+  if (payload.esInvitado === "si") {
+    requiredFields.push("invitadoPor");
+  }
+
   return requiredFields.filter((field) => {
     const value = payload[field];
-    return typeof value !== "string" || value.trim().length === 0;
+    return (
+      typeof value !== "string" ||
+      value.trim().length === 0 ||
+      value.length > MAX_FIELD_LENGTH
+    );
   });
 }
 
@@ -66,15 +82,9 @@ function getRowValues(payload: RegistroPayload) {
     normalizeValue(payload.sexo),
     normalizeValue(payload.iglesia),
     normalizeValue(payload.esInvitado),
-    esInvitado
-      ? normalizeValue(payload.invitadoPor, "No aplica")
-      : "No aplica",
-    esMenor
-      ? normalizeValue(payload.nombrePadreMadre, "-")
-      : "No aplica",
-    esMenor
-      ? normalizeValue(payload.telefonoPadreMadre, "-")
-      : "No aplica",
+    esInvitado ? normalizeValue(payload.invitadoPor, "No aplica") : "No aplica",
+    esMenor ? normalizeValue(payload.nombrePadreMadre, "-") : "No aplica",
+    esMenor ? normalizeValue(payload.telefonoPadreMadre, "-") : "No aplica",
     normalizeValue(payload.alergias),
     normalizeValue(payload.medicamentos),
     normalizeValue(payload.enfermedadBase),
@@ -108,8 +118,7 @@ function getGoogleErrorMessage(error: unknown) {
     googleError.message ??
     "";
 
-  const statusCode =
-    googleError.code ?? googleError.response?.status;
+  const statusCode = googleError.code ?? googleError.response?.status;
 
   const message = apiMessage.toLowerCase();
 
@@ -141,8 +150,7 @@ function getGoogleErrorMessage(error: unknown) {
 
     return {
       status: 404,
-      error:
-        "El GOOGLE_SHEET_ID no corresponde a una hoja accesible.",
+      error: "El GOOGLE_SHEET_ID no corresponde a una hoja accesible.",
     };
   }
 
@@ -167,8 +175,28 @@ function getGoogleErrorMessage(error: unknown) {
 
 export async function POST(request: Request) {
   try {
-    const payload =
-      (await request.json()) as Partial<RegistroPayload>;
+    const contentLength = Number(request.headers.get("content-length") ?? 0);
+
+    if (contentLength > MAX_REQUEST_BYTES) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "El formulario excede el tamaño máximo permitido.",
+        },
+        { status: 413 },
+      );
+    }
+
+    let payload: Partial<RegistroPayload>;
+
+    try {
+      payload = (await request.json()) as Partial<RegistroPayload>;
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: "El cuerpo de la solicitud no es JSON válido." },
+        { status: 400 },
+      );
+    }
 
     const missingFields = validatePayload(payload);
 
@@ -181,7 +209,7 @@ export async function POST(request: Request) {
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
@@ -194,29 +222,20 @@ export async function POST(request: Request) {
         {
           ok: false,
           error:
-            "Faltan variables de entorno de Google Sheets.",
-          details: {
-            GOOGLE_CLIENT_EMAIL: Boolean(clientEmail),
-            GOOGLE_PRIVATE_KEY: Boolean(privateKeyRaw),
-            GOOGLE_SHEET_ID: Boolean(spreadsheetId),
-          },
+            "El registro no está disponible temporalmente por configuración del servidor.",
         },
         {
           status: 500,
-        }
+        },
       );
     }
 
-    const privateKey = privateKeyRaw
-      .replace(/\\n/g, "\n")
-      .trim();
+    const privateKey = privateKeyRaw.replace(/\\n/g, "\n").trim();
 
     const auth = new google.auth.JWT({
       email: clientEmail,
       key: privateKey,
-      scopes: [
-        "https://www.googleapis.com/auth/spreadsheets",
-      ],
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
 
     await auth.authorize();
@@ -226,33 +245,29 @@ export async function POST(request: Request) {
       auth,
     });
 
-    const rowValues = getRowValues(
-      payload as RegistroPayload
-    );
+    const rowValues = getRowValues(payload as RegistroPayload);
 
-    const result =
-      await sheets.spreadsheets.values.append({
-        spreadsheetId,
-        range: SHEET_RANGE,
-        valueInputOption: "USER_ENTERED",
-        insertDataOption: "INSERT_ROWS",
-        requestBody: {
-          values: [rowValues],
-        },
-      });
+    const result = await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: SHEET_RANGE,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      requestBody: {
+        values: [rowValues],
+      },
+    });
 
     return NextResponse.json({
       ok: true,
       message: "Registro guardado correctamente.",
-      updatedRange:
-        result.data.updates?.updatedRange ?? null,
+      updatedRange: result.data.updates?.updatedRange ?? null,
     });
   } catch (error: unknown) {
     const mappedError = getGoogleErrorMessage(error);
 
     console.error("Error en /api/registro:", {
-      mappedError,
-      rawError: error,
+      status: mappedError.status,
+      message: error instanceof Error ? error.message : "Error desconocido",
     });
 
     return NextResponse.json(
@@ -262,7 +277,7 @@ export async function POST(request: Request) {
       },
       {
         status: mappedError.status,
-      }
+      },
     );
   }
 }
