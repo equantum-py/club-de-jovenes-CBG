@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "club_de_jovenes_CBG.com",
-  description: "Campamento 2026 - Club de Jóvenes C.B.G"
+  title: "JÓVENES DE C.B.G",
+  description: "Campamento 2026 - Jóvenes de C.B.G",
 };
 
 type RootLayoutProps = {
@@ -12,7 +19,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="es">
+    <html lang="es" className={inter.className}>
       <body>{children}</body>
     </html>
   );
