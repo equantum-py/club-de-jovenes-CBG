@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import Header from "@/components/Header";
@@ -92,11 +93,14 @@ function HeroBanner() {
           <source media="(max-width: 767px)" srcSet={activeSlide.mobileSrc} />
         ) : null}
 
-        <img
+        <Image
           src={activeSlide.desktopSrc}
           alt={activeSlide.alt}
+          width={1920}
+          height={640}
+          priority
+          sizes="100vw"
           className="block h-auto w-full object-contain object-center"
-          loading="eager"
         />
       </picture>
     </section>
@@ -109,7 +113,6 @@ function CategoryNav() {
     { label: "Registrarme", href: "/registro" },
     { label: "Reglamento", href: "/reglamento" },
   ];
-
 
   return (
     <div className="border-b border-[#D9DDD1] bg-white">
@@ -125,7 +128,6 @@ function CategoryNav() {
             </Link>
           ))}
         </div>
-
       </div>
     </div>
   );
@@ -133,7 +135,10 @@ function CategoryNav() {
 
 function TemaSection() {
   return (
-    <section className="relative overflow-hidden" style={{ backgroundColor: CBG.cream }}>
+    <section
+      className="relative overflow-hidden"
+      style={{ backgroundColor: CBG.cream }}
+    >
       <div className="mx-auto max-w-6xl">
         <div className="grid lg:grid-cols-2">
           <div
@@ -161,9 +166,12 @@ function TemaSection() {
           </div>
 
           <div className="relative min-h-[170px] overflow-hidden sm:min-h-[230px] lg:min-h-0">
-            <img
+            <Image
               src="/campamento-bg.jpg"
               alt="Imagen del campamento"
+              width={1200}
+              height={800}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="h-full min-h-[170px] w-full object-cover sm:min-h-[230px]"
             />
           </div>
@@ -174,7 +182,9 @@ function TemaSection() {
 }
 
 function RemerasSection() {
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>(
+    {},
+  );
 
   const handleSizeChange = (productId: string, talla: string) => {
     setSelectedSizes((prev) => ({ ...prev, [productId]: talla }));
@@ -198,8 +208,12 @@ function RemerasSection() {
             Remera oficial del campamento
           </h2>
 
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: CBG.textMuted }}>
-            Elegí tu talle y reservá la remera oficial de Gracia Camp por WhatsApp.
+          <p
+            className="mt-2 max-w-2xl text-sm leading-relaxed sm:text-base"
+            style={{ color: CBG.textMuted }}
+          >
+            Elegí tu talle y reservá la remera oficial de Gracia Camp por
+            WhatsApp.
           </p>
         </div>
 
@@ -213,11 +227,14 @@ function RemerasSection() {
                 className="group min-w-[82%] max-w-[82%] snap-start rounded-sm border border-[#D9DDD1] bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:min-w-0 sm:w-full sm:max-w-[420px]"
               >
                 <div className="relative h-[520px] overflow-hidden rounded-sm bg-[#F7F5EF]">
-  <img
-    src={remera.imagen}
-    alt={remera.nombre}
-    className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
-  />
+                  <Image
+                    src={remera.imagen}
+                    alt={remera.nombre}
+                    width={840}
+                    height={1040}
+                    sizes="(min-width: 640px) 420px, 82vw"
+                    className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
+                  />
 
                   <div className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-[#183A2B] shadow-sm">
                     Oficial
@@ -225,25 +242,41 @@ function RemerasSection() {
                 </div>
 
                 <div className="mt-3">
-                  <h3 className="text-lg font-semibold leading-tight sm:text-xl" style={{ color: CBG.text }}>
+                  <h3
+                    className="text-lg font-semibold leading-tight sm:text-xl"
+                    style={{ color: CBG.text }}
+                  >
                     {remera.nombre}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-relaxed" style={{ color: CBG.textMuted }}>
-                    Diseño oficial del campamento, disponible por tiempo limitado.
+                  <p
+                    className="mt-2 text-sm leading-relaxed"
+                    style={{ color: CBG.textMuted }}
+                  >
+                    Diseño oficial del campamento, disponible por tiempo
+                    limitado.
                   </p>
 
                   <div className="mt-3 flex items-end justify-between gap-3">
-                    <p className="text-xl font-semibold sm:text-2xl" style={{ color: CBG.text }}>
+                    <p
+                      className="text-xl font-semibold sm:text-2xl"
+                      style={{ color: CBG.text }}
+                    >
                       {formatPrice(remera.precio)}
                     </p>
-                    <p className="text-[10px] font-medium uppercase tracking-wider sm:text-xs" style={{ color: CBG.gold }}>
+                    <p
+                      className="text-[10px] font-medium uppercase tracking-wider sm:text-xs"
+                      style={{ color: CBG.gold }}
+                    >
                       Precio único
                     </p>
                   </div>
 
                   <div className="mt-3">
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: CBG.textMuted }}>
+                    <p
+                      className="mb-2 text-xs font-medium uppercase tracking-wider"
+                      style={{ color: CBG.textMuted }}
+                    >
                       Elegí tu talle
                     </p>
 
@@ -256,9 +289,12 @@ function RemerasSection() {
                           aria-pressed={selectedSize === talla}
                           className="h-9 min-w-9 rounded-sm border px-2 text-xs font-medium transition sm:h-10 sm:min-w-10 sm:px-3"
                           style={{
-                            borderColor: selectedSize === talla ? CBG.navy : CBG.border,
-                            backgroundColor: selectedSize === talla ? CBG.navy : "transparent",
-                            color: selectedSize === talla ? "white" : CBG.textMuted,
+                            borderColor:
+                              selectedSize === talla ? CBG.navy : CBG.border,
+                            backgroundColor:
+                              selectedSize === talla ? CBG.navy : "transparent",
+                            color:
+                              selectedSize === talla ? "white" : CBG.textMuted,
                           }}
                         >
                           {talla}
@@ -268,7 +304,11 @@ function RemerasSection() {
                   </div>
 
                   <a
-                    href={selectedSize ? getWhatsAppUrl(remera.nombre, selectedSize) : "#"}
+                    href={
+                      selectedSize
+                        ? getWhatsAppUrl(remera.nombre, selectedSize)
+                        : "#"
+                    }
                     target={selectedSize ? "_blank" : undefined}
                     rel={selectedSize ? "noopener noreferrer" : undefined}
                     onClick={(event) => {
@@ -288,11 +328,18 @@ function RemerasSection() {
           })}
 
           <div className="hidden min-h-[280px] rounded-sm border border-dashed border-[#D9DDD1] bg-[#F7F5EF]/60 p-6 sm:block">
-            <p className="text-sm font-medium uppercase tracking-wider" style={{ color: CBG.gold }}>
+            <p
+              className="text-sm font-medium uppercase tracking-wider"
+              style={{ color: CBG.gold }}
+            >
               Próximamente
             </p>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: CBG.textMuted }}>
-              Este espacio queda reservado para agregar información adicional del campamento, beneficios, combos o avisos importantes.
+            <p
+              className="mt-2 text-sm leading-relaxed"
+              style={{ color: CBG.textMuted }}
+            >
+              Este espacio queda reservado para agregar información adicional
+              del campamento, beneficios, combos o avisos importantes.
             </p>
           </div>
         </div>
@@ -303,7 +350,11 @@ function RemerasSection() {
 
 function LugarSection() {
   return (
-    <section id="lugar" className="py-10 sm:py-12" style={{ backgroundColor: CBG.cream }}>
+    <section
+      id="lugar"
+      className="py-10 sm:py-12"
+      style={{ backgroundColor: CBG.cream }}
+    >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-sm border border-[#D9DDD1] bg-white p-5 sm:p-6">
           <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -323,7 +374,10 @@ function LugarSection() {
                   >
                     Nombre
                   </p>
-                  <p className="mt-1 text-sm font-medium sm:text-base" style={{ color: CBG.text }}>
+                  <p
+                    className="mt-1 text-sm font-medium sm:text-base"
+                    style={{ color: CBG.text }}
+                  >
                     Campamento Kavaju - Palabra de Vida
                   </p>
                 </div>
@@ -335,7 +389,10 @@ function LugarSection() {
                   >
                     Dirección
                   </p>
-                  <p className="mt-1 text-sm font-medium sm:text-base" style={{ color: CBG.text }}>
+                  <p
+                    className="mt-1 text-sm font-medium sm:text-base"
+                    style={{ color: CBG.text }}
+                  >
                     Ver ubicación exacta en Google Maps
                   </p>
                 </div>
@@ -347,7 +404,10 @@ function LugarSection() {
                   >
                     Ciudad
                   </p>
-                  <p className="mt-1 text-sm font-medium sm:text-base" style={{ color: CBG.text }}>
+                  <p
+                    className="mt-1 text-sm font-medium sm:text-base"
+                    style={{ color: CBG.text }}
+                  >
                     Atyrá, Paraguay
                   </p>
                 </div>
@@ -410,11 +470,13 @@ function VideoSection() {
               className="group relative h-full w-full overflow-hidden bg-black text-white"
               aria-label="Reproducir video informativo"
             >
-              <img
+              <Image
                 src={thumbnailUrl}
                 alt="Miniatura del video informativo del campamento"
+                width={480}
+                height={360}
+                sizes="100vw"
                 className="h-full w-full object-cover opacity-80 transition group-hover:scale-105 group-hover:opacity-90"
-                loading="lazy"
               />
 
               <span className="absolute inset-0 flex items-center justify-center">
@@ -443,8 +505,8 @@ function CTASection() {
         </h2>
 
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
-          Lee cuidadosamente el reglamento del campamento. Estas normas nos ayudarán a vivir este
-          tiempo con orden, respeto y propósito.
+          Lee cuidadosamente el reglamento del campamento. Estas normas nos
+          ayudarán a vivir este tiempo con orden, respeto y propósito.
         </p>
 
         <div className="mt-6 grid gap-3 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-3">
@@ -479,11 +541,13 @@ function Footer() {
           <div className="mt-5 space-y-2 text-sm text-white/55">
             <p>WhatsApp: 0985 194953</p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-white">
-                Instagram
-              </a>
-              <a href="#" className="hover:text-white">
-                Facebook
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white"
+              >
+                WhatsApp
               </a>
             </div>
           </div>
@@ -491,8 +555,12 @@ function Footer() {
 
         <div className="hidden gap-8 sm:grid sm:grid-cols-2 lg:grid-cols-5">
           <div>
-            <h4 className="text-lg font-semibold text-white sm:text-xl">JÓVENES CBG</h4>
-            <p className="mt-2 text-sm text-white/50 sm:text-base">Campamento 2026</p>
+            <h4 className="text-lg font-semibold text-white sm:text-xl">
+              JÓVENES CBG
+            </h4>
+            <p className="mt-2 text-sm text-white/50 sm:text-base">
+              Campamento 2026
+            </p>
           </div>
 
           <div>
@@ -550,11 +618,13 @@ function Footer() {
               Redes
             </h4>
             <div className="mt-3 flex gap-4 text-sm sm:text-base">
-              <a href="#" className="text-white/50 hover:text-white">
-                Instagram
-              </a>
-              <a href="#" className="text-white/50 hover:text-white">
-                Facebook
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/50 hover:text-white"
+              >
+                WhatsApp
               </a>
             </div>
           </div>
