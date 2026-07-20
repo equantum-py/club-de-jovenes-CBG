@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  useMemo,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
+import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 import Header from "@/components/Header";
 
@@ -86,7 +81,7 @@ export default function RegistroPage() {
   function handleChange(
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) {
     const { name, value } = event.target;
 
@@ -119,13 +114,14 @@ export default function RegistroPage() {
         body: JSON.stringify(formData),
       });
 
-      const responsePayload =
-        (await response.json().catch(() => null)) as ApiErrorResponse | null;
+      const responsePayload = (await response
+        .json()
+        .catch(() => null)) as ApiErrorResponse | null;
 
       if (!response.ok) {
         setSubmitError(
           responsePayload?.error ??
-            "No se pudo guardar tu registro. Intentá nuevamente."
+            "No se pudo guardar tu registro. Intentá nuevamente.",
         );
 
         return;
@@ -136,7 +132,7 @@ export default function RegistroPage() {
       console.error("Error al enviar el registro:", error);
 
       setSubmitError(
-        "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente."
+        "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente.",
       );
     } finally {
       setIsSubmitting(false);
@@ -144,324 +140,321 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-brand-warmWhite text-brand-ink">
       <Header />
 
-      <main
-        className="min-h-screen text-white"
-        style={{ backgroundColor: CBG.navy }}
-      >
-        <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8 lg:px-10">
-          <div className="mb-10 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.35em] text-white/70">
+      <main>
+        <section className="bg-brand-cream py-14 sm:py-20">
+          <div className="mx-auto w-full max-w-5xl px-5 sm:px-6 lg:px-8">
+            <p className="text-sm font-medium tracking-[0.18em] text-brand-gold">
               Club de Jóvenes CBG
             </p>
-
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-tight text-brand-forest sm:text-6xl">
               Registro Campamento 2026
             </h1>
-
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-white/70 sm:text-lg">
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-brand-muted">
               Completá este formulario con los datos necesarios para tu
               inscripción. Queremos cuidar cada detalle del campamento y contar
               con la información importante de cada participante.
             </p>
           </div>
+        </section>
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-8 rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-8"
-          >
-            <section>
-              <h2 className="text-2xl font-bold text-white">
-                Datos personales
-              </h2>
-
-              <p className="mt-2 text-sm text-white/60">
-                Información básica del participante.
-              </p>
-
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
-                <Field
-                  label="Nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  autoComplete="given-name"
-                  required
+        <section className="py-12 sm:py-16">
+          <div className="mx-auto w-full max-w-5xl px-5 sm:px-6 lg:px-8">
+            <form onSubmit={handleSubmit} className="space-y-12">
+              <section className="border-t border-brand-border pt-8">
+                <FormSectionHeader
+                  number="01"
+                  title="Datos personales"
+                  description="Información básica del participante."
                 />
-
-                <Field
-                  label="Apellido"
-                  name="apellido"
-                  value={formData.apellido}
-                  onChange={handleChange}
-                  autoComplete="family-name"
-                  required
-                />
-
-                <Field
-                  label="Edad"
-                  name="edad"
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={formData.edad}
-                  onChange={handleChange}
-                  required
-                />
-
-                <Field
-                  label="Número de teléfono"
-                  name="telefono"
-                  type="tel"
-                  value={formData.telefono}
-                  onChange={handleChange}
-                  autoComplete="tel"
-                  required
-                />
-
-                <Field
-                  label="Cédula"
-                  name="cedula"
-                  inputMode="numeric"
-                  value={formData.cedula}
-                  onChange={handleChange}
-                  required
-                />
-
-                <SelectField
-                  label="Sexo"
-                  name="sexo"
-                  value={formData.sexo}
-                  onChange={handleChange}
-                  required
-                  options={[
-                    {
-                      value: "",
-                      label: "Seleccionar",
-                    },
-                    {
-                      value: "masculino",
-                      label: "Masculino",
-                    },
-                    {
-                      value: "femenino",
-                      label: "Femenino",
-                    },
-                  ]}
-                />
-
-                <Field
-                  label="Iglesia / congregación"
-                  name="iglesia"
-                  value={formData.iglesia}
-                  onChange={handleChange}
-                />
-
-                <SelectField
-                  label="¿Sos invitado?"
-                  name="esInvitado"
-                  value={formData.esInvitado}
-                  onChange={handleChange}
-                  required
-                  options={[
-                    {
-                      value: "",
-                      label: "Seleccionar",
-                    },
-                    {
-                      value: "no",
-                      label: "No",
-                    },
-                    {
-                      value: "si",
-                      label: "Sí",
-                    },
-                  ]}
-                />
-              </div>
-            </section>
-
-            {esMenor && (
-              <section className="rounded-3xl border border-red-400/30 bg-red-500/10 p-6">
-                <h3 className="text-xl font-bold text-red-300">
-                  Participante menor de edad
-                </h3>
-
-                <p className="mt-2 text-sm leading-6 text-red-100/90">
-                  Necesitamos los datos del padre, madre o tutor responsable.
-                </p>
-
-                <div className="mt-5 grid gap-5 md:grid-cols-2">
+                <div className="mt-7 grid gap-5 md:grid-cols-2">
                   <Field
-                    label="Nombre del padre, madre o tutor"
-                    name="nombrePadreMadre"
-                    value={formData.nombrePadreMadre}
+                    label="Nombre"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    autoComplete="given-name"
+                    required
+                  />
+                  <Field
+                    label="Apellido"
+                    name="apellido"
+                    value={formData.apellido}
+                    onChange={handleChange}
+                    autoComplete="family-name"
+                    required
+                  />
+                  <Field
+                    label="Edad"
+                    name="edad"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={formData.edad}
                     onChange={handleChange}
                     required
                   />
-
                   <Field
-                    label="Teléfono del padre, madre o tutor"
-                    name="telefonoPadreMadre"
+                    label="Número de teléfono"
+                    name="telefono"
                     type="tel"
-                    value={formData.telefonoPadreMadre}
+                    inputMode="tel"
+                    value={formData.telefono}
                     onChange={handleChange}
+                    autoComplete="tel"
                     required
                   />
-                </div>
-              </section>
-            )}
-
-            {mostrarInvitado && (
-              <section className="rounded-3xl border border-amber-400/25 bg-amber-400/10 p-6">
-                <h3 className="text-xl font-bold text-amber-300">
-                  Información de invitación
-                </h3>
-
-                <p className="mt-2 text-sm leading-6 text-amber-100/90">
-                  Como marcaste que sos invitado, necesitamos saber quién te
-                  invitó.
-                </p>
-
-                <div className="mt-5">
                   <Field
-                    label="Nombre de quien te invitó"
-                    name="invitadoPor"
-                    value={formData.invitadoPor}
+                    label="Cédula"
+                    name="cedula"
+                    inputMode="numeric"
+                    value={formData.cedula}
                     onChange={handleChange}
                     required
                   />
+                  <SelectField
+                    label="Sexo"
+                    name="sexo"
+                    value={formData.sexo}
+                    onChange={handleChange}
+                    required
+                    options={[
+                      { value: "", label: "Seleccionar" },
+                      { value: "masculino", label: "Masculino" },
+                      { value: "femenino", label: "Femenino" },
+                    ]}
+                  />
                 </div>
               </section>
-            )}
 
-            <section>
-              <h2 className="text-2xl font-bold text-white">
-                Salud y cuidados
-              </h2>
-
-              <p className="mt-2 text-sm text-white/60">
-                Estos datos nos ayudan a acompañarte y cuidarte mejor durante
-                el campamento.
-              </p>
-
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
-                <Field
-                  label="¿Tiene algún tipo de alergia?"
-                  name="alergias"
-                  value={formData.alergias}
-                  onChange={handleChange}
-                  placeholder="Ej.: penicilina, maní, picaduras, etc."
+              <section className="border-t border-brand-border pt-8">
+                <FormSectionHeader
+                  number="02"
+                  title="Información adicional"
+                  description="Datos de congregación e invitación."
                 />
+                <div className="mt-7 grid gap-5 md:grid-cols-2">
+                  <Field
+                    label="Iglesia / congregación"
+                    name="iglesia"
+                    value={formData.iglesia}
+                    onChange={handleChange}
+                  />
+                  <SelectField
+                    label="¿Sos invitado?"
+                    name="esInvitado"
+                    value={formData.esInvitado}
+                    onChange={handleChange}
+                    required
+                    options={[
+                      { value: "", label: "Seleccionar" },
+                      { value: "no", label: "No" },
+                      { value: "si", label: "Sí" },
+                    ]}
+                  />
+                </div>
+              </section>
 
-                <Field
-                  label="¿Qué medicamento toma?"
-                  name="medicamentos"
-                  value={formData.medicamentos}
-                  onChange={handleChange}
-                  placeholder="Ej.: antialérgicos o medicación diaria"
-                />
-
-                <Field
-                  label="¿Tiene enfermedad de base?"
-                  name="enfermedadBase"
-                  value={formData.enfermedadBase}
-                  onChange={handleChange}
-                  placeholder="Ej.: asma, diabetes, hipertensión"
-                />
-
-                <Field
-                  label="Contacto de emergencia"
-                  name="contactoEmergenciaNombre"
-                  value={formData.contactoEmergenciaNombre}
-                  onChange={handleChange}
-                  placeholder="Nombre y apellido"
-                />
-
-                <Field
-                  label="Teléfono de emergencia"
-                  name="contactoEmergenciaTelefono"
-                  type="tel"
-                  value={formData.contactoEmergenciaTelefono}
-                  onChange={handleChange}
-                  placeholder="Número de contacto"
-                />
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-bold text-white">
-                Pago y observaciones
-              </h2>
-
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
-                <SelectField
-                  label="Forma de pago"
-                  name="formaPago"
-                  value={formData.formaPago}
-                  onChange={handleChange}
-                  required
-                  options={[
-                    {
-                      value: "",
-                      label: "Seleccionar",
-                    },
-                    {
-                      value: "efectivo",
-                      label: "Efectivo",
-                    },
-                    {
-                      value: "transferencia",
-                      label: "Transferencia",
-                    },
-                  ]}
-                />
-              </div>
-
-              <div className="mt-5">
-                <TextAreaField
-                  label="Observaciones"
-                  name="observaciones"
-                  value={formData.observaciones}
-                  onChange={handleChange}
-                  placeholder="Agregá cualquier información adicional que sea importante para el equipo organizador."
-                />
-              </div>
-            </section>
-
-            <div className="flex flex-col gap-4 border-t border-white/10 pt-6">
-              {submitError && (
-                <p
-                  role="alert"
-                  className="rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200"
-                >
-                  {submitError}
-                </p>
+              {mostrarInvitado && (
+                <section className="border-l-2 border-brand-sage bg-brand-sageSoft/60 px-5 py-6 sm:px-7">
+                  <FormSectionHeader
+                    number="03"
+                    title="Información de invitación"
+                    description="Como marcaste que sos invitado, necesitamos saber quién te invitó."
+                    compact
+                  />
+                  <div className="mt-5">
+                    <Field
+                      label="Nombre de quien te invitó"
+                      name="invitadoPor"
+                      value={formData.invitadoPor}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </section>
               )}
 
-              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <Link
-                  href="/bienvenida"
-                  className="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 px-6 py-3 font-semibold text-white transition hover:bg-white/10 sm:w-auto"
-                >
-                  Volver
-                </Link>
+              {esMenor && (
+                <section className="border-l-2 border-brand-gold bg-brand-cream px-5 py-6 sm:px-7">
+                  <FormSectionHeader
+                    number="04"
+                    title="Responsable"
+                    description="Necesitamos los datos del padre, madre o tutor responsable."
+                    compact
+                  />
+                  <div className="mt-5 grid gap-5 md:grid-cols-2">
+                    <Field
+                      label="Nombre del padre, madre o tutor"
+                      name="nombrePadreMadre"
+                      value={formData.nombrePadreMadre}
+                      onChange={handleChange}
+                      required
+                    />
+                    <Field
+                      label="Teléfono del padre, madre o tutor"
+                      name="telefonoPadreMadre"
+                      type="tel"
+                      inputMode="tel"
+                      value={formData.telefonoPadreMadre}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </section>
+              )}
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex w-full items-center justify-center rounded-2xl px-8 py-3 font-bold text-slate-950 shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
-                  style={{ backgroundColor: CBG.gold }}
-                >
-                  {isSubmitting ? "Enviando..." : "Enviar registro"}
-                </button>
+              <section className="border-t border-brand-border pt-8">
+                <FormSectionHeader
+                  number="05"
+                  title="Salud"
+                  description="Estos datos nos ayudan a acompañarte y cuidarte mejor durante el campamento."
+                />
+                <div className="mt-7 grid gap-5 md:grid-cols-2">
+                  <Field
+                    label="¿Tiene algún tipo de alergia?"
+                    name="alergias"
+                    value={formData.alergias}
+                    onChange={handleChange}
+                    placeholder="Ej.: penicilina, maní, picaduras, etc."
+                  />
+                  <Field
+                    label="¿Qué medicamento toma?"
+                    name="medicamentos"
+                    value={formData.medicamentos}
+                    onChange={handleChange}
+                    placeholder="Ej.: antialérgicos o medicación diaria"
+                  />
+                  <Field
+                    label="¿Tiene enfermedad de base?"
+                    name="enfermedadBase"
+                    value={formData.enfermedadBase}
+                    onChange={handleChange}
+                    placeholder="Ej.: asma, diabetes, hipertensión"
+                  />
+                </div>
+              </section>
+
+              <section className="border-t border-brand-border pt-8">
+                <FormSectionHeader
+                  number="06"
+                  title="Emergencia"
+                  description="Contacto para cualquier situación importante durante el campamento."
+                />
+                <div className="mt-7 grid gap-5 md:grid-cols-2">
+                  <Field
+                    label="Contacto de emergencia"
+                    name="contactoEmergenciaNombre"
+                    value={formData.contactoEmergenciaNombre}
+                    onChange={handleChange}
+                    placeholder="Nombre y apellido"
+                  />
+                  <Field
+                    label="Teléfono de emergencia"
+                    name="contactoEmergenciaTelefono"
+                    type="tel"
+                    inputMode="tel"
+                    value={formData.contactoEmergenciaTelefono}
+                    onChange={handleChange}
+                    placeholder="Número de contacto"
+                  />
+                </div>
+              </section>
+
+              <section className="border-t border-brand-border pt-8">
+                <FormSectionHeader number="07" title="Pago y observaciones" />
+                <div className="mt-7 grid gap-5 md:grid-cols-2">
+                  <SelectField
+                    label="Forma de pago"
+                    name="formaPago"
+                    value={formData.formaPago}
+                    onChange={handleChange}
+                    required
+                    options={[
+                      { value: "", label: "Seleccionar" },
+                      { value: "efectivo", label: "Efectivo" },
+                      { value: "transferencia", label: "Transferencia" },
+                    ]}
+                  />
+                </div>
+                <div className="mt-5">
+                  <TextAreaField
+                    label="Observaciones"
+                    name="observaciones"
+                    value={formData.observaciones}
+                    onChange={handleChange}
+                    placeholder="Agregá cualquier información adicional que sea importante para el equipo organizador."
+                  />
+                </div>
+              </section>
+
+              <div className="border-t border-brand-border pt-8">
+                {submitError && (
+                  <p
+                    role="alert"
+                    className="mb-5 border-l-2 border-red-600 bg-red-50 px-4 py-3 text-sm text-red-800"
+                  >
+                    {submitError}
+                  </p>
+                )}
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <Link
+                    href="/bienvenida"
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-brand-border px-6 text-sm font-semibold text-brand-forest transition hover:border-brand-forest hover:bg-brand-forest/5 sm:w-auto"
+                  >
+                    Volver
+                  </Link>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-brand-forest px-8 text-sm font-semibold text-white transition hover:bg-brand-forestLight disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  >
+                    {isSubmitting ? "Enviando..." : "Enviar registro"}
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        </section>
       </main>
+    </div>
+  );
+}
+
+type FormSectionHeaderProps = {
+  number: string;
+  title: string;
+  description?: string;
+  compact?: boolean;
+};
+
+function FormSectionHeader({
+  number,
+  title,
+  description,
+  compact = false,
+}: FormSectionHeaderProps) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-[64px_1fr]">
+      <span
+        className={`${compact ? "text-2xl" : "text-3xl"} font-semibold text-brand-gold`}
+      >
+        {number}
+      </span>
+      <div>
+        <h2
+          className={`${compact ? "text-2xl" : "text-3xl"} font-semibold leading-tight text-brand-forest`}
+        >
+          {title}
+        </h2>
+        {description ? (
+          <p className="mt-2 max-w-2xl leading-7 text-brand-muted">
+            {description}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -475,7 +468,7 @@ type BaseFieldProps = {
   onChange: (
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => void;
 };
 
@@ -510,11 +503,11 @@ function Field({
 }: FieldProps) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-semibold text-slate-200">
+      <span className="mb-2 block text-sm font-semibold text-brand-ink">
         {label}
 
         {required && (
-          <span className="ml-1 text-red-300" aria-hidden="true">
+          <span className="ml-1 text-red-700" aria-hidden="true">
             *
           </span>
         )}
@@ -531,7 +524,7 @@ function Field({
         max={max}
         autoComplete={autoComplete}
         inputMode={inputMode}
-        className="w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50 focus:ring-2 focus:ring-sky-300/20"
+        className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base text-brand-ink outline-none transition placeholder:text-brand-muted/60 focus:border-brand-forest focus:ring-2 focus:ring-brand-forest/15"
       />
     </label>
   );
@@ -554,11 +547,11 @@ function SelectField({
 }: SelectFieldProps) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-semibold text-slate-200">
+      <span className="mb-2 block text-sm font-semibold text-brand-ink">
         {label}
 
         {required && (
-          <span className="ml-1 text-red-300" aria-hidden="true">
+          <span className="ml-1 text-red-700" aria-hidden="true">
             *
           </span>
         )}
@@ -569,13 +562,13 @@ function SelectField({
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-white outline-none transition focus:border-sky-300/50 focus:ring-2 focus:ring-sky-300/20"
+        className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base text-brand-ink outline-none transition focus:border-brand-forest focus:ring-2 focus:ring-brand-forest/15"
       >
         {options.map((option) => (
           <option
             key={option.value || option.label}
             value={option.value}
-            className="bg-slate-900"
+            className="bg-white"
           >
             {option.label}
           </option>
@@ -594,7 +587,7 @@ function TextAreaField({
 }: BaseFieldProps) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-semibold text-slate-200">
+      <span className="mb-2 block text-sm font-semibold text-brand-ink">
         {label}
       </span>
 
@@ -604,7 +597,7 @@ function TextAreaField({
         onChange={onChange}
         placeholder={placeholder}
         rows={5}
-        className="w-full rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50 focus:ring-2 focus:ring-sky-300/20"
+        className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base text-brand-ink outline-none transition placeholder:text-brand-muted/60 focus:border-brand-forest focus:ring-2 focus:ring-brand-forest/15"
       />
     </label>
   );
