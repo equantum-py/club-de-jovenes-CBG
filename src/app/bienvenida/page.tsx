@@ -1,30 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Header from "@/components/Header";
 
-/* ─── CBG Brand Colors ─── */
-const CBG = {
-  navy: "#1e3a5c",
-  navyDark: "#122842",
-  gold: "#b8860b",
-  white: "#ffffff",
-};
+const CBG_GOLD = "#b8860b";
 
 type RevealProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   delay?: number;
 };
 
-function Reveal({ children, className = "", delay = 0 }: RevealProps) {
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
+
+    if (!node) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -33,20 +34,29 @@ function Reveal({ children, className = "", delay = 0 }: RevealProps) {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.15 }
+      {
+        threshold: 0.15,
+      }
     );
 
     observer.observe(node);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (
     <div
       ref={ref}
       className={`transform-gpu transition-all duration-700 ease-out ${
-        visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+        visible
+          ? "translate-y-0 opacity-100"
+          : "translate-y-5 opacity-0"
       } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{
+        transitionDelay: `${delay}ms`,
+      }}
     >
       {children}
     </div>
@@ -123,17 +133,17 @@ export default function BienvenidaPage() {
               Bienvenidos al Campamento 2026
             </h1>
 
-            <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-white/78 sm:text-lg">
-              Un espacio preparado para escuchar la Palabra de Dios, examinar la fe y responder con
-              arrepentimiento genuino.
+            <p className="mx-auto mt-5 max-w-3xl text-base leading-relaxed text-white/80 sm:text-lg">
+              Un espacio preparado para escuchar la Palabra de Dios, examinar
+              la fe y responder con arrepentimiento genuino.
             </p>
           </Reveal>
 
           <Reveal>
-            <section className="rounded-2xl border border-white/12 bg-white/[0.08] p-6 shadow-2xl backdrop-blur-md sm:rounded-3xl sm:p-10">
+            <section className="rounded-2xl border border-white/15 bg-white/[0.08] p-6 shadow-2xl backdrop-blur-md sm:rounded-3xl sm:p-10">
               <p
                 className="text-xs font-medium uppercase tracking-[0.22em] sm:text-sm"
-                style={{ color: CBG.gold }}
+                style={{ color: CBG_GOLD }}
               >
                 Objetivo principal
               </p>
@@ -142,11 +152,21 @@ export default function BienvenidaPage() {
                 Exponer a cada acampante al evangelio de Jesucristo.
               </p>
 
+              <p className="mt-4 leading-relaxed text-white/75">
+                Que cada participante examine la autenticidad de su fe, evalúe
+                sus convicciones y responda con arrepentimiento genuino y fe
+                activa.
+              </p>
+
               <blockquote className="mt-7 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-5 text-center sm:px-6">
                 <p className="text-base font-medium leading-relaxed text-white sm:text-lg">
-                  &ldquo;Examinaos a vosotros mismos si estáis en la fe.&rdquo;
+                  &ldquo;Examinaos a vosotros mismos si estáis en la
+                  fe.&rdquo;
                 </p>
-                <footer className="mt-2 text-sm text-white/65">1 Corintios 13:5</footer>
+
+                <footer className="mt-2 text-sm text-white/65">
+                  1 Corintios 13:5
+                </footer>
               </blockquote>
             </section>
           </Reveal>
@@ -161,25 +181,39 @@ export default function BienvenidaPage() {
             </Reveal>
 
             <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-              {secondaryObjectives.map((obj, index) => (
-                <Reveal key={obj.title} delay={index * 80}>
-                  <article className="rounded-2xl border border-white/12 bg-white/[0.08] p-5 backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/[0.11] hover:shadow-xl sm:p-6">
+              {secondaryObjectives.map((objective, index) => (
+                <Reveal
+                  key={objective.title}
+                  delay={index * 80}
+                >
+                  <article className="rounded-2xl border border-white/15 bg-white/[0.08] p-5 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/[0.11] hover:shadow-xl sm:p-6">
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg">
-                        {obj.icon}
+                        {objective.icon}
                       </span>
-                      <span className="text-sm font-medium" style={{ color: CBG.gold }}>
+
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: CBG_GOLD }}
+                      >
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
 
                     <h3 className="mt-4 text-lg font-medium leading-snug text-white sm:text-xl">
-                      {obj.title}
+                      {objective.title}
                     </h3>
 
                     <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
-                      {obj.description}
+                      {objective.description}
                     </p>
+
+                    {index === 4 && (
+                      <p className="mt-4 text-sm leading-relaxed text-white/80">
+                        En otras palabras, que la fe que profesen sea real en
+                        su día a día.
+                      </p>
+                    )}
                   </article>
                 </Reveal>
               ))}
@@ -187,16 +221,17 @@ export default function BienvenidaPage() {
           </section>
 
           <Reveal>
-            <section className="rounded-2xl border border-white/12 bg-white/[0.08] p-6 text-center backdrop-blur-md sm:rounded-3xl sm:p-8">
+            <section className="rounded-2xl border border-white/15 bg-white/[0.08] p-6 text-center backdrop-blur-md sm:rounded-3xl sm:p-8">
               <h2 className="text-2xl font-semibold text-white sm:text-3xl">
                 Sigamos adelante con propósito
               </h2>
 
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
-                Continuá revisando la información del campamento y completá tu registro cuando estés listo.
+                Continuá revisando la información del campamento y completá tu
+                registro cuando estés listo.
               </p>
 
-              <div className="mt-8 grid gap-3 sm:flex sm:justify-center">
+              <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:justify-center">
                 <Link
                   href="/campamento"
                   className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wider text-[#1e3a5c] shadow-lg transition hover:scale-[1.02] hover:bg-white/90 sm:px-8 sm:py-4 sm:text-base"
