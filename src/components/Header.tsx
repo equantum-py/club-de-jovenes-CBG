@@ -4,94 +4,68 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Countdown from "@/components/Countdown";
+import { Container } from "@/components/ui/design";
 
-const CBG_NAVY = "#1e3a5c";
-
-function getTimeRemaining() {
-  const target = new Date("2026-12-11T00:00:00-03:00");
-  const now = new Date();
-  const diff = target.getTime() - now.getTime();
-
-  if (diff <= 0) {
-    return {
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      expired: true,
-    };
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-  return {
-    days,
-    hours,
-    minutes,
-    seconds,
-    expired: false,
-  };
-}
+const navItems = [
+  { label: "Inicio", href: "/campamento" },
+  { label: "Bienvenida", href: "/bienvenida" },
+  { label: "Campamento", href: "/campamento" },
+  { label: "Registro", href: "/registro" },
+  { label: "Reglamento", href: "/reglamento" },
+];
 
 export default function Header() {
   const pathname = usePathname();
-
-  const [time, setTime] = useState(() => getTimeRemaining());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(getTimeRemaining());
-    }, 1000);
+    setIsMenuOpen(false);
+  }, [pathname]);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  const navItems = [
-    { label: "INICIO", href: "/campamento" },
-    { label: "BIENVENIDA", href: "/bienvenida" },
-    { label: "REGISTRO", href: "/registro" },
-    { label: "REGLAMENTO", href: "/reglamento" },
-  ];
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#e5e5e5] bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-
-        {/* LOGO */}
+    <header className="sticky top-0 z-50 border-b border-brand-border/70 bg-brand-warmWhite/95 backdrop-blur-sm">
+      <Container className="flex min-h-[76px] items-center justify-between gap-4 py-3">
         <Link
           href="/campamento"
-          className="flex shrink-0 items-center"
+          className="flex items-center gap-3"
+          aria-label="Ir al inicio de Gracia Camp"
         >
           <Image
             src="/logo.png"
             alt="Gracia Camp"
-            width={80}
-            height={80}
+            width={74}
+            height={74}
             priority
-            className="object-contain"
+            className="h-14 w-14 object-contain sm:h-16 sm:w-16"
           />
+          <div className="hidden leading-tight sm:block">
+            <p className="text-sm font-semibold text-brand-forest">
+              Jóvenes CBG
+            </p>
+            <p className="text-xs text-brand-muted">Gracia Camp 2026</p>
+          </div>
         </Link>
 
-        {/* NAV DESKTOP */}
-        <nav className="hidden items-center gap-6 text-sm font-semibold uppercase tracking-wider lg:flex">
+        <nav
+          className="hidden items-center gap-1 rounded-full bg-brand-cream px-2 py-2 lg:flex"
+          aria-label="Navegación principal"
+        >
           {navItems.map((item) => {
             const isActive = pathname === item.href;
-
             return (
               <Link
-                key={item.href}
+                key={`${item.label}-${item.href}`}
                 href={item.href}
-                className="transition"
-                style={{
-                  color: isActive ? CBG_NAVY : "#666666",
-                  fontWeight: isActive ? 800 : 600,
-                }}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${isActive ? "bg-brand-warmWhite text-brand-forest shadow-soft" : "text-brand-muted hover:text-brand-forest"}`}
+                aria-current={isActive ? "page" : undefined}
               >
                 {item.label}
               </Link>
@@ -99,167 +73,83 @@ export default function Header() {
           })}
         </nav>
 
-        {/* DERECHA */}
-        <div className="flex items-center gap-3">
-
-          {!time.expired && (
-            <div className="hidden items-center gap-4 rounded-2xl border border-gray-100 bg-white px-5 py-3 shadow-lg md:inline-flex">
-
-              {/* ICONO */}
-              <div className="flex flex-col items-center">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="18"
-                    stroke="#dc2626"
-                    strokeWidth="3"
-                    fill="none"
-                  />
-
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="14"
-                    fill="#fef3c7"
-                  />
-
-                  <line
-                    x1="20"
-                    y1="20"
-                    x2="20"
-                    y2="10"
-                    stroke="#1a1a1a"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-
-                  <line
-                    x1="20"
-                    y1="20"
-                    x2="26"
-                    y2="20"
-                    stroke="#1a1a1a"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="2"
-                    fill="#dc2626"
-                  />
-
-                  <path
-                    d="M28 28 Q30 24 32 26 Q34 22 30 20 Q28 18 26 22 Q24 26 28 28Z"
-                    fill="#f59e0b"
-                  />
-
-                  <path
-                    d="M29 27 Q30 24 31 25 Q32 23 30 22 Q29 21 28 23 Q27 25 29 27Z"
-                    fill="#ef4444"
-                  />
-                </svg>
-
-                <span className="mt-1 text-[10px] font-black uppercase tracking-tight text-red-600">
-                  ¡¡INSCRIBITE YA!!
-                </span>
-              </div>
-
-              <div className="h-12 w-px bg-gray-200" />
-
-              {/* COUNTDOWN */}
-              <div className="flex items-center gap-2">
-                {[
-                  { value: time.days, label: "días" },
-                  { value: time.hours, label: "horas" },
-                  { value: time.minutes, label: "mins." },
-                  { value: time.seconds, label: "segs." },
-                ].map((item, index) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center gap-2"
-                  >
-                    <div className="text-center">
-                      <div className="text-3xl font-bold leading-none tabular-nums text-[#1a1a1a]">
-                        {String(item.value).padStart(2, "0")}
-                      </div>
-
-                      <div className="mt-1 text-[10px] font-medium lowercase text-red-600">
-                        {item.label}
-                      </div>
-                    </div>
-
-                    {index < 3 && (
-                      <span className="text-2xl font-light text-gray-400">
-                        :
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* BOTON */}
+        <div className="hidden items-center gap-5 xl:flex">
+          <div className="border-l border-brand-border pl-5">
+            <p className="text-xs font-medium text-brand-muted">
+              Faltan para el campamento
+            </p>
+            <Countdown compact />
+          </div>
           <Link
             href="/registro"
-            className="hidden rounded-sm px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:opacity-90 sm:inline-flex"
-            style={{ backgroundColor: CBG_NAVY }}
+            className="inline-flex min-h-11 items-center rounded-full bg-brand-forest px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-forestLight"
           >
             Inscribirme
           </Link>
+        </div>
 
-          {/* MENU MOBILE */}
+        <div className="flex items-center gap-2 xl:hidden">
+          <Link
+            href="/registro"
+            className="hidden min-h-11 items-center rounded-full bg-brand-forest px-4 text-sm font-semibold text-white transition hover:bg-brand-forestLight sm:inline-flex"
+          >
+            Inscribirme
+          </Link>
           <button
             type="button"
             onClick={() => setIsMenuOpen((value) => !value)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-[#e5e5e5] text-[#1e3a5c] lg:hidden"
-            aria-label="Abrir menú"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-border text-brand-forest transition hover:bg-brand-cream lg:hidden"
+            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMenuOpen}
+            aria-controls="menu-principal-mobile"
           >
-            <span className="text-xl leading-none">
+            <span className="text-2xl leading-none" aria-hidden="true">
               {isMenuOpen ? "×" : "☰"}
             </span>
           </button>
         </div>
-      </div>
+      </Container>
 
-      {/* MENU MOBILE */}
-      {isMenuOpen && (
-        <div className="border-t border-[#e5e5e5] bg-white px-4 py-4 lg:hidden">
-          <nav className="mx-auto grid max-w-7xl gap-2">
-
+      <div
+        id="menu-principal-mobile"
+        className={`overflow-hidden border-t border-brand-border bg-brand-warmWhite transition-[max-height,opacity] duration-300 lg:hidden ${isMenuOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <Container className="py-5">
+          <nav className="grid gap-2" aria-label="Navegación móvil">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
-
               return (
                 <Link
-                  key={item.href}
+                  key={`${item.label}-${item.href}-mobile`}
                   href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-sm border border-[#e5e5e5] px-4 py-3 text-sm font-bold uppercase tracking-wider transition"
-                  style={{
-                    backgroundColor: isActive ? CBG_NAVY : "#ffffff",
-                    color: isActive ? "#ffffff" : "#666666",
-                  }}
+                  className={`flex min-h-12 items-center justify-between border-b border-brand-border/70 py-3 text-base font-medium ${isActive ? "text-brand-forest" : "text-brand-muted"}`}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   {item.label}
+                  {isActive ? (
+                    <span
+                      className="h-2 w-2 rounded-full bg-brand-gold"
+                      aria-hidden="true"
+                    />
+                  ) : null}
                 </Link>
               );
             })}
-
-            <Link
-              href="/registro"
-              onClick={() => setIsMenuOpen(false)}
-              className="rounded-sm px-4 py-3 text-center text-sm font-bold uppercase tracking-wider text-white"
-              style={{ backgroundColor: CBG_NAVY }}
-            >
-              Inscribirme
-            </Link>
+            <div className="mt-3 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs text-brand-muted">Faltan</p>
+                <Countdown compact />
+              </div>
+              <Link
+                href="/registro"
+                className="inline-flex min-h-11 items-center rounded-full bg-brand-forest px-5 text-sm font-semibold text-white"
+              >
+                Inscribirme
+              </Link>
+            </div>
           </nav>
-        </div>
-      )}
+        </Container>
+      </div>
     </header>
   );
 }

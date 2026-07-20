@@ -1,16 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "JÓVENES DE C.B.G",
-  description: "Campamento 2026 - Jóvenes de C.B.G",
+  metadataBase: new URL("https://club-de-jovenes-cbg.vercel.app"),
+  title: {
+    default: "Jóvenes CBG | Campamento 2026",
+    template: "%s | Jóvenes CBG",
+  },
+  description:
+    "Información y registro del Campamento 2026 del Club de Jóvenes CBG.",
+  openGraph: {
+    title: "Jóvenes CBG | Campamento 2026",
+    description:
+      "Información y registro del Campamento 2026 del Club de Jóvenes CBG.",
+    images: ["/og/gracia-camp-2026-whatsapp.jpg"],
+    locale: "es_PY",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 type RootLayoutProps = {
@@ -19,7 +29,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="es" className={inter.className}>
+    <html lang="es">
       <body>{children}</body>
     </html>
   );

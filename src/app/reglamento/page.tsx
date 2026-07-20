@@ -1,224 +1,129 @@
-"use client";
-
-import Link from "next/link";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-
 import Header from "@/components/Header";
+import { ButtonLink, Container, Eyebrow } from "@/components/ui/design";
 
-const CBG = {
-  navy: "#1e3a5c",
-  gold: "#b8860b",
-};
-
-type Regla = {
-  titulo: string;
-  descripcion: string;
-};
-
-const REGLAS: Regla[] = [
-  {
-    titulo: "Puntualidad",
-    descripcion:
-      "Todos los participantes deben respetar los horarios establecidos para actividades, comidas y reuniones.",
-  },
-  {
-    titulo: "Respeto y sujeción",
-    descripcion:
-      "Cada acampante debe mantener una actitud de respeto hacia líderes, encargados y demás participantes.",
-  },
-  {
-    titulo: "Cuidado del testimonio",
-    descripcion:
-      "El comportamiento dentro y fuera de las actividades debe reflejar una conducta digna y coherente con la fe cristiana.",
-  },
-  {
-    titulo: "Uso responsable de pertenencias",
-    descripcion:
-      "Cada participante es responsable del cuidado de sus objetos personales y del buen uso de las instalaciones.",
-  },
-  {
-    titulo: "Orden y limpieza",
-    descripcion:
-      "Se espera colaboración en el orden, limpieza de habitaciones y cuidado general del lugar.",
-  },
-  {
-    titulo: "Participación en actividades",
-    descripcion:
-      "Todos deben participar con disposición en las actividades programadas, salvo indicación contraria del equipo responsable.",
-  },
-  {
-    titulo: "Cuidado físico y salud",
-    descripcion:
-      "Cualquier malestar, medicación o situación médica debe informarse inmediatamente a los responsables.",
-  },
-  {
-    titulo: "Relaciones sanas",
-    descripcion:
-      "Las interacciones entre participantes deben mantenerse en pureza, respeto y edificación mutua.",
-  },
-  {
-    titulo: "Prohibiciones",
-    descripcion:
-      "No se permitirá ninguna conducta que atente contra el propósito espiritual, la seguridad o el orden del campamento.",
-  },
+const REGLAS = [
+  [
+    "Puntualidad",
+    "Todos los participantes deben respetar los horarios establecidos para actividades, comidas y reuniones.",
+  ],
+  [
+    "Respeto y sujeción",
+    "Cada acampante debe mantener una actitud de respeto hacia líderes, encargados y demás participantes.",
+  ],
+  [
+    "Cuidado del testimonio",
+    "El comportamiento dentro y fuera de las actividades debe reflejar una conducta digna y coherente con la fe cristiana.",
+  ],
+  [
+    "Uso responsable de pertenencias",
+    "Cada participante es responsable del cuidado de sus objetos personales y del buen uso de las instalaciones.",
+  ],
+  [
+    "Orden y limpieza",
+    "Se espera colaboración en el orden, limpieza de habitaciones y cuidado general del lugar.",
+  ],
+  [
+    "Participación en actividades",
+    "Todos deben participar con disposición en las actividades programadas, salvo indicación contraria del equipo responsable.",
+  ],
+  [
+    "Cuidado físico y salud",
+    "Cualquier malestar, medicación o situación médica debe informarse inmediatamente a los responsables.",
+  ],
+  [
+    "Relaciones sanas",
+    "Las interacciones entre participantes deben mantenerse en pureza, respeto y edificación mutua.",
+  ],
+  [
+    "Prohibiciones",
+    "No se permitirá ninguna conducta que atente contra el propósito espiritual, la seguridad o el orden del campamento.",
+  ],
 ];
 
 export default function ReglamentoPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-brand-warmWhite text-brand-ink">
       <Header />
-
-      <main
-        className="min-h-screen text-white"
-        style={{ backgroundColor: CBG.navy }}
-      >
-        <div className="mx-auto max-w-6xl px-6 py-12 sm:px-8 lg:px-10">
-          <Reveal>
-            <section className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-10">
-              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-white/70">
-                Club de Jóvenes CBG
-              </p>
-
-              <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
+      <main>
+        <section className="bg-brand-cream py-16 sm:py-24">
+          <Container className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <Eyebrow>Club de Jóvenes CBG</Eyebrow>
+              <h1 className="mt-4 text-4xl font-semibold leading-tight text-brand-forest sm:text-6xl">
                 Reglamento del Campamento Jóvenes CBG 2026
               </h1>
-
-              <p className="mt-8 max-w-4xl whitespace-pre-line text-base leading-8 text-white/80 sm:text-lg">
-                {`Querido acampante:
-
-Gracias por inscribirte al Campamento CBG 2026. Es un verdadero gozo contar contigo.
-
-Nuestro anhelo es que este tiempo sea de bendición y transformación para tu vida.
-
-Deseamos honrar a Dios en cada detalle de esta actividad. Por ello, buscamos que todo se realice con orden, respeto y excelencia, conforme a principios que le agradan.
-
-Las siguientes normas tienen como propósito facilitar el desarrollo del campamento y cuidar el bienestar espiritual y físico de todos.`}
+            </div>
+            <div className="text-lg leading-9 text-brand-muted">
+              <p>Querido acampante:</p>
+              <p className="mt-4">
+                Gracias por inscribirte al Campamento CBG 2026. Es un verdadero
+                gozo contar contigo.
               </p>
-            </section>
-          </Reveal>
+              <p className="mt-4">
+                Nuestro anhelo es que este tiempo sea de bendición y
+                transformación para tu vida.
+              </p>
+              <p className="mt-4">
+                Deseamos honrar a Dios en cada detalle de esta actividad. Por
+                ello, buscamos que todo se realice con orden, respeto y
+                excelencia, conforme a principios que le agradan.
+              </p>
+              <p className="mt-4">
+                Las siguientes normas tienen como propósito facilitar el
+                desarrollo del campamento y cuidar el bienestar espiritual y
+                físico de todos.
+              </p>
+            </div>
+          </Container>
+        </section>
 
-          <section className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {REGLAS.map((regla, index) => (
-              <Reveal
-                key={regla.titulo}
-                delay={index * 60}
-              >
-                <article className="group h-full rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-[#b8860b]/30 hover:shadow-[0_18px_45px_rgba(184,134,11,0.15)]">
-                  <p
-                    className="text-sm font-bold tracking-[0.25em]"
-                    style={{ color: CBG.gold }}
-                  >
+        <section className="bg-brand-warmWhite py-16 sm:py-24">
+          <Container>
+            <div className="grid gap-x-14 lg:grid-cols-2">
+              {REGLAS.map(([titulo, descripcion], index) => (
+                <article
+                  key={titulo}
+                  className="grid grid-cols-[64px_1fr] gap-5 border-t border-brand-border py-8"
+                >
+                  <span className="text-4xl font-semibold text-brand-gold">
                     {String(index + 1).padStart(2, "0")}
-                  </p>
-
-                  <h2 className="mt-3 text-xl font-bold text-white">
-                    {regla.titulo}
-                  </h2>
-
-                  <p className="mt-3 leading-7 text-white/70">
-                    {regla.descripcion}
-                  </p>
+                  </span>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-brand-forest">
+                      {titulo}
+                    </h2>
+                    <p className="mt-3 leading-8 text-brand-muted">
+                      {descripcion}
+                    </p>
+                  </div>
                 </article>
-              </Reveal>
-            ))}
-          </section>
+              ))}
+            </div>
+          </Container>
+        </section>
 
-          <Reveal delay={120}>
-            <section
-              className="mt-10 rounded-2xl border border-[#b8860b]/20 p-6 sm:p-7"
-              style={{
-                backgroundColor: "rgba(184,134,11,0.1)",
-              }}
-            >
-              <p className="text-base leading-8 text-white/90 sm:text-lg">
-                Estas normas no buscan solo mantener el orden, sino ayudar a
-                que cada participante aproveche este tiempo para crecer,
-                escuchar la Palabra de Dios y convivir de una manera que honre
-                a Cristo.
-              </p>
-            </section>
-          </Reveal>
-
-          <Reveal delay={160}>
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Link
+        <section className="bg-brand-forest py-14 text-white">
+          <Container className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
+            <p className="max-w-3xl text-lg leading-8 text-white/80">
+              Estas normas no buscan solo mantener el orden, sino ayudar a que
+              cada participante aproveche este tiempo para crecer, escuchar la
+              Palabra de Dios y convivir de una manera que honre a Cristo.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <ButtonLink
                 href="/registro"
-                className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+                variant="secondary"
+                className="border-white/30 text-white hover:bg-white/10 hover:text-white"
               >
                 Volver al registro
-              </Link>
-
-              <Link
-                href="/campamento"
-                className="inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold text-slate-950 transition hover:opacity-90"
-                style={{ backgroundColor: CBG.gold }}
-              >
+              </ButtonLink>
+              <ButtonLink href="/campamento" variant="light">
                 Finalizar
-              </Link>
+              </ButtonLink>
             </div>
-          </Reveal>
-        </div>
+          </Container>
+        </section>
       </main>
-    </div>
-  );
-}
-
-type RevealProps = {
-  children: ReactNode;
-  delay?: number;
-};
-
-function Reveal({
-  children,
-  delay = 0,
-}: RevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-
-    if (!element) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: 0.18,
-      }
-    );
-
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        transitionDelay: `${delay}ms`,
-      }}
-      className={`transform-gpu transition-all duration-700 ease-out ${
-        isVisible
-          ? "translate-y-0 opacity-100"
-          : "translate-y-6 opacity-0"
-      }`}
-    >
-      {children}
     </div>
   );
 }
