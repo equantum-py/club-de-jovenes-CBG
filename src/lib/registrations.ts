@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 
 export type Registration = Record<string, string>;
+type SheetRow = unknown[];
 
 function normalizePrivateKey(value: string) {
   return value.replace(/\\n/g, "\n");
@@ -25,24 +26,35 @@ export async function getRegistrations(): Promise<Registration[]> {
     range: "Registros!A:AZ",
   });
 
-  const rows = response.data.values ?? [];
+  const rows = (response.data.values ?? []) as SheetRow[];
   if (rows.length < 2) return [];
 
-  const headers = rows[0].map((header) => String(header).trim());
-  return rows.slice(1).filter((row) => row.some(Boolean)).map((row) => {
-    const record: Registration = {};
-    headers.forEach((header, index) => {
-      record[header || `Campo ${index + 1}`] = String(row[index] ?? "");
+  const headers = rows[0].map((header: unknown) => String(header ?? "").trim());
+
+  return rows
+    .slice(1)
+    .filter((row: SheetRow) => row.some((value: unknown) => Boolean(value)))
+    .map((row: SheetRow) => {
+      const record: Registration = {};
+
+      headers.forEach((header: string, index: number) => {
+        record[header || `Campo ${index + 1}`] = String(row[index] ?? "");
+      });
+
+      return record;
     });
-    return record;
-  });
 }
 
 export function findValue(registration: Registration, candidates: string[]) {
   const entries = Object.entries(registration);
+
   for (const candidate of candidates) {
-    const found = entries.find(([key]) => key.toLowerCase().includes(candidate.toLowerCase()));
+    const found = entries.find(([key]: [string, string]) =>
+      key.toLowerCase().includes(candidate.toLowerCase()),
+    );
+
     if (found?.[1]) return found[1];
   }
+
   return "—";
 }
