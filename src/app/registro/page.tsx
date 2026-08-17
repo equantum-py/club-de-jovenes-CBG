@@ -46,7 +46,11 @@ export default function RegistroPage() {
     try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify(formData)); } catch {}
   }, [formData]);
 
-  useEffect(() => () => stopCamera(), []);
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
 
   const esMenor = useMemo(() => formData.edad !== "" && Number(formData.edad) < 18, [formData.edad]);
 
@@ -60,15 +64,18 @@ export default function RegistroPage() {
     setCameraError("");
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
-        setCameraError("Este navegador no permite abrir la cámara dentro de la página. Podés elegir una foto desde tu galería.");
+        setCameraError("Este navegador no permite usar la cámara dentro de la página. Probá con Chrome o Safari actualizado.");
         return;
       }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
         audio: false,
       });
+
       streamRef.current = stream;
       setCameraOpen(true);
+
       requestAnimationFrame(() => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -76,7 +83,7 @@ export default function RegistroPage() {
         }
       });
     } catch {
-      setCameraError("No pudimos abrir la cámara. Revisá el permiso de cámara del navegador o elegí una foto desde tu galería.");
+      setCameraError("No pudimos abrir la cámara. Revisá el permiso de cámara del navegador e intentá nuevamente.");
     }
   }
 
@@ -116,30 +123,18 @@ export default function RegistroPage() {
     }, "image/jpeg", 0.88);
   }
 
-  function choosePhoto(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setSubmitError("La selfie debe pesar menos de 5 MB.");
-      return;
-    }
-    setSelfie(file);
-    const reader = new FileReader();
-    reader.onload = () => setPreview(typeof reader.result === "string" ? reader.result : "");
-    reader.readAsDataURL(file);
-    setSubmitError("");
-  }
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     if (!selfie) {
-      setSubmitError("Sacate o adjuntá una selfie para completar la inscripción.");
+      setSubmitError("Necesitamos que te saques una selfie para completar la inscripción.");
       return;
     }
     if (isSubmitting) return;
 
     setIsSubmitting(true);
     setSubmitError("");
+
     try {
       const body = new FormData();
       Object.entries(formData).forEach(([key, value]) => body.append(key, value));
@@ -147,6 +142,7 @@ export default function RegistroPage() {
 
       const response = await fetch("/api/registro", { method: "POST", body });
       const result = await response.json().catch(() => ({}));
+
       if (!response.ok) {
         setSubmitError(result.error ?? "No se pudo guardar tu inscripción.");
         return;
@@ -164,11 +160,12 @@ export default function RegistroPage() {
   return (
     <div className="min-h-screen bg-brand-warmWhite text-brand-ink">
       <Header />
+
       <section className="bg-brand-cream py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-5">
           <p className="text-sm font-medium tracking-[.18em] text-brand-gold">Club de Jóvenes CBG</p>
           <h1 className="mt-4 text-4xl font-semibold text-brand-forest sm:text-6xl">Registro Campamento 2026</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-brand-muted">Completá tus datos y una selfie reciente para que el equipo pueda identificarte durante el campamento.</p>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-brand-muted">Completá tus datos y sacate una selfie reciente para que el equipo pueda identificarte durante el campamento.</p>
         </div>
       </section>
 
@@ -191,22 +188,20 @@ export default function RegistroPage() {
               <p className="mt-2 max-w-xl leading-7 text-brand-muted">Abrí la cámara sin salir del formulario, mirá de frente y tomá una foto clara. Tus datos escritos se guardan automáticamente mientras completás el registro.</p>
 
               {!cameraOpen ? (
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                  <button type="button" onClick={openCamera} className="rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white">Abrir cámara</button>
-                  <label className="cursor-pointer rounded-full border border-brand-border bg-white px-6 py-3 text-center text-sm font-semibold text-brand-forest">
-                    Elegir foto
-                    <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={choosePhoto} />
-                  </label>
+                <div className="mt-5">
+                  <button type="button" onClick={openCamera} className="w-full rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white sm:w-auto">
+                    {preview ? "Volver a sacar selfie" : "Abrir cámara"}
+                  </button>
                 </div>
               ) : (
-                <div className="mt-5 flex gap-3">
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <button type="button" onClick={takeSelfie} className="rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white">Tomar selfie</button>
                   <button type="button" onClick={stopCamera} className="rounded-full border border-brand-border bg-white px-6 py-3 text-sm font-semibold text-brand-forest">Cancelar</button>
                 </div>
               )}
 
               {cameraError ? <p className="mt-3 text-sm text-red-700">{cameraError}</p> : null}
-              <p className="mt-3 text-xs text-brand-muted">La foto queda privada. JPG, PNG o WebP · máximo 5 MB.</p>
+              <p className="mt-3 text-xs text-brand-muted">La selfie queda guardada de forma privada y solo puede verla la administración.</p>
             </div>
 
             <div className="aspect-square overflow-hidden rounded-3xl border border-brand-border bg-white">
@@ -228,7 +223,15 @@ export default function RegistroPage() {
           {formData.esInvitado === "si" ? <Field label="Nombre de quien te invitó" name="invitadoPor" value={formData.invitadoPor} onChange={handleChange} /> : null}
         </div>
 
-        {esMenor ? <><Section number="03" title="Responsable" /><div className="grid gap-5 md:grid-cols-2"><Field label="Nombre del padre, madre o tutor" name="nombrePadreMadre" value={formData.nombrePadreMadre} onChange={handleChange} /><Field label="Teléfono del responsable" name="telefonoPadreMadre" value={formData.telefonoPadreMadre} onChange={handleChange} /></div></> : null}
+        {esMenor ? (
+          <>
+            <Section number="03" title="Responsable" />
+            <div className="grid gap-5 md:grid-cols-2">
+              <Field label="Nombre del padre, madre o tutor" name="nombrePadreMadre" value={formData.nombrePadreMadre} onChange={handleChange} />
+              <Field label="Teléfono del responsable" name="telefonoPadreMadre" value={formData.telefonoPadreMadre} onChange={handleChange} />
+            </div>
+          </>
+        ) : null}
 
         <Section number="04" title="Salud" />
         <div className="grid gap-5 md:grid-cols-2">
@@ -245,9 +248,13 @@ export default function RegistroPage() {
 
         <Section number="06" title="Pago y observaciones" />
         <Select label="Forma de pago" name="formaPago" value={formData.formaPago} onChange={handleChange} options={[["","Seleccionar"],["efectivo","Efectivo"],["transferencia","Transferencia"]]} />
-        <label className="block"><span className="mb-2 block text-sm font-semibold">Observaciones</span><textarea name="observaciones" value={formData.observaciones} onChange={handleChange} rows={4} className="w-full rounded-xl border border-brand-border bg-white p-4" /></label>
+        <label className="block">
+          <span className="mb-2 block text-sm font-semibold">Observaciones</span>
+          <textarea name="observaciones" value={formData.observaciones} onChange={handleChange} rows={4} className="w-full rounded-xl border border-brand-border bg-white p-4" />
+        </label>
 
         {submitError ? <p role="alert" className="bg-red-50 px-4 py-3 text-sm text-red-800">{submitError}</p> : null}
+
         <div className="flex flex-col-reverse gap-3 border-t border-brand-border pt-8 sm:flex-row sm:justify-between">
           <Link href="/bienvenida" className="rounded-full border border-brand-border px-6 py-3 text-center text-sm font-semibold">Volver</Link>
           <button disabled={isSubmitting} className="rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white disabled:opacity-60">{isSubmitting ? "Enviando..." : "Enviar registro"}</button>
@@ -258,13 +265,30 @@ export default function RegistroPage() {
 }
 
 function Section({ number, title }: { number: string; title: string }) {
-  return <div className="grid gap-3 border-t border-brand-border pt-8 sm:grid-cols-[64px_1fr]"><span className="text-3xl font-semibold text-brand-gold">{number}</span><h2 className="text-3xl font-semibold text-brand-forest">{title}</h2></div>;
+  return (
+    <div className="grid gap-3 border-t border-brand-border pt-8 sm:grid-cols-[64px_1fr]">
+      <span className="text-3xl font-semibold text-brand-gold">{number}</span>
+      <h2 className="text-3xl font-semibold text-brand-forest">{title}</h2>
+    </div>
+  );
 }
 
 function Field({ label, name, value, onChange, type = "text", required = true }: { label: string; name: string; value: string; onChange: (event: ChangeEvent<HTMLInputElement>) => void; type?: string; required?: boolean }) {
-  return <label><span className="mb-2 block text-sm font-semibold">{label}{required ? " *" : ""}</span><input name={name} type={type} value={value} onChange={onChange} required={required} className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4" /></label>;
+  return (
+    <label>
+      <span className="mb-2 block text-sm font-semibold">{label}{required ? " *" : ""}</span>
+      <input name={name} type={type} value={value} onChange={onChange} required={required} className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4" />
+    </label>
+  );
 }
 
 function Select({ label, name, value, onChange, options }: { label: string; name: string; value: string; onChange: (event: ChangeEvent<HTMLSelectElement>) => void; options: string[][] }) {
-  return <label className="block"><span className="mb-2 block text-sm font-semibold">{label} *</span><select name={name} value={value} onChange={onChange} required className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4">{options.map(([optionValue, optionLabel]) => <option key={optionValue} value={optionValue}>{optionLabel}</option>)}</select></label>;
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-semibold">{label} *</span>
+      <select name={name} value={value} onChange={onChange} required className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4">
+        {options.map(([optionValue, optionLabel]) => <option key={optionValue} value={optionValue}>{optionLabel}</option>)}
+      </select>
+    </label>
+  );
 }
