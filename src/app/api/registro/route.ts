@@ -51,16 +51,18 @@ function validatePayload(payload: RegistrationPayload) {
   }
 
   const age = Number(payload.edad);
+  if (!Number.isFinite(age) || age < 1 || age > 100) missing.push("edad");
+
   if (Number.isFinite(age) && age < 18) {
     if (!payload.nombrePadreMadre) missing.push("nombrePadreMadre");
     if (!payload.telefonoPadreMadre) missing.push("telefonoPadreMadre");
   }
 
-  if (payload.esInvitado.toLowerCase() === "si" && !payload.invitadoPor) {
+  if (["si", "sí"].includes(payload.esInvitado.toLowerCase()) && !payload.invitadoPor) {
     missing.push("invitadoPor");
   }
 
-  return missing;
+  return Array.from(new Set(missing));
 }
 
 export async function POST(request: Request) {
@@ -85,7 +87,7 @@ export async function POST(request: Request) {
 
   if (missingFields.length) {
     return NextResponse.json(
-      { ok: false, error: "Faltan campos obligatorios en el formulario.", missingFields },
+      { ok: false, error: "Faltan datos obligatorios o hay datos inválidos.", missingFields },
       { status: 400 },
     );
   }
@@ -94,7 +96,16 @@ export async function POST(request: Request) {
     await saveRegistration(payload);
     return NextResponse.json({ ok: true, message: "Registro guardado correctamente." });
   } catch (error) {
-    console.error("Error en /api/registro:", error instanceof Error ? error.message : error);
+    const message = error instanceof Error ? error.message : "";
+    console.error("Error en /api/registro:", message || error);
+
+    if (message === "DUPLICATE_CEDULA") {
+      return NextResponse.json(
+        { ok: false, error: "Ya existe una inscripción registrada con esta cédula." },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
       { ok: false, error: "No pudimos guardar tu inscripción. Intentá nuevamente en unos minutos." },
       { status: 503 },
