@@ -4,6 +4,7 @@ import { hasAdminSession } from "@/lib/admin-auth";
 import { getRegistrations } from "@/lib/registrations";
 
 const COLUMNS = [
+  "ID",
   "Fecha",
   "Nombre",
   "Apellido",
@@ -23,6 +24,7 @@ const COLUMNS = [
   "ContactoEmergenciaTelefono",
   "FormaPago",
   "Observaciones",
+  "Estado",
 ];
 
 function escapeXml(value: string) {
