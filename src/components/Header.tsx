@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import Countdown from "@/components/Countdown";
 import { Container } from "@/components/ui/design";
@@ -16,30 +16,32 @@ type Config = SiteSettings & {
 
 type Props = { settings?: Config };
 
+const CACHE_KEY = "gracia-camp-site-settings";
+
 const fallback: Config = {
-  siteName: "Jóvenes CBG",
-  siteTagline: "Crecer · Compartir · Servir",
-  showLogo: true,
-  showSiteText: true,
-  logoSizeMobile: 56,
-  logoSizeTablet: 64,
-  logoSizeDesktop: 140,
+  siteName: "",
+  siteTagline: "",
+  showLogo: false,
+  showSiteText: false,
+  logoSizeMobile: 110,
+  logoSizeTablet: 140,
+  logoSizeDesktop: 160,
   stickyHeader: true,
-  showCountdown: true,
-  countdownLabel: "Gracia Camp",
-  showCta: true,
-  ctaText: "Inscribirme",
+  showCountdown: false,
+  countdownLabel: "",
+  showCta: false,
+  ctaText: "",
   ctaHref: "/registro",
-  nav: { inicio: true, nosotros: true, actividades: true, eventos: true, galeria: true, campamento: true, contacto: true },
+  nav: { inicio: false, nosotros: false, actividades: false, eventos: false, galeria: false, campamento: false, contacto: false },
   showBanner: false,
   bannerHref: "",
-  bannerAlt: "Banner",
+  bannerAlt: "",
   bannerMaxHeightDesktop: 260,
   bannerMaxHeightMobile: 220,
   logoPath: "",
   bannerDesktopPath: "",
   bannerMobilePath: "",
-  logoUrl: "/logo.png",
+  logoUrl: "",
   bannerDesktopUrl: "",
   bannerMobileUrl: "",
 };
@@ -58,23 +60,42 @@ export default function Header({ settings }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [s, setS] = useState<Config>(settings || fallback);
-  const [logoSrc, setLogoSrc] = useState(settings?.logoUrl || "/logo.png");
+  const [logoSrc, setLogoSrc] = useState(settings?.logoUrl || "");
+  const [ready, setReady] = useState(Boolean(settings));
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (settings) {
       setS(settings);
-      setLogoSrc(settings.logoUrl || "/logo.png");
+      setLogoSrc(settings.logoUrl || "");
+      setReady(true);
+      try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(settings)); } catch {}
       return;
     }
+
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached) as Config;
+        setS(parsed);
+        setLogoSrc(parsed.logoUrl || "");
+        setReady(true);
+      }
+    } catch {}
+  }, [settings]);
+
+  useEffect(() => {
+    if (settings) return;
+
     fetch("/api/site-settings", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
-      .then((data) => {
-        if (data) {
-          setS(data);
-          setLogoSrc(data.logoUrl || "/logo.png");
-        }
+      .then((data: Config | null) => {
+        if (!data) return;
+        setS(data);
+        setLogoSrc(data.logoUrl || "");
+        setReady(true);
+        try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch {}
       })
-      .catch(() => undefined);
+      .catch(() => setReady(true));
   }, [settings]);
 
   useEffect(() => setOpen(false), [pathname]);
@@ -84,6 +105,10 @@ export default function Header({ settings }: Props) {
   }, [open]);
 
   const nav = base.filter(([key]) => s.nav[key] !== false);
+
+  if (!ready) {
+    return <div className="h-[68px] border-b border-brand-border/70 bg-brand-warmWhite" aria-hidden="true" />;
+  }
 
   const bannerImage = (
     <picture>
@@ -123,11 +148,11 @@ export default function Header({ settings }: Props) {
       <header className={`${s.stickyHeader ? "sticky top-0" : ""} z-50 border-b border-brand-border/70 bg-brand-warmWhite/95 backdrop-blur-md`}>
         <Container className="flex min-h-[68px] items-center justify-between gap-3 py-2 lg:grid lg:grid-cols-[minmax(180px,1fr)_auto_minmax(260px,1fr)] lg:gap-6">
           <Link href="/" className="flex min-w-0 items-center gap-3 lg:justify-self-start">
-            {s.showLogo ? (
+            {s.showLogo && logoSrc ? (
               <img
                 src={logoSrc}
                 alt={s.siteName || "Gracia Camp"}
-                onError={() => setLogoSrc("/logo.png")}
+                onError={() => setLogoSrc("")}
                 className="dynamic-logo shrink-0 object-contain"
               />
             ) : null}
