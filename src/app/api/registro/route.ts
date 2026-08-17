@@ -1,283 +1,74 @@
-import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { google } from "googleapis";
+import { NextResponse } from "next/server";
+import { clean, MAX_REQUEST_BYTES, normalizeCedula, type RegistroPayload, validateRegistro } from "@/lib/registro";
 
-type RegistroPayload = {
-  nombre: string;
-  apellido: string;
-  edad: string;
-  telefono: string;
-  cedula: string;
-  sexo: string;
-  iglesia: string;
-  esInvitado: string;
-  invitadoPor: string;
-  alergias: string;
-  medicamentos: string;
-  enfermedadBase: string;
-  contactoEmergenciaNombre: string;
-  contactoEmergenciaTelefono: string;
-  observaciones: string;
-  formaPago: string;
-  nombrePadreMadre: string;
-  telefonoPadreMadre: string;
-};
+const RANGE = "Registros!A:W";
+const attempts = new Map<string, { count: number; reset: number }>();
 
-const SHEET_RANGE = "Registros!A:S";
-const SHEET_TAB_NAME = "Registros";
-const MAX_FIELD_LENGTH = 500;
-const MAX_REQUEST_BYTES = 20_000;
-
-function normalizeValue(value: string, fallback = "-") {
-  const trimmed = (value ?? "").replace(/[\u0000-\u001F\u007F]/g, " ").trim();
-  return trimmed.length > 0 ? trimmed.slice(0, MAX_FIELD_LENGTH) : fallback;
+function response(error: string, status: number) {
+  return NextResponse.json({ ok: false, error }, { status });
 }
 
-function validatePayload(payload: Partial<RegistroPayload>) {
-  const requiredFields: (keyof RegistroPayload)[] = [
-    "nombre",
-    "apellido",
-    "edad",
-    "telefono",
-    "cedula",
-    "sexo",
-    "esInvitado",
-    "formaPago",
-  ];
-
-  const edadNumero = Number(payload.edad);
-
-  if (!Number.isNaN(edadNumero) && edadNumero < 18) {
-    requiredFields.push("nombrePadreMadre", "telefonoPadreMadre");
-  }
-
-  if (payload.esInvitado === "si") {
-    requiredFields.push("invitadoPor");
-  }
-
-  return requiredFields.filter((field) => {
-    const value = payload[field];
-    return (
-      typeof value !== "string" ||
-      value.trim().length === 0 ||
-      value.length > MAX_FIELD_LENGTH
-    );
-  });
+function clientIp(request: Request) {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
 }
 
-function getRowValues(payload: RegistroPayload) {
-  const edadNumero = Number(payload.edad);
-  const esMenor = !Number.isNaN(edadNumero) && edadNumero < 18;
-  const esInvitado = payload.esInvitado === "si";
-
-  return [
-    new Date().toLocaleString("es-PY", {
-      hour12: false,
-      timeZone: "America/Asuncion",
-    }),
-    normalizeValue(payload.nombre),
-    normalizeValue(payload.apellido),
-    normalizeValue(payload.edad),
-    normalizeValue(payload.telefono),
-    normalizeValue(payload.cedula),
-    normalizeValue(payload.sexo),
-    normalizeValue(payload.iglesia),
-    normalizeValue(payload.esInvitado),
-    esInvitado ? normalizeValue(payload.invitadoPor, "No aplica") : "No aplica",
-    esMenor ? normalizeValue(payload.nombrePadreMadre, "-") : "No aplica",
-    esMenor ? normalizeValue(payload.telefonoPadreMadre, "-") : "No aplica",
-    normalizeValue(payload.alergias),
-    normalizeValue(payload.medicamentos),
-    normalizeValue(payload.enfermedadBase),
-    normalizeValue(payload.contactoEmergenciaNombre),
-    normalizeValue(payload.contactoEmergenciaTelefono),
-    normalizeValue(payload.formaPago),
-    normalizeValue(payload.observaciones),
-  ];
+function allowedOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    const requestOrigin = new URL(request.url).origin;
+    const officialOrigin = process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL).origin : requestOrigin;
+    return new URL(origin).origin === requestOrigin || new URL(origin).origin === officialOrigin;
+  } catch { return false; }
 }
 
-function getGoogleErrorMessage(error: unknown) {
-  const googleError = error as {
-    code?: number;
-    message?: string;
-    response?: {
-      status?: number;
-      data?: {
-        error?: {
-          message?: string;
-        };
-      };
-    };
-    errors?: Array<{
-      message?: string;
-    }>;
-  };
-
-  const apiMessage =
-    googleError.response?.data?.error?.message ??
-    googleError.errors?.[0]?.message ??
-    googleError.message ??
-    "";
-
-  const statusCode = googleError.code ?? googleError.response?.status;
-
-  const message = apiMessage.toLowerCase();
-
-  if (
-    message.includes("invalid_grant") ||
-    message.includes("invalid jwt signature") ||
-    message.includes("private key")
-  ) {
-    return {
-      status: 502,
-      error:
-        "No se pudo autenticar con Google Sheets. Revisá GOOGLE_PRIVATE_KEY y GOOGLE_CLIENT_EMAIL.",
-    };
-  }
-
-  if (
-    message.includes("requested entity was not found") ||
-    message.includes("unable to parse range")
-  ) {
-    if (
-      message.includes(SHEET_TAB_NAME.toLowerCase()) ||
-      message.includes("unable to parse range")
-    ) {
-      return {
-        status: 404,
-        error: `La pestaña "${SHEET_TAB_NAME}" no existe o tiene otro nombre en Google Sheets.`,
-      };
-    }
-
-    return {
-      status: 404,
-      error: "El GOOGLE_SHEET_ID no corresponde a una hoja accesible.",
-    };
-  }
-
-  if (
-    statusCode === 403 ||
-    message.includes("permission denied") ||
-    message.includes("caller does not have permission")
-  ) {
-    return {
-      status: 403,
-      error:
-        "La cuenta de servicio no tiene acceso a la hoja. Compartí el spreadsheet con GOOGLE_CLIENT_EMAIL y otorgale permiso de Editor.",
-    };
-  }
-
-  return {
-    status: 502,
-    error:
-      "Error al guardar en Google Sheets. Verificá la configuración y los permisos.",
-  };
+async function verifyTurnstile(token: string, ip: string) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret || !token) return false;
+  const body = new URLSearchParams({ secret, response: token, remoteip: ip });
+  const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body, cache: "no-store" });
+  const data = await result.json() as { success?: boolean };
+  return data.success === true;
 }
 
 export async function POST(request: Request) {
+  const contentType = request.headers.get("content-type") || "";
+  if (!contentType.toLowerCase().startsWith("application/json")) return response("Enviá el formulario en formato JSON.", 415);
+  if (!allowedOrigin(request)) return response("No pudimos verificar el origen de la solicitud.", 403);
+  const declaredSize = Number(request.headers.get("content-length") || 0);
+  if (declaredSize > MAX_REQUEST_BYTES) return response("El formulario es demasiado grande.", 413);
+
+  const ip = clientIp(request);
+  const now = Date.now();
+  const current = attempts.get(ip);
+  if (current && current.reset > now && current.count >= 5) return response("Demasiados intentos. Esperá unos minutos.", 429);
+  attempts.set(ip, !current || current.reset <= now ? { count: 1, reset: now + 10 * 60_000 } : { ...current, count: current.count + 1 });
+
   try {
-    const contentLength = Number(request.headers.get("content-length") ?? 0);
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).length > MAX_REQUEST_BYTES) return response("El formulario es demasiado grande.", 413);
+    const payload = JSON.parse(raw) as RegistroPayload;
+    if (payload.website) return NextResponse.json({ ok: true, codigo: "RECIBIDO" });
+    const errors = validateRegistro(payload);
+    if (errors.length) return response(errors[0], 400);
+    if (!(await verifyTurnstile(payload.turnstileToken, ip))) return response("Completá la verificación de seguridad.", 400);
 
-    if (contentLength > MAX_REQUEST_BYTES) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "El formulario excede el tamaño máximo permitido.",
-        },
-        { status: 413 },
-      );
-    }
+    const { GOOGLE_CLIENT_EMAIL: email, GOOGLE_PRIVATE_KEY: key, GOOGLE_SHEET_ID: spreadsheetId } = process.env;
+    if (!email || !key || !spreadsheetId) return response("El registro no está disponible por el momento.", 503);
+    const auth = new google.auth.JWT({ email, key: key.replace(/\\n/g, "\n").trim(), scopes: ["https://www.googleapis.com/auth/spreadsheets"] });
+    const sheets = google.sheets({ version: "v4", auth });
+    const existing = await sheets.spreadsheets.values.get({ spreadsheetId, range: "Registros!F:F" });
+    const cedula = normalizeCedula(payload.cedula);
+    if ((existing.data.values || []).some((row: unknown[]) => normalizeCedula(String(row[0] || "")) === cedula)) return response("Ya existe una inscripción con esta cédula.", 409);
 
-    let payload: Partial<RegistroPayload>;
-
-    try {
-      payload = (await request.json()) as Partial<RegistroPayload>;
-    } catch {
-      return NextResponse.json(
-        { ok: false, error: "El cuerpo de la solicitud no es JSON válido." },
-        { status: 400 },
-      );
-    }
-
-    const missingFields = validatePayload(payload);
-
-    if (missingFields.length > 0) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "Faltan campos obligatorios en el formulario.",
-          missingFields,
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
-    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-    const privateKeyRaw = process.env.GOOGLE_PRIVATE_KEY;
-    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-
-    if (!clientEmail || !privateKeyRaw || !spreadsheetId) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error:
-            "El registro no está disponible temporalmente por configuración del servidor.",
-        },
-        {
-          status: 500,
-        },
-      );
-    }
-
-    const privateKey = privateKeyRaw.replace(/\\n/g, "\n").trim();
-
-    const auth = new google.auth.JWT({
-      email: clientEmail,
-      key: privateKey,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-
-    await auth.authorize();
-
-    const sheets = google.sheets({
-      version: "v4",
-      auth,
-    });
-
-    const rowValues = getRowValues(payload as RegistroPayload);
-
-    const result = await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: SHEET_RANGE,
-      valueInputOption: "USER_ENTERED",
-      insertDataOption: "INSERT_ROWS",
-      requestBody: {
-        values: [rowValues],
-      },
-    });
-
-    return NextResponse.json({
-      ok: true,
-      message: "Registro guardado correctamente.",
-      updatedRange: result.data.updates?.updatedRange ?? null,
-    });
-  } catch (error: unknown) {
-    const mappedError = getGoogleErrorMessage(error);
-
-    console.error("Error en /api/registro:", {
-      status: mappedError.status,
-      message: error instanceof Error ? error.message : "Error desconocido",
-    });
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: mappedError.error,
-      },
-      {
-        status: mappedError.status,
-      },
-    );
+    const age = Number(payload.edad), minor = age < 18, invited = payload.esInvitado === "si";
+    const codigo = `GC26-${randomBytes(4).toString("hex").toUpperCase()}`;
+    const values = [new Date().toLocaleString("es-PY", { hour12: false, timeZone: "America/Asuncion" }), clean(payload.nombre), clean(payload.apellido), String(age), clean(payload.telefono), cedula, payload.sexo, clean(payload.iglesia), payload.esInvitado, invited ? clean(payload.invitadoPor) : "No aplica", minor ? clean(payload.nombrePadreMadre) : "No aplica", minor ? clean(payload.telefonoPadreMadre) : "No aplica", clean(payload.alergias), clean(payload.medicamentos), clean(payload.enfermedadBase), clean(payload.contactoEmergenciaNombre), clean(payload.contactoEmergenciaTelefono), payload.formaPago, clean(payload.observaciones), "Sí", "Sí", minor ? "Sí" : "No aplica", codigo];
+    await sheets.spreadsheets.values.append({ spreadsheetId, range: RANGE, valueInputOption: "RAW", insertDataOption: "INSERT_ROWS", requestBody: { values: [values] } });
+    return NextResponse.json({ ok: true, codigo });
+  } catch {
+    return response("No pudimos guardar tu inscripción. Intentá nuevamente.", 500);
   }
 }
