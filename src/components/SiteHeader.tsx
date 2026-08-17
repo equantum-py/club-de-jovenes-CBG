@@ -1,0 +1,2 @@
+import {getSiteSettings,publicAssetUrl} from '@/lib/site-settings';import Header from '@/components/Header';
+export default async function SiteHeader(){const settings=await getSiteSettings();return <Header settings={{...settings,logoUrl:settings.logoPath?publicAssetUrl(settings.logoPath):'/logo.png',bannerDesktopUrl:settings.bannerDesktopPath?publicAssetUrl(settings.bannerDesktopPath):'',bannerMobileUrl:settings.bannerMobilePath?publicAssetUrl(settings.bannerMobilePath):''}}/>;}
