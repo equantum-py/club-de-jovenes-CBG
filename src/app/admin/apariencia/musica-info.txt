@@ -1,0 +1,1 @@
+La sección Apariencia y Header admite música de fondo: mostrar/ocultar, título, autoplay, loop, volumen y archivo de audio MP3/M4A/AAC/OGG/WAV.
