@@ -5,6 +5,7 @@ const items = [
   ["Resumen", "/admin"],
   ["Participantes", "/admin/participantes"],
   ["Inscripciones", "/admin/inscripciones"],
+  ["Apariencia / Header", "/admin/apariencia"],
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
