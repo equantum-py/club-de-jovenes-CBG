@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Countdown from "@/components/Countdown";
 import { Container } from "@/components/ui/design";
@@ -30,6 +30,7 @@ const navItems = [
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -41,6 +42,13 @@ export default function Header() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") { setIsMenuOpen(false); menuButtonRef.current?.focus(); } };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
   }, [isMenuOpen]);
 
   function isCurrentRoute(href: string) {
@@ -125,6 +133,7 @@ export default function Header() {
           </Link>
 
           <button
+            ref={menuButtonRef}
             type="button"
             onClick={() =>
               setIsMenuOpen((currentValue) => !currentValue)
@@ -150,6 +159,7 @@ export default function Header() {
 
       <div
         id="menu-principal-mobile"
+        aria-hidden={!isMenuOpen}
         className={`overflow-hidden border-t border-brand-border bg-brand-warmWhite transition-[max-height,opacity] duration-300 lg:hidden ${
           isMenuOpen
             ? "max-h-[520px] opacity-100"
@@ -168,6 +178,7 @@ export default function Header() {
                 <Link
                   key={`${item.href}-mobile`}
                   href={item.href}
+                  tabIndex={isMenuOpen ? 0 : -1}
                   aria-current={isActive ? "page" : undefined}
                   className={`flex min-h-12 items-center justify-between border-b border-brand-border/70 py-3 text-base font-medium ${
                     isActive
@@ -198,6 +209,7 @@ export default function Header() {
 
               <Link
                 href="/registro"
+                tabIndex={isMenuOpen ? 0 : -1}
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-forest px-5 text-sm font-semibold text-white transition hover:bg-brand-forestLight"
               >
                 Inscribirme

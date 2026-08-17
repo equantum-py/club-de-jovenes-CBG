@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 import Header from "@/components/Header";
+import Turnstile from "@/components/Turnstile";
 
 const CBG = {
   navy: "#1e3a5c",
@@ -30,6 +31,11 @@ type FormData = {
   formaPago: string;
   nombrePadreMadre: string;
   telefonoPadreMadre: string;
+  aceptaPrivacidad: boolean;
+  aceptaReglamento: boolean;
+  autorizacionResponsable: boolean;
+  turnstileToken: string;
+  website: string;
 };
 
 type ApiErrorResponse = {
@@ -57,6 +63,11 @@ const initialForm: FormData = {
   formaPago: "",
   nombrePadreMadre: "",
   telefonoPadreMadre: "",
+  aceptaPrivacidad: false,
+  aceptaReglamento: false,
+  autorizacionResponsable: false,
+  turnstileToken: "",
+  website: "",
 };
 
 export default function RegistroPage() {
@@ -84,10 +95,11 @@ export default function RegistroPage() {
     >,
   ) {
     const { name, value } = event.target;
+    const nextValue = event.target instanceof HTMLInputElement && event.target.type === "checkbox" ? event.target.checked : value;
 
     setFormData((currentForm) => ({
       ...currentForm,
-      [name]: value,
+      [name]: nextValue,
     }));
 
     if (submitError) {
@@ -127,10 +139,9 @@ export default function RegistroPage() {
         return;
       }
 
-      router.push("/reglamento");
-    } catch (error) {
-      console.error("Error al enviar el registro:", error);
-
+      const codigo = (responsePayload as ApiErrorResponse & { codigo?: string })?.codigo;
+      router.push(`/registro/confirmacion?codigo=${encodeURIComponent(codigo || "")}`);
+    } catch {
       setSubmitError(
         "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente.",
       );
@@ -190,7 +201,7 @@ export default function RegistroPage() {
                     label="Edad"
                     name="edad"
                     type="number"
-                    min="1"
+                    min="10"
                     max="100"
                     value={formData.edad}
                     onChange={handleChange}
@@ -350,6 +361,7 @@ export default function RegistroPage() {
                     value={formData.contactoEmergenciaNombre}
                     onChange={handleChange}
                     placeholder="Nombre y apellido"
+                    required
                   />
                   <Field
                     label="Teléfono de emergencia"
@@ -359,8 +371,18 @@ export default function RegistroPage() {
                     value={formData.contactoEmergenciaTelefono}
                     onChange={handleChange}
                     placeholder="Número de contacto"
+                    required
                   />
                 </div>
+              </section>
+
+              <section className="border-t border-brand-border pt-8 space-y-5">
+                <FormSectionHeader number="08" title="Autorizaciones" description="Leé y aceptá estas condiciones para enviar tu inscripción." />
+                {esMenor && <Checkbox name="autorizacionResponsable" checked={formData.autorizacionResponsable} onChange={handleChange}>El padre, madre o tutor autoriza esta inscripción y el tratamiento de los datos del menor.</Checkbox>}
+                <Checkbox name="aceptaPrivacidad" checked={formData.aceptaPrivacidad} onChange={handleChange}>Autorizo el tratamiento de mis datos según la <Link className="underline" href="/privacidad" target="_blank">Política de Privacidad</Link>.</Checkbox>
+                <Checkbox name="aceptaReglamento" checked={formData.aceptaReglamento} onChange={handleChange}>Leí y acepto el <Link className="underline" href="/reglamento" target="_blank">Reglamento</Link>.</Checkbox>
+                <div className="absolute -left-[9999px]" aria-hidden="true"><label>No completar<input name="website" value={formData.website} onChange={handleChange} tabIndex={-1} autoComplete="off" /></label></div>
+                <Turnstile onToken={(turnstileToken) => setFormData((current) => ({ ...current, turnstileToken }))} />
               </section>
 
               <section className="border-t border-brand-border pt-8">
@@ -472,6 +494,10 @@ type BaseFieldProps = {
   ) => void;
 };
 
+function Checkbox({ name, checked, onChange, children }: { name: string; checked: boolean; onChange: BaseFieldProps["onChange"]; children: React.ReactNode }) {
+  return <label className="flex min-h-11 items-start gap-3 text-sm leading-6 text-brand-ink"><input className="mt-1 h-5 w-5" type="checkbox" name={name} checked={checked} onChange={onChange} required /> <span>{children}</span></label>;
+}
+
 type FieldProps = BaseFieldProps & {
   type?: string;
   min?: string;
@@ -524,6 +550,7 @@ function Field({
         max={max}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        maxLength={type === "number" ? undefined : 200}
         className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base text-brand-ink outline-none transition placeholder:text-brand-muted/60 focus:border-brand-forest focus:ring-2 focus:ring-brand-forest/15"
       />
     </label>
@@ -597,6 +624,7 @@ function TextAreaField({
         onChange={onChange}
         placeholder={placeholder}
         rows={5}
+        maxLength={200}
         className="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-base text-brand-ink outline-none transition placeholder:text-brand-muted/60 focus:border-brand-forest focus:ring-2 focus:ring-brand-forest/15"
       />
     </label>

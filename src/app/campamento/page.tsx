@@ -501,6 +501,7 @@ function Footer() {
             >
               Reglamento
             </Link>
+            <Link href="/privacidad" className="hover:text-white">Privacidad</Link>
           </nav>
 
           <div className="text-sm text-white/70">
@@ -557,9 +558,11 @@ function StickyMobileActions() {
 }
 
 export default function CampamentoPage() {
+  const eventSchema = { "@context": "https://schema.org", "@type": "Event", name: "Gracia Camp 2026", startDate: "2026-12-11", eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode", eventStatus: "https://schema.org/EventScheduled", inLanguage: "es-PY", location: { "@type": "Place", name: "Campamento Kavaju - Palabra de Vida", address: { "@type": "PostalAddress", addressLocality: "Atyrá", addressCountry: "PY" } }, url: "https://campamentocbg.vercel.app/campamento" };
   return (
     <div className="min-h-screen bg-brand-warmWhite pb-20 text-brand-ink antialiased md:pb-0">
       <Header />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }} />
 
       <main>
         <Hero />
