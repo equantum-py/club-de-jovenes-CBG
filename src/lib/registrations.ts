@@ -26,6 +26,7 @@ export async function getRegistrations(): Promise<Registration[]> {
     ContactoEmergenciaTelefono: registration.contactoEmergenciaTelefono,
     FormaPago: registration.formaPago,
     Observaciones: registration.observaciones,
+    Estado: registration.estado,
   }));
 }
 
