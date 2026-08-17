@@ -3,8 +3,37 @@ import { google } from "googleapis";
 export type Registration = Record<string, string>;
 type SheetRow = unknown[];
 
+const DEFAULT_HEADERS = [
+  "Fecha",
+  "Nombre",
+  "Apellido",
+  "Edad",
+  "Telefono",
+  "Cedula",
+  "Sexo",
+  "Iglesia",
+  "EsInvitado",
+  "InvitadoPor",
+  "NombrePadreMadre",
+  "TelefonoPadreMadre",
+  "Alergias",
+  "Medicamentos",
+  "EnfermedadBase",
+  "ContactoEmergenciaNombre",
+  "ContactoEmergenciaTelefono",
+  "FormaPago",
+  "Observaciones",
+];
+
 function normalizePrivateKey(value: string) {
   return value.replace(/\\n/g, "\n");
+}
+
+function looksLikeHeaderRow(row: SheetRow) {
+  const normalized = row.map((value) => String(value ?? "").trim().toLowerCase());
+  return normalized.some((value) =>
+    ["nombre", "apellido", "edad", "telefono", "teléfono", "cedula", "cédula", "fecha"].includes(value),
+  );
 }
 
 export async function getRegistrations(): Promise<Registration[]> {
@@ -23,22 +52,30 @@ export async function getRegistrations(): Promise<Registration[]> {
   const sheets = google.sheets({ version: "v4", auth });
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Registros!A:AZ",
+    range: "Registros!A:S",
   });
 
   const rows = (response.data.values ?? []) as SheetRow[];
-  if (rows.length < 2) return [];
+  if (!rows.length) return [];
 
-  const headers = rows[0].map((header: unknown) => String(header ?? "").trim());
+  const firstRowIsHeader = looksLikeHeaderRow(rows[0]);
+  const headers = firstRowIsHeader
+    ? rows[0].map((header: unknown, index: number) =>
+        String(header ?? "").trim() || DEFAULT_HEADERS[index] || `Campo ${index + 1}`,
+      )
+    : DEFAULT_HEADERS;
 
-  return rows
-    .slice(1)
-    .filter((row: SheetRow) => row.some((value: unknown) => Boolean(value)))
+  const dataRows = firstRowIsHeader ? rows.slice(1) : rows;
+
+  return dataRows
+    .filter((row: SheetRow) =>
+      row.some((value: unknown) => String(value ?? "").trim().length > 0),
+    )
     .map((row: SheetRow) => {
       const record: Registration = {};
 
       headers.forEach((header: string, index: number) => {
-        record[header || `Campo ${index + 1}`] = String(row[index] ?? "");
+        record[header] = String(row[index] ?? "").trim();
       });
 
       return record;
