@@ -5,6 +5,7 @@ const items = [
   ["Resumen", "/admin"],
   ["Participantes", "/admin/participantes"],
   ["Inscripciones", "/admin/inscripciones"],
+  ["Merch oficial", "/admin/merch"],
   ["Apariencia / Header", "/admin/apariencia"],
   ["Música de fondo", "/admin/musica"],
 ];
