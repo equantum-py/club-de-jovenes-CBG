@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import Countdown from "@/components/Countdown";
 import Header from "@/components/Header";
 import PreacherSection from "@/components/PreacherSection";
 import MerchSectionPublic from "@/components/MerchSectionPublic";
@@ -14,8 +13,6 @@ const MAPS_URL = "https://maps.app.goo.gl/bVdDJtbaZFsJN7Eo7";
 const YOUTUBE_VIDEO_ID = "_EpTnktKT-o";
 const CAMP_PRICE = 400000;
 const formatPrice=(value:number)=>`Gs. ${value.toLocaleString("es-PY")}`;
-
-function Hero(){return <section id="inicio" className="relative overflow-hidden bg-brand-forestDark text-white"><div className="absolute -right-24 top-10 h-72 w-72 rounded-full border border-white/10"/><Container className="relative grid gap-6 py-8 sm:py-12 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-14"><div><span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[.16em] text-brand-gold sm:text-[10px]">Ministerio de Jóvenes CBG</span><h1 className="mt-4 max-w-4xl text-[clamp(2.35rem,10vw,5.5rem)] font-semibold leading-[.93] tracking-[-.05em]">4 días para salir de la rutina y volver a lo esencial.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-white/70 sm:text-lg sm:leading-7">Palabra, comunidad, actividades y nuevas amistades en una experiencia pensada para volver a poner a Cristo en el centro.</p><div className="mt-5 flex gap-2"><ButtonLink href="/registro" variant="light" className="min-h-10 flex-1 px-4 text-xs sm:flex-none sm:px-6 sm:text-sm">Inscribirme ahora</ButtonLink><a href="#info" className="inline-flex min-h-10 flex-1 items-center justify-center rounded-full border border-white/25 px-4 text-xs font-semibold sm:flex-none sm:px-6 sm:text-sm">Ver información</a></div></div><div className="rounded-2xl border border-white/12 bg-white/8 p-4 sm:p-5"><p className="text-[9px] font-bold uppercase tracking-[.15em] text-brand-gold">Falta para Gracia Camp</p><div className="mt-2"><Countdown/></div></div></Container></section>}
 
 function QuickNav(){return <div className="sticky top-[58px] z-30 border-y border-brand-border bg-brand-warmWhite/95 backdrop-blur sm:top-[64px] lg:top-[68px]"><Container className="-mx-1 flex snap-x gap-1.5 overflow-x-auto py-2 text-[11px] [scrollbar-width:none] sm:mx-0 sm:gap-2 sm:text-sm">{[["Info","#info"],["Predicador","#predicador"],["Merch","#remera"],["Lugar + Video","#lugar"],["Inscripción","#inscripcion"]].map(([label,href])=><a key={href} href={href} className="snap-start whitespace-nowrap rounded-full border border-brand-border bg-white px-3 py-1.5 font-semibold text-brand-forest sm:px-4 sm:py-2">{label}</a>)}</Container></div>}
 
@@ -30,4 +27,4 @@ function CTA(){return <section id="inscripcion" className="scroll-mt-24 bg-brand
 function Footer(){return <footer className="bg-brand-forestDark py-6 text-white"><Container className="flex flex-col gap-2 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold text-white">Ministerio de Jóvenes CBG</p><p className="mt-1">Gracia Camp 2026</p></div><p>© 2026 Ministerio de Jóvenes CBG.</p></Container></footer>}
 function StickyMobileActions(){return <div className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-border bg-brand-warmWhite/95 p-2 backdrop-blur md:hidden"><div className="grid grid-cols-[auto_1fr] items-center gap-2"><div className="px-2"><p className="text-[8px] uppercase tracking-wider text-brand-muted">Por persona</p><p className="text-sm font-semibold text-brand-forest">Gs. 400.000</p></div><Link href="/registro" className="flex min-h-10 items-center justify-center rounded-full bg-brand-forest px-4 text-xs font-semibold text-white">Inscribirme</Link></div></div>}
 
-export default function CampamentoPage(){return <div className="min-h-screen bg-brand-warmWhite pb-14 text-brand-ink antialiased md:pb-0"><Header/><main><Hero/><QuickNav/><InfoSection/><PreacherSection/><MerchSectionPublic/><PlaceAndVideo/><FAQ/><CTA/></main><Footer/><StickyMobileActions/></div>}
+export default function CampamentoPage(){return <div className="min-h-screen bg-brand-warmWhite pb-14 text-brand-ink antialiased md:pb-0"><Header/><main><QuickNav/><InfoSection/><PreacherSection/><MerchSectionPublic/><PlaceAndVideo/><FAQ/><CTA/></main><Footer/><StickyMobileActions/></div>}
