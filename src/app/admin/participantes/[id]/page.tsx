@@ -1,116 +1,24 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { revalidatePath } from "next/cache";
 import DeleteRegistrationButton from "@/components/admin/DeleteRegistrationButton";
 import { getRegistrationById, getSignedSelfieUrl } from "@/lib/registration-db";
+import { assignMemberToCabin, assignMemberToTeam, listCabins, listTeamMembers, listTeams, setCabinLeader } from "@/lib/camp-management";
 
 export const dynamic = "force-dynamic";
+const field="min-h-12 w-full rounded-xl border border-brand-border bg-white px-4 text-sm font-medium text-brand-forest focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20";
+function Item({label,value}:{label:string;value?:string}){return <div className="border-b border-brand-border py-4 last:border-b-0"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted">{label}</p><p className="mt-1 break-words text-base font-medium text-brand-forest">{value||"—"}</p></div>}
 
-function Item({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="border-b border-brand-border py-4 last:border-b-0">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted">{label}</p>
-      <p className="mt-1 break-words text-base font-medium text-brand-forest">{value || "—"}</p>
-    </div>
-  );
-}
+async function saveOrganization(formData:FormData){"use server";const registrationId=String(formData.get("registrationId")||"");const cabinId=String(formData.get("cabinId")||"")||null;const teamId=String(formData.get("teamId")||"")||null;const leader=formData.get("isCabinLeader")==="on";if(!registrationId)return;const cabins=await listCabins();for(const cabin of cabins){if(cabin.leader_registration_id===registrationId&&(!leader||cabin.id!==cabinId))await setCabinLeader(cabin.id,null);}await assignMemberToCabin(registrationId,cabinId);await assignMemberToTeam(registrationId,teamId);if(leader&&cabinId)await setCabinLeader(cabinId,registrationId);revalidatePath(`/admin/participantes/${registrationId}`);revalidatePath("/admin/cabanas");revalidatePath("/admin/equipos");}
 
-export default async function ParticipanteDetallePage({ params }: { params: { id: string } }) {
-  const registration = await getRegistrationById(params.id).catch(() => null);
-  if (!registration) notFound();
-
-  const selfieUrl = await getSignedSelfieUrl(registration.selfiePath, 900).catch(() => "");
-  const fullName = `${registration.nombre} ${registration.apellido}`.trim();
-
-  return (
-    <main className="p-5 sm:p-8 lg:p-10">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <Link href="/admin/participantes" className="text-sm font-semibold text-brand-forest">← Volver a inscripciones</Link>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">Ficha de inscripción</p>
-          <h1 className="mt-2 text-4xl font-semibold text-brand-forest">{registration.nombre} {registration.apellido}</h1>
-          <p className="mt-2 text-sm text-brand-muted">Inscripto: {registration.fecha}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="w-fit rounded-full bg-brand-sageSoft px-4 py-2 text-sm font-semibold capitalize text-brand-forest">
-            {registration.estado || "registrado"}
-          </span>
-          <DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete />
-        </div>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
-        <aside className="rounded-2xl border border-brand-border bg-white p-5">
-          <div className="aspect-square overflow-hidden rounded-2xl bg-brand-cream">
-            {selfieUrl ? (
-              <img src={selfieUrl} alt={`Selfie de ${registration.nombre} ${registration.apellido}`} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center px-6 text-center text-sm text-brand-muted">Este registro no tiene selfie disponible.</div>
-            )}
-          </div>
-          <div className="mt-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted">Identificación</p>
-            <p className="mt-1 text-xl font-semibold text-brand-forest">{registration.nombre} {registration.apellido}</p>
-            <p className="mt-1 text-sm text-brand-muted">CI {registration.cedula || "—"}</p>
-          </div>
-        </aside>
-
-        <div className="grid gap-6">
-          <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
-            <h2 className="text-xl font-semibold text-brand-forest">Datos personales</h2>
-            <div className="mt-3 grid md:grid-cols-2 xl:grid-cols-3">
-              <Item label="Nombre" value={registration.nombre} />
-              <Item label="Apellido" value={registration.apellido} />
-              <Item label="Edad" value={registration.edad} />
-              <Item label="Sexo" value={registration.sexo} />
-              <Item label="Cédula" value={registration.cedula} />
-              <Item label="Teléfono" value={registration.telefono} />
-              <Item label="Iglesia / congregación" value={registration.iglesia} />
-              <Item label="¿Es invitado?" value={registration.esInvitado} />
-              <Item label="Invitado por" value={registration.invitadoPor} />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
-            <h2 className="text-xl font-semibold text-brand-forest">Responsable y emergencia</h2>
-            <div className="mt-3 grid md:grid-cols-2">
-              <Item label="Padre, madre o tutor" value={registration.nombrePadreMadre} />
-              <Item label="Teléfono del responsable" value={registration.telefonoPadreMadre} />
-              <Item label="Contacto de emergencia" value={registration.contactoEmergenciaNombre} />
-              <Item label="Teléfono de emergencia" value={registration.contactoEmergenciaTelefono} />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
-            <h2 className="text-xl font-semibold text-brand-forest">Salud</h2>
-            <div className="mt-3 grid md:grid-cols-2 xl:grid-cols-3">
-              <Item label="Alergias" value={registration.alergias} />
-              <Item label="Medicamentos" value={registration.medicamentos} />
-              <Item label="Enfermedad de base" value={registration.enfermedadBase} />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
-            <h2 className="text-xl font-semibold text-brand-forest">Pago y observaciones</h2>
-            <div className="mt-3 grid md:grid-cols-2">
-              <Item label="Forma de pago" value={registration.formaPago} />
-              <Item label="Estado" value={registration.estado} />
-            </div>
-            <div className="mt-2">
-              <Item label="Observaciones" value={registration.observaciones} />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-7">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">Zona de eliminación</p>
-            <h2 className="mt-2 text-xl font-semibold text-red-900">Eliminar esta inscripción</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-red-800/80">Usá esta opción solamente para registros de prueba o inscripciones que realmente deban borrarse. Se pedirá confirmación antes de eliminar.</p>
-            <div className="mt-5">
-              <DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete />
-            </div>
-          </section>
-        </div>
-      </div>
-    </main>
-  );
-}
+export default async function ParticipanteDetallePage({params}:{params:{id:string}}){const[registration,cabins,teams,members]=await Promise.all([getRegistrationById(params.id).catch(()=>null),listCabins().catch(()=>[]),listTeams().catch(()=>[]),listTeamMembers().catch(()=>[])]);if(!registration)notFound();const selfieUrl=await getSignedSelfieUrl(registration.selfiePath,900).catch(()=>"");const fullName=`${registration.nombre} ${registration.apellido}`.trim();const membership=members.find(m=>m.id===registration.id);const currentCabin=cabins.find(c=>c.id===membership?.cabin_id);const currentTeam=teams.find(t=>t.id===membership?.team_id);const isLeader=cabins.some(c=>c.leader_registration_id===registration.id);
+return <main className="p-5 sm:p-8 lg:p-10"><div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><Link href="/admin/participantes" className="text-sm font-semibold text-brand-forest">← Volver a inscripciones</Link><p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">Ficha de inscripción</p><h1 className="mt-2 text-4xl font-semibold text-brand-forest">{registration.nombre} {registration.apellido}</h1><p className="mt-2 text-sm text-brand-muted">Inscripto: {registration.fecha}</p></div><div className="flex flex-wrap items-center gap-3"><span className="w-fit rounded-full bg-brand-sageSoft px-4 py-2 text-sm font-semibold capitalize text-brand-forest">{registration.estado||"registrado"}</span><DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete/></div></div>
+<div className="grid gap-6 xl:grid-cols-[320px_1fr]"><aside className="rounded-2xl border border-brand-border bg-white p-5"><div className="aspect-square overflow-hidden rounded-2xl bg-brand-cream">{selfieUrl?<img src={selfieUrl} alt={`Selfie de ${fullName}`} className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center px-6 text-center text-sm text-brand-muted">Este registro no tiene selfie disponible.</div>}</div><div className="mt-5"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-muted">Identificación</p><p className="mt-1 text-xl font-semibold text-brand-forest">{fullName}</p><p className="mt-1 text-sm text-brand-muted">CI {registration.cedula||"—"}</p></div></aside>
+<div className="grid gap-6">
+<section className="rounded-2xl border-2 border-brand-gold/35 bg-brand-cream/40 p-5 sm:p-7"><div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-brand-gold">Organización del campamento</p><h2 className="mt-1 text-2xl font-semibold text-brand-forest">Cabaña y equipo</h2><p className="mt-1 text-sm text-brand-muted">Asigná a esta persona desde un solo lugar.</p></div>{(currentCabin||currentTeam||isLeader)?<p className="text-sm font-medium text-brand-forest">{currentCabin?.name||"Sin cabaña"} · {currentTeam?.name||"Sin equipo"}{isLeader?" · Líder":""}</p>:null}</div><form action={saveOrganization} className="mt-6 grid gap-4 md:grid-cols-2"><input type="hidden" name="registrationId" value={registration.id}/><label className="grid gap-2"><span className="text-sm font-semibold text-brand-forest">Cabaña</span><select name="cabinId" defaultValue={membership?.cabin_id||""} className={field}><option value="">Sin cabaña</option>{cabins.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label className="grid gap-2"><span className="text-sm font-semibold text-brand-forest">Equipo / color</span><select name="teamId" defaultValue={membership?.team_id||""} className={field}><option value="">Sin equipo</option>{teams.map(t=><option key={t.id} value={t.id}>{t.name} — {t.color_name}</option>)}</select></label><label className="md:col-span-2 flex cursor-pointer items-center gap-3 rounded-xl border border-brand-border bg-white px-4 py-3"><input type="checkbox" name="isCabinLeader" defaultChecked={isLeader} className="h-5 w-5 accent-[#0E3B31]"/><span><strong className="block text-sm text-brand-forest">Es líder de esta cabaña</strong><small className="text-brand-muted">Marcá esta opción solamente si será responsable de la cabaña seleccionada.</small></span></label><button className="md:col-span-2 min-h-12 rounded-xl bg-brand-forest px-5 font-semibold text-white">Guardar organización</button></form></section>
+<section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7"><h2 className="text-xl font-semibold text-brand-forest">Datos personales</h2><div className="mt-3 grid md:grid-cols-2 xl:grid-cols-3"><Item label="Nombre" value={registration.nombre}/><Item label="Apellido" value={registration.apellido}/><Item label="Edad" value={registration.edad}/><Item label="Sexo" value={registration.sexo}/><Item label="Cédula" value={registration.cedula}/><Item label="Teléfono" value={registration.telefono}/><Item label="Iglesia / congregación" value={registration.iglesia}/><Item label="¿Es invitado?" value={registration.esInvitado}/><Item label="Invitado por" value={registration.invitadoPor}/></div></section>
+<section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7"><h2 className="text-xl font-semibold text-brand-forest">Responsable y emergencia</h2><div className="mt-3 grid md:grid-cols-2"><Item label="Padre, madre o tutor" value={registration.nombrePadreMadre}/><Item label="Teléfono del responsable" value={registration.telefonoPadreMadre}/><Item label="Contacto de emergencia" value={registration.contactoEmergenciaNombre}/><Item label="Teléfono de emergencia" value={registration.contactoEmergenciaTelefono}/></div></section>
+<section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7"><h2 className="text-xl font-semibold text-brand-forest">Salud</h2><div className="mt-3 grid md:grid-cols-2 xl:grid-cols-3"><Item label="Alergias" value={registration.alergias}/><Item label="Medicamentos" value={registration.medicamentos}/><Item label="Enfermedad de base" value={registration.enfermedadBase}/></div></section>
+<section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7"><h2 className="text-xl font-semibold text-brand-forest">Pago y observaciones</h2><div className="mt-3 grid md:grid-cols-2"><Item label="Forma de pago" value={registration.formaPago}/><Item label="Estado" value={registration.estado}/></div><div className="mt-2"><Item label="Observaciones" value={registration.observaciones}/></div></section>
+<section className="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-7"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">Zona de eliminación</p><h2 className="mt-2 text-xl font-semibold text-red-900">Eliminar esta inscripción</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-red-800/80">Usá esta opción solamente para registros de prueba o inscripciones que realmente deban borrarse. Se pedirá confirmación antes de eliminar.</p><div className="mt-5"><DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete/></div></section>
+</div></div></main>}
