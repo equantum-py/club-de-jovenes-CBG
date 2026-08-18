@@ -1,0 +1,1 @@
+import MerchSection from '@/components/MerchSection';import{getMerchSettings,merchImageUrl}from'@/lib/merch-settings';export default async function MerchSectionLoader(){const s=await getMerchSettings();return <MerchSection settings={s} shirtImageUrl={merchImageUrl(s.shirtImagePath,'/campamento/remera-nueva.png')} capImageUrl={merchImageUrl(s.capImagePath,'')}/>}
