@@ -1,3 +1,57 @@
-import {NextResponse} from 'next/server';import {saveMerch,uploadMerchImage} from '@/lib/merch-settings';
-const b=(f:FormData,k:string)=>f.get(k)==='on';const t=(f:FormData,k:string)=>String(f.get(k)||'').trim();const n=(f:FormData,k:string)=>Math.max(0,Number(f.get(k))||0);
-export async function POST(req:Request){try{const f=await req.formData();const data:Record<string,unknown>={section_enabled:b(f,'section_enabled'),section_eyebrow:t(f,'section_eyebrow'),section_title:t(f,'section_title'),section_description:t(f,'section_description'),shirt_enabled:b(f,'shirt_enabled'),shirt_name:t(f,'shirt_name'),shirt_description:t(f,'shirt_description'),shirt_price:n(f,'shirt_price'),shirt_sizes:t(f,'shirt_sizes').split(',').map(x=>x.trim()).filter(Boolean),shirt_badge:t(f,'shirt_badge'),cap_enabled:b(f,'cap_enabled'),cap_name:t(f,'cap_name'),cap_description:t(f,'cap_description'),cap_price:n(f,'cap_price'),cap_badge:t(f,'cap_badge'),combo_enabled:b(f,'combo_enabled'),combo_name:t(f,'combo_name'),combo_description:t(f,'combo_description'),combo_price:n(f,'combo_price'),combo_old_price:n(f,'combo_old_price'),whatsapp_number:t(f,'whatsapp_number').replace(/\D/g,'')};for(const[field,prefix,column]of[['shirt_image','shirt','shirt_image_path'],['cap_image','cap','cap_image_path']]as const){const file=f.get(field);if(file instanceof File&&file.size){if(file.size>10*1024*1024)return NextResponse.json({error:'La imagen debe pesar menos de 10 MB.'},{status:400});if(!['image/jpeg','image/png','image/webp'].includes(file.type))return NextResponse.json({error:'Usá JPG, PNG o WebP.'},{status:400});data[column]=await uploadMerchImage(file,prefix)}}await saveMerch(data);return NextResponse.redirect(new URL('/admin/merch?guardado=1',req.url),303)}catch(e){console.error(e);return NextResponse.json({error:'No se pudo guardar el merch.'},{status:500})}}
+import {NextResponse} from 'next/server';
+import {saveMerch,uploadMerchImage} from '@/lib/merch-settings';
+
+const b=(f:FormData,k:string)=>f.get(k)==='on';
+const t=(f:FormData,k:string)=>String(f.get(k)||'').trim();
+const n=(f:FormData,k:string)=>Math.max(0,Number(f.get(k))||0);
+
+export async function POST(req:Request){
+  try{
+    const f=await req.formData();
+    const data:Record<string,unknown>={
+      section_enabled:b(f,'section_enabled'),
+      section_eyebrow:t(f,'section_eyebrow'),
+      section_title:t(f,'section_title'),
+      section_description:t(f,'section_description'),
+      banner_enabled:b(f,'banner_enabled'),
+      banner_alt:t(f,'banner_alt')||'Merch oficial Gracia Camp 2026',
+      shirt_enabled:b(f,'shirt_enabled'),
+      shirt_name:t(f,'shirt_name'),
+      shirt_description:t(f,'shirt_description'),
+      shirt_price:n(f,'shirt_price'),
+      shirt_sizes:t(f,'shirt_sizes').split(',').map(x=>x.trim()).filter(Boolean),
+      shirt_badge:t(f,'shirt_badge'),
+      cap_enabled:b(f,'cap_enabled'),
+      cap_name:t(f,'cap_name'),
+      cap_description:t(f,'cap_description'),
+      cap_price:n(f,'cap_price'),
+      cap_badge:t(f,'cap_badge'),
+      combo_enabled:b(f,'combo_enabled'),
+      combo_name:t(f,'combo_name'),
+      combo_description:t(f,'combo_description'),
+      combo_price:n(f,'combo_price'),
+      combo_old_price:n(f,'combo_old_price'),
+      whatsapp_number:t(f,'whatsapp_number').replace(/\D/g,'')
+    };
+
+    for(const[field,prefix,column]of[
+      ['banner_desktop','banner-desktop','banner_desktop_path'],
+      ['banner_mobile','banner-mobile','banner_mobile_path'],
+      ['shirt_image','shirt','shirt_image_path'],
+      ['cap_image','cap','cap_image_path']
+    ]as const){
+      const file=f.get(field);
+      if(file instanceof File&&file.size){
+        if(file.size>10*1024*1024)return NextResponse.json({error:'La imagen debe pesar menos de 10 MB.'},{status:400});
+        if(!['image/jpeg','image/png','image/webp'].includes(file.type))return NextResponse.json({error:'Usá JPG, PNG o WebP.'},{status:400});
+        data[column]=await uploadMerchImage(file,prefix);
+      }
+    }
+
+    await saveMerch(data);
+    return NextResponse.redirect(new URL('/admin/merch?guardado=1',req.url),303);
+  }catch(e){
+    console.error(e);
+    return NextResponse.json({error:'No se pudo guardar el merch.'},{status:500});
+  }
+}
