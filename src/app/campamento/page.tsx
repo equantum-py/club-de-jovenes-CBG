@@ -29,21 +29,14 @@ function Hero() {
           <p className="mt-5 max-w-2xl text-base leading-7 text-white/70 sm:text-lg">Palabra, comunidad, actividades y nuevas amistades en una experiencia pensada para volver a poner a Cristo en el centro.</p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <ButtonLink href="/registro" variant="light" className="min-h-11 px-6">Inscribirme ahora</ButtonLink>
-            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-6 text-sm font-semibold">Ver ubicación →</a>
+            <a href="#info" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-6 text-sm font-semibold">Ver información →</a>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          {[["03–06 DIC","4 días · 2026"],["GS. 400.000","Por persona"],["NUEVO LUGAR","Ver ubicación"],["CUPOS","Limitados"]].map(([value,label]) => (
-            <div key={value} className="rounded-2xl border border-white/12 bg-white/8 p-4 sm:p-5">
-              <p className="text-lg font-semibold sm:text-2xl">{value}</p>
-              <p className="mt-1 text-xs text-white/55">{label}</p>
-            </div>
-          ))}
-          <div className="col-span-2 rounded-2xl bg-brand-gold p-4 text-brand-forest sm:p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[.15em]">Falta para Gracia Camp</p>
-            <div className="mt-2"><Countdown /></div>
-          </div>
+        <div className="rounded-[1.7rem] border border-white/12 bg-white/8 p-5 sm:p-6">
+          <p className="text-[10px] font-bold uppercase tracking-[.15em] text-brand-gold">Falta para Gracia Camp</p>
+          <div className="mt-3"><Countdown /></div>
+          <p className="mt-4 text-sm leading-6 text-white/60">Toda la información importante está reunida en una sola sección más abajo.</p>
         </div>
       </Container>
     </section>
@@ -54,7 +47,7 @@ function QuickNav() {
   return (
     <div className="sticky top-[68px] z-30 border-y border-brand-border bg-brand-warmWhite/95 backdrop-blur">
       <Container className="flex gap-2 overflow-x-auto py-2.5 text-xs [scrollbar-width:none] sm:text-sm">
-        {[["Info","#info"],["Tema","#tema"],["Predicador","#predicador"],["Merch","#remera"],["Lugar + Video","#lugar"],["Inscripción","#inscripcion"]].map(([label,href]) => (
+        {[["Información","#info"],["Predicador","#predicador"],["Merch","#remera"],["Lugar + Video","#lugar"],["Inscripción","#inscripcion"]].map(([label,href]) => (
           <a key={href} href={href} className="whitespace-nowrap rounded-full border border-brand-border bg-white px-4 py-2 font-semibold text-brand-forest">{label}</a>
         ))}
       </Container>
@@ -65,8 +58,8 @@ function QuickNav() {
 function InfoSection() {
   const facts = [
     ["Fecha","03 al 06 de diciembre"],
-    ["Inversión",formatPrice(CAMP_PRICE)],
-    ["Duración","4 días / 3 noches"],
+    ["Precio",formatPrice(CAMP_PRICE)],
+    ["Lugar","Nueva ubicación 2026"],
     ["Cupos","Limitados"],
   ];
   const experience = [
@@ -78,38 +71,30 @@ function InfoSection() {
   return (
     <section id="info" className="scroll-mt-28 bg-brand-cream py-10 sm:py-14 lg:py-16">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
-          <div>
-            <Eyebrow>Lo esencial</Eyebrow>
-            <h2 className="mt-3 text-3xl font-semibold leading-[1.02] tracking-[-.035em] text-brand-forest sm:text-4xl lg:text-5xl">Entendé Gracia Camp en segundos.</h2>
-            <p className="mt-4 max-w-xl leading-7 text-brand-muted">Todo lo que necesitás saber antes de decidirte, sin vueltas.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {facts.map(([label,value]) => <div key={label} className="rounded-2xl border border-brand-border bg-white p-4"><p className="text-[10px] font-bold uppercase tracking-[.14em] text-brand-gold">{label}</p><p className="mt-2 text-sm font-semibold text-brand-forest sm:text-base">{value}</p></div>)}
-          </div>
+        <div className="max-w-3xl">
+          <Eyebrow>Información clave</Eyebrow>
+          <h2 className="mt-3 text-3xl font-semibold leading-[1.02] tracking-[-.035em] text-brand-forest sm:text-4xl lg:text-5xl">Todo lo que necesitás saber, en un solo lugar.</h2>
+          <p className="mt-4 max-w-xl leading-7 text-brand-muted">Fecha, precio, ubicación y cupos sin repetir la misma información en toda la página.</p>
         </div>
 
-        <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {experience.map(([title,text],index) => <article key={title} className="rounded-[1.5rem] border border-brand-border bg-white p-5 sm:p-6"><span className="text-xs font-semibold text-brand-gold">0{index+1}</span><h3 className="mt-5 text-2xl font-semibold text-brand-forest">{title}</h3><p className="mt-2 text-sm leading-6 text-brand-muted">{text}</p></article>)}
+        <div className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {facts.map(([label,value]) => (
+            <div key={label} className="rounded-2xl border border-brand-border bg-white p-4 sm:p-5">
+              <p className="text-[10px] font-bold uppercase tracking-[.14em] text-brand-gold">{label}</p>
+              <p className="mt-2 text-base font-semibold text-brand-forest sm:text-lg">{value}</p>
+              {label === "Lugar" ? <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex text-xs font-semibold text-brand-forest underline underline-offset-4">Abrir Maps</a> : null}
+            </div>
+          ))}
         </div>
-      </Container>
-    </section>
-  );
-}
 
-function TemaSection() {
-  return (
-    <section id="tema" className="scroll-mt-28 bg-brand-forest py-10 text-white sm:py-14 lg:py-16">
-      <Container className="grid gap-7 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-        <div>
-          <Eyebrow className="text-brand-gold">Tema central</Eyebrow>
-          <h2 className="mt-3 text-3xl font-semibold leading-[1.04] tracking-[-.035em] sm:text-4xl lg:text-5xl">Una fe examinada, una vida rendida a Cristo.</h2>
-          <p className="mt-4 max-w-xl text-base leading-7 text-white/65">Bajar el ritmo, escuchar la Palabra, hacer preguntas sinceras y responder al evangelio con una fe propia.</p>
-          <blockquote className="mt-6 rounded-2xl border border-white/12 bg-white/8 p-4 text-base leading-7">“Examinaos a vosotros mismos si estáis en la fe.” <span className="block mt-1 text-xs font-semibold text-brand-gold">1 Corintios 13:5</span></blockquote>
-        </div>
-        <div className="relative min-h-[250px] overflow-hidden rounded-[1.6rem] sm:min-h-[320px] lg:min-h-[380px]">
-          <Image src="/campamento-bg.jpg" alt="Campamento juvenil durante la noche" fill sizes="(min-width:1024px)55vw,100vw" className="object-cover" />
-          <div className="absolute inset-x-4 bottom-4 rounded-xl bg-brand-forestDark/80 px-4 py-3 text-sm backdrop-blur">Palabra · Comunidad · Reflexión · Amistad</div>
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {experience.map(([title,text],index) => (
+            <article key={title} className="rounded-[1.4rem] border border-brand-border bg-white p-5">
+              <span className="text-xs font-semibold text-brand-gold">0{index+1}</span>
+              <h3 className="mt-4 text-xl font-semibold text-brand-forest sm:text-2xl">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-brand-muted">{text}</p>
+            </article>
+          ))}
         </div>
       </Container>
     </section>
@@ -124,11 +109,10 @@ function PlaceAndVideo() {
       <Container>
         <div className="grid gap-4 lg:grid-cols-2">
           <article className="flex flex-col rounded-[1.6rem] border border-brand-border bg-brand-cream p-6 sm:p-8">
-            <Eyebrow>Nueva ubicación 2026</Eyebrow>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-.03em] text-brand-forest sm:text-4xl">Este año nos encontramos en un nuevo lugar.</h2>
-            <p className="mt-4 leading-7 text-brand-muted">Abrí Google Maps para conocer el punto exacto y calcular tu recorrido.</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm"><div className="rounded-xl bg-white p-4"><p className="text-xs text-brand-muted">Fecha</p><p className="mt-1 font-semibold text-brand-forest">03–06 diciembre</p></div><div className="rounded-xl bg-white p-4"><p className="text-xs text-brand-muted">Precio</p><p className="mt-1 font-semibold text-brand-forest">{formatPrice(CAMP_PRICE)}</p></div></div>
-            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="mt-auto pt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-forest px-6 text-sm font-semibold text-white">Ver ubicación exacta →</a>
+            <Eyebrow>Lugar del campamento</Eyebrow>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-.03em] text-brand-forest sm:text-4xl">Conocé la nueva ubicación.</h2>
+            <p className="mt-4 leading-7 text-brand-muted">Abrí Google Maps para ver el punto exacto, calcular tu recorrido y guardar el lugar.</p>
+            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-forest px-6 text-sm font-semibold text-white">Ver ubicación exacta →</a>
           </article>
 
           <article className="overflow-hidden rounded-[1.6rem] border border-brand-border bg-brand-forestDark text-white">
@@ -143,10 +127,9 @@ function PlaceAndVideo() {
 
 function FAQ() {
   const items = [
-    ["¿Cuándo es?","Del 03 al 06 de diciembre de 2026."],
-    ["¿Cuánto cuesta?",`${formatPrice(CAMP_PRICE)} por persona.`],
-    ["¿Dónde es?","La ubicación oficial está disponible en el botón de Google Maps."],
     ["¿Cómo me inscribo?","Completá el formulario de registro y seguí las indicaciones del equipo."],
+    ["¿Qué incluye?","La organización comunicará el detalle completo de lo incluido y recomendaciones antes del campamento."],
+    ["¿Dónde veo el reglamento?","Podés abrirlo desde el botón al final de esta página."],
   ];
   return (
     <section className="bg-brand-cream py-10 sm:py-14">
@@ -162,7 +145,7 @@ function CTA() {
   return (
     <section id="inscripcion" className="scroll-mt-28 bg-brand-forest py-12 text-white sm:py-16">
       <Container className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Tu lugar puede empezar acá</p><h2 className="mt-3 max-w-3xl text-3xl font-semibold leading-[1.04] sm:text-4xl lg:text-5xl">03–06 de diciembre. Cuatro días que pueden marcar mucho más.</h2><p className="mt-3 text-white/60">{formatPrice(CAMP_PRICE)} por persona · cupos limitados.</p></div>
+        <div><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Tu lugar puede empezar acá</p><h2 className="mt-3 max-w-3xl text-3xl font-semibold leading-[1.04] sm:text-4xl lg:text-5xl">¿Listo para vivir Gracia Camp 2026?</h2><p className="mt-3 text-white/60">Completá tu inscripción y asegurá tu lugar.</p></div>
         <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><ButtonLink href="/registro" variant="light" className="min-h-11 px-7">Inscribirme ahora</ButtonLink><ButtonLink href="/reglamento" variant="secondary" className="min-h-11 border-white/25 px-7 text-white">Leer reglamento</ButtonLink></div>
       </Container>
     </section>
@@ -170,7 +153,7 @@ function CTA() {
 }
 
 function Footer() {
-  return <footer className="bg-brand-forestDark py-8 text-white"><Container className="flex flex-col gap-4 text-sm text-white/55 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold text-white">Ministerio de Jóvenes CBG</p><p className="mt-1">Gracia Camp 2026 · 03–06 diciembre</p></div><p>© 2026 Ministerio de Jóvenes CBG.</p></Container></footer>;
+  return <footer className="bg-brand-forestDark py-8 text-white"><Container className="flex flex-col gap-4 text-sm text-white/55 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold text-white">Ministerio de Jóvenes CBG</p><p className="mt-1">Gracia Camp 2026</p></div><p>© 2026 Ministerio de Jóvenes CBG.</p></Container></footer>;
 }
 
 function StickyMobileActions() {
@@ -185,7 +168,6 @@ export default function CampamentoPage() {
         <Hero />
         <QuickNav />
         <InfoSection />
-        <TemaSection />
         <PreacherSection />
         <MerchSectionPublic />
         <PlaceAndVideo />
