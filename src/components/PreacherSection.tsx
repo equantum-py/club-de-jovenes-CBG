@@ -73,19 +73,10 @@ export default function PreacherSection() {
               <h2 className="mt-1 text-3xl font-semibold tracking-[-.035em] sm:text-4xl lg:text-5xl">{s.name}</h2>
             </div>
 
-            <div className="my-6 h-px bg-white/10" />
-
-            <p className="text-xs font-semibold uppercase tracking-[.16em] text-white/45">Tema</p>
-            <h3 className="mt-3 max-w-2xl text-2xl font-semibold leading-[1.08] tracking-[-.03em] sm:text-3xl lg:text-[2.45rem]">
-              {s.topic}
-            </h3>
-
-            {s.description ? (
-              <p className="mt-5 max-w-2xl text-base leading-7 text-white/62 sm:text-lg sm:leading-8">{s.description}</p>
-            ) : null}
+            {(s.church || s.cityCountry) ? <div className="my-6 h-px bg-white/10" /> : null}
 
             {s.church || s.cityCountry ? (
-              <div className="mt-6 flex flex-wrap gap-2 text-xs text-white/60 sm:text-sm">
+              <div className="flex flex-wrap gap-2 text-xs text-white/60 sm:text-sm">
                 {s.church ? <span className="rounded-full border border-white/12 px-3 py-2">{s.church}</span> : null}
                 {s.cityCountry ? <span className="rounded-full border border-white/12 px-3 py-2">{s.cityCountry}</span> : null}
               </div>
