@@ -169,3 +169,22 @@ export async function getRegistrationById(id: string): Promise<StoredRegistratio
   const rows = (await response.json()) as Array<Record<string, unknown>>;
   return rows[0] ? mapRow(rows[0]) : null;
 }
+
+export async function deleteRegistration(id: string, selfiePath = "") {
+  const { url, key } = getConfig();
+  const response = await fetch(`${url}/rest/v1/registrations?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { ...authHeaders(key), Prefer: "return=minimal" },
+    cache: "no-store",
+  });
+
+  if (!response.ok) throw new Error("REGISTRATION_DELETE_FAILED");
+
+  if (selfiePath) {
+    await fetch(`${url}/storage/v1/object/participant-selfies/${encodeURIComponent(selfiePath)}`, {
+      method: "DELETE",
+      headers: authHeaders(key),
+      cache: "no-store",
+    }).catch(() => null);
+  }
+}
