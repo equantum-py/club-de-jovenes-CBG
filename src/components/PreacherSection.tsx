@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { Container } from "@/components/ui/design";
 
 type S = {
@@ -26,33 +25,21 @@ type S = {
 
 export default function PreacherSection() {
   const [settings, setSettings] = useState<S | null>(null);
-  const [mount, setMount] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    const info = document.querySelector("#info");
-    if (info) {
-      let node = document.getElementById("predicador-mount");
-      if (!node) {
-        node = document.createElement("div");
-        node.id = "predicador-mount";
-        info.insertAdjacentElement("afterend", node);
-      }
-      setMount(node);
-    }
-
     fetch("/api/predicador", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
       .then(setSettings)
       .catch(() => {});
   }, []);
 
-  if (!mount || !settings?.sectionEnabled) return null;
+  if (!settings?.sectionEnabled) return null;
 
   const s = settings;
   const desktopVisual = (s.showBanner && s.bannerDesktopUrl) || s.photoUrl || s.bannerMobileUrl;
   const mobileVisual = s.photoUrl || (s.showBanner && s.bannerMobileUrl) || s.bannerDesktopUrl;
 
-  const section = (
+  return (
     <section id="predicador" className="scroll-mt-28 bg-[#090b0d] py-10 text-white sm:py-12 lg:py-16">
       <Container>
         <article className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#101416] shadow-2xl shadow-black/20 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:items-stretch">
@@ -86,6 +73,4 @@ export default function PreacherSection() {
       </Container>
     </section>
   );
-
-  return createPortal(section, mount);
 }
