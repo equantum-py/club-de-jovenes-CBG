@@ -7,8 +7,7 @@ import { useState } from "react";
 
 const managementItems = [
   ["Resumen", "/admin"],
-  ["Participantes", "/admin/participantes"],
-  ["Inscripciones", "/admin/inscripciones"],
+  ["Inscripciones", "/admin/participantes"],
 ] as const;
 
 const siteItems = [
