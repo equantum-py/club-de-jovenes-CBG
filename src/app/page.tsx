@@ -18,17 +18,17 @@ export default function HomePage() {
       <main>
         <section className="relative overflow-hidden bg-brand-forestDark text-white">
           <div className="absolute inset-0">
-            <Image src="/campamento-hero.jpg" alt="Jóvenes reunidos en una actividad del Club de Jóvenes CBG" fill priority sizes="100vw" className="object-cover opacity-35" />
+            <Image src="/campamento-hero.jpg" alt="Jóvenes reunidos en una actividad del Ministerio de Jóvenes CBG" fill priority sizes="100vw" className="object-cover opacity-35" />
             <div className="absolute inset-0 bg-gradient-to-r from-brand-forestDark via-brand-forestDark/85 to-brand-forestDark/45" />
           </div>
           <Container className="relative grid min-h-[680px] items-end gap-10 py-14 sm:min-h-[720px] sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
             <div className="max-w-4xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-gold">Club de Jóvenes CBG</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-gold">Ministerio de Jóvenes CBG</p>
               <h1 className="mt-5 text-5xl font-semibold leading-[0.98] sm:text-6xl lg:text-8xl">Una generación que quiere vivir su fe con propósito.</h1>
               <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75 sm:text-xl">Un espacio para crecer en la Palabra, compartir en comunidad y servir juntos a Cristo.</p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <ButtonLink href="/campamento" variant="light" className="px-7">Conocer Gracia Camp 2026</ButtonLink>
-                <Link href="/bienvenida" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10">Conocé el club</Link>
+                <Link href="/bienvenida" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/30 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10">Conocé el ministerio</Link>
               </div>
             </div>
             <div className="hidden lg:flex lg:justify-end">
@@ -58,11 +58,11 @@ export default function HomePage() {
             <div>
               <Eyebrow>Quiénes somos</Eyebrow>
               <h2 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight text-brand-forest sm:text-5xl">Jóvenes que aprenden, comparten y crecen juntos.</h2>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-brand-muted">El Club de Jóvenes CBG busca acompañar a una nueva generación en su crecimiento espiritual, personal y comunitario, creando espacios donde la fe pueda ser conocida, examinada y vivida.</p>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-brand-muted">El Ministerio de Jóvenes CBG busca acompañar a una nueva generación en su crecimiento espiritual, personal y comunitario, creando espacios donde la fe pueda ser conocida, examinada y vivida.</p>
               <div className="mt-8"><ButtonLink href="/bienvenida" variant="secondary">Leer nuestra bienvenida</ButtonLink></div>
             </div>
             <div className="relative min-h-[380px] overflow-hidden rounded-[2rem] sm:min-h-[500px]">
-              <Image src="/bienvenida-bg..jpg" alt="Encuentro del Club de Jóvenes CBG" fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
+              <Image src="/bienvenida-bg..jpg" alt="Encuentro del Ministerio de Jóvenes CBG" fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
           </Container>
         </section>
