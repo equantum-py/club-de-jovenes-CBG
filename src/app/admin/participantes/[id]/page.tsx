@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import DeleteRegistrationButton from "@/components/admin/DeleteRegistrationButton";
 import { getRegistrationById, getSignedSelfieUrl } from "@/lib/registration-db";
 
 export const dynamic = "force-dynamic";
@@ -19,19 +20,23 @@ export default async function ParticipanteDetallePage({ params }: { params: { id
   if (!registration) notFound();
 
   const selfieUrl = await getSignedSelfieUrl(registration.selfiePath, 900).catch(() => "");
+  const fullName = `${registration.nombre} ${registration.apellido}`.trim();
 
   return (
     <main className="p-5 sm:p-8 lg:p-10">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Link href="/admin/participantes" className="text-sm font-semibold text-brand-forest">← Volver a participantes</Link>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">Ficha del participante</p>
+          <Link href="/admin/participantes" className="text-sm font-semibold text-brand-forest">← Volver a inscripciones</Link>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">Ficha de inscripción</p>
           <h1 className="mt-2 text-4xl font-semibold text-brand-forest">{registration.nombre} {registration.apellido}</h1>
           <p className="mt-2 text-sm text-brand-muted">Inscripto: {registration.fecha}</p>
         </div>
-        <span className="w-fit rounded-full bg-brand-sageSoft px-4 py-2 text-sm font-semibold capitalize text-brand-forest">
-          {registration.estado || "registrado"}
-        </span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="w-fit rounded-full bg-brand-sageSoft px-4 py-2 text-sm font-semibold capitalize text-brand-forest">
+            {registration.estado || "registrado"}
+          </span>
+          <DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete />
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
@@ -93,6 +98,15 @@ export default async function ParticipanteDetallePage({ params }: { params: { id
             </div>
             <div className="mt-2">
               <Item label="Observaciones" value={registration.observaciones} />
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">Zona de eliminación</p>
+            <h2 className="mt-2 text-xl font-semibold text-red-900">Eliminar esta inscripción</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-red-800/80">Usá esta opción solamente para registros de prueba o inscripciones que realmente deban borrarse. Se pedirá confirmación antes de eliminar.</p>
+            <div className="mt-5">
+              <DeleteRegistrationButton id={registration.id} name={fullName} redirectAfterDelete />
             </div>
           </section>
         </div>
