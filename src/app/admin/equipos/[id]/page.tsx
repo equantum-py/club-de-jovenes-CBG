@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { addTeamPoints, assignMemberToTeam, deleteTeam, listPointMovements, listTeamMembers, listTeams } from "@/lib/camp-management";
 
@@ -9,7 +9,7 @@ const field="min-h-11 rounded-xl border border-brand-border bg-white px-3 text-s
 async function moveMemberAction(formData:FormData){"use server";const memberId=String(formData.get("memberId")||"");const teamId=String(formData.get("teamId")||"");if(memberId)await assignMemberToTeam(memberId,teamId||null);revalidatePath(`/admin/equipos/${String(formData.get("currentTeamId")||"")}`);revalidatePath("/admin/equipos");}
 async function removeMemberAction(formData:FormData){"use server";const memberId=String(formData.get("memberId")||"");const currentTeamId=String(formData.get("currentTeamId")||"");if(memberId)await assignMemberToTeam(memberId,null);revalidatePath(`/admin/equipos/${currentTeamId}`);revalidatePath("/admin/equipos");}
 async function pointsAction(formData:FormData){"use server";const teamId=String(formData.get("teamId")||"");const points=Number(formData.get("points")||0);if(!teamId||!Number.isFinite(points)||points===0)return;await addTeamPoints(teamId,points,String(formData.get("reason")||"").trim());revalidatePath(`/admin/equipos/${teamId}`);revalidatePath("/admin/equipos");}
-async function deleteTeamAction(formData:FormData){"use server";const id=String(formData.get("id")||"");if(id)await deleteTeam(id);revalidatePath("/admin/equipos");}
+async function deleteTeamAction(formData:FormData){"use server";const id=String(formData.get("id")||"");if(!id)return;await deleteTeam(id);revalidatePath("/admin/equipos");redirect("/admin/equipos");}
 
 export default async function EquipoDetallePage({params}:{params:{id:string}}){const[teams,members,movements]=await Promise.all([listTeams().catch(()=>[]),listTeamMembers().catch(()=>[]),listPointMovements(50).catch(()=>[])]);const team=teams.find(t=>t.id===params.id);if(!team)notFound();const teamMembers=members.filter(m=>m.team_id===team.id);const unassigned=members.filter(m=>!m.team_id);const teamMovements=movements.filter(m=>m.team_id===team.id).slice(0,10);return <main className="p-5 sm:p-8 lg:p-10">
   <Link href="/admin/equipos" className="text-sm font-semibold text-brand-forest">← Volver a equipos</Link>
