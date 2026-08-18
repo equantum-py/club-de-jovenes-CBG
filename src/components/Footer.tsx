@@ -9,9 +9,9 @@ export default function Footer() {
       <Container className="grid gap-10 py-12 md:grid-cols-[1.2fr_0.8fr_0.8fr] lg:py-16">
         <div className="max-w-md">
           <Link href="/" className="inline-flex items-center gap-3">
-            <Image src="/logo.png" alt="Club de Jóvenes CBG" width={64} height={64} className="h-14 w-14 object-contain" />
+            <Image src="/logo.png" alt="Ministerio de Jóvenes CBG" width={64} height={64} className="h-14 w-14 object-contain" />
             <div>
-              <p className="font-semibold">Club de Jóvenes CBG</p>
+              <p className="font-semibold">Ministerio de Jóvenes CBG</p>
               <p className="text-sm text-white/55">Crecer · Compartir · Servir</p>
             </div>
           </Link>
@@ -23,7 +23,7 @@ export default function Footer() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">Explorar</p>
           <div className="mt-4 grid gap-3 text-sm text-white/65">
-            <Link href="/bienvenida" className="hover:text-white">El Club</Link>
+            <Link href="/bienvenida" className="hover:text-white">El Ministerio</Link>
             <Link href="/campamento" className="hover:text-white">Gracia Camp 2026</Link>
             <Link href="/reglamento" className="hover:text-white">Reglamento</Link>
           </div>
@@ -37,7 +37,7 @@ export default function Footer() {
       </Container>
       <div className="border-t border-white/10">
         <Container className="flex flex-col gap-2 py-5 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Club de Jóvenes CBG.</p>
+          <p>© 2026 Ministerio de Jóvenes CBG.</p>
           <p>Hecho con propósito.</p>
         </Container>
       </div>
