@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 function getTimeRemaining() {
-  const target = new Date("2026-12-11T00:00:00-03:00");
+  const target = new Date("2026-12-03T08:00:00-03:00");
   const now = new Date();
   const diff = target.getTime() - now.getTime();
 
@@ -27,11 +27,7 @@ export default function Countdown({ compact = false }: { compact?: boolean }) {
   }, []);
 
   if (time.expired)
-    return (
-      <p className="text-sm font-medium text-brand-forest">
-        El campamento ya comenzó.
-      </p>
-    );
+    return <p className="text-sm font-medium text-brand-forest">Gracia Camp ya comenzó.</p>;
 
   const items = [
     { value: time.days, label: "días" },
@@ -41,20 +37,13 @@ export default function Countdown({ compact = false }: { compact?: boolean }) {
   ];
 
   return (
-    <div
-      className={`flex items-center ${compact ? "gap-2" : "gap-3 sm:gap-5"}`}
-      aria-label="Cuenta regresiva para Gracia Camp 2026"
-    >
+    <div className={`flex items-center ${compact ? "gap-2" : "gap-3 sm:gap-5"}`} aria-label="Cuenta regresiva para Gracia Camp 2026">
       {items.map((item) => (
         <div key={item.label} className="min-w-10 text-center">
-          <div
-            className={`${compact ? "text-base" : "text-2xl sm:text-3xl"} font-semibold leading-none tabular-nums text-brand-forest`}
-          >
+          <div className={`${compact ? "text-base" : "text-2xl sm:text-3xl"} font-semibold leading-none tabular-nums text-brand-forest`}>
             {String(item.value).padStart(2, "0")}
           </div>
-          <div className="mt-1 text-[11px] font-medium text-brand-muted">
-            {item.label}
-          </div>
+          <div className="mt-1 text-[11px] font-medium text-brand-muted">{item.label}</div>
         </div>
       ))}
     </div>
