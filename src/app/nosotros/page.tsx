@@ -18,9 +18,9 @@ export default function NosotrosPage() {
       <main>
         <section className="bg-brand-forest py-16 text-white sm:py-24">
           <Container>
-            <Eyebrow className="text-brand-sageSoft">El Club</Eyebrow>
+            <Eyebrow className="text-brand-sageSoft">El Ministerio</Eyebrow>
             <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight sm:text-6xl lg:text-7xl">Una comunidad para crecer en la fe y caminar juntos.</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">El Club de Jóvenes CBG reúne a jóvenes que desean conocer más a Cristo, fortalecer su fe y construir relaciones con propósito.</p>
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">El Ministerio de Jóvenes CBG reúne a jóvenes que desean conocer más a Cristo, fortalecer su fe y construir relaciones con propósito.</p>
           </Container>
         </section>
 
@@ -32,7 +32,7 @@ export default function NosotrosPage() {
               <p className="mt-6 text-lg leading-8 text-brand-muted">Creamos espacios de enseñanza bíblica, conversación, amistad, servicio y actividades especiales para acompañar a cada joven en una fe más firme y genuina.</p>
             </div>
             <div className="relative min-h-[380px] overflow-hidden rounded-[2rem] sm:min-h-[500px]">
-              <Image src="/bienvenida-bg..jpg" alt="Jóvenes del Club CBG compartiendo juntos" fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
+              <Image src="/bienvenida-bg..jpg" alt="Jóvenes del Ministerio CBG compartiendo juntos" fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
           </Container>
         </section>
