@@ -45,8 +45,8 @@ export default async function PaymentAdminPage({ searchParams }: { searchParams?
               <input name="accountNumber" defaultValue={settings.accountNumber} required placeholder="Número de cuenta o alias" className={inputClass} />
             </label>
             <label className="grid gap-2">
-              <span className="text-sm font-semibold text-brand-forest">CI / RUC</span>
-              <input name="documentNumber" defaultValue={settings.documentNumber} required placeholder="Documento del titular" className={inputClass} />
+              <span className="text-sm font-semibold text-brand-forest">CI / RUC <span className="font-normal text-brand-muted">(opcional)</span></span>
+              <input name="documentNumber" defaultValue={settings.documentNumber} placeholder="Dejar vacío si no aplica" className={inputClass} />
             </label>
           </div>
 
