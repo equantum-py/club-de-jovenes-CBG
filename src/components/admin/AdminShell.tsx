@@ -15,6 +15,7 @@ const managementItems = [
 const siteItems = [
   ["Predicador", "/admin/predicador"],
   ["Merch oficial", "/admin/merch"],
+  ["Datos de transferencia", "/admin/pago"],
   ["Apariencia / Header", "/admin/apariencia"],
   ["Música de fondo", "/admin/musica"],
 ] as const;
