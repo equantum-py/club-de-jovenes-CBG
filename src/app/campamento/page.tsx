@@ -75,19 +75,20 @@ function Pillars() {
   return (
     <section className="bg-brand-warmWhite py-8 sm:py-12">
       <Container>
-        <div className="mb-6 text-center sm:mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[.2em] text-brand-gold">Sobre el propósito</p>
-          <h2 className="mt-2 text-3xl font-semibold text-brand-forest sm:text-4xl">Tiene el propósito de</h2>
+        <div className="mb-5 text-center sm:mb-8">
+          <h2 className="text-3xl font-semibold text-brand-forest sm:text-4xl">Tres propósitos</h2>
         </div>
-        <div className="grid gap-3 sm:grid-cols-3">
+
+        <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
           {items.map(([title, text], index) => (
-            <article key={title} className="rounded-[1.4rem] border border-brand-border bg-white p-5 sm:p-6">
+            <article key={title} className="min-w-[84%] snap-center rounded-[1.4rem] border border-brand-border bg-white p-5 sm:min-w-0 sm:p-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-forest text-sm font-bold text-white">0{index + 1}</div>
               <h3 className="mt-4 text-xl font-semibold text-brand-forest">{title}</h3>
               {text ? <p className="mt-2 text-sm leading-6 text-brand-muted">{text}</p> : null}
             </article>
           ))}
         </div>
+        <p className="mt-2 text-center text-[11px] text-brand-muted sm:hidden">Deslizá para ver los 3 propósitos →</p>
       </Container>
     </section>
   );
