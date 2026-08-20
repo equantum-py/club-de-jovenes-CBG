@@ -13,7 +13,6 @@ export type RegistrationPayload = {
   enfermedadBase: string;
   contactoEmergenciaNombre: string;
   contactoEmergenciaTelefono: string;
-  observaciones: string;
   formaPago: string;
   nombrePadreMadre: string;
   telefonoPadreMadre: string;
@@ -24,6 +23,7 @@ export type StoredRegistration = RegistrationPayload & {
   fecha: string;
   estado: string;
   selfiePath: string;
+  paymentProofPath: string;
 };
 
 function getConfig() {
@@ -34,11 +34,7 @@ function getConfig() {
 }
 
 function authHeaders(key: string, contentType = "application/json") {
-  return {
-    apikey: key,
-    Authorization: `Bearer ${key}`,
-    "Content-Type": contentType,
-  };
+  return { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": contentType };
 }
 
 function mapRow(row: Record<string, unknown>): StoredRegistration {
@@ -59,49 +55,48 @@ function mapRow(row: Record<string, unknown>): StoredRegistration {
     enfermedadBase: String(row.enfermedad_base ?? ""),
     contactoEmergenciaNombre: String(row.contacto_emergencia_nombre ?? ""),
     contactoEmergenciaTelefono: String(row.contacto_emergencia_telefono ?? ""),
-    observaciones: String(row.observaciones ?? ""),
-    formaPago: String(row.forma_pago ?? ""),
+    formaPago: String(row.forma_pago ?? "transferencia"),
     nombrePadreMadre: String(row.nombre_padre_madre ?? ""),
     telefonoPadreMadre: String(row.telefono_padre_madre ?? ""),
     estado: String(row.estado ?? "registrado"),
     selfiePath: String(row.selfie_path ?? ""),
+    paymentProofPath: String(row.payment_proof_path ?? ""),
   };
 }
 
-export async function uploadParticipantSelfie(file: File, cedula: string) {
+async function uploadPrivateFile(bucket: string, file: File, cedula: string, prefix: string) {
   const { url, key } = getConfig();
-  const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const byType: Record<string, string> = { "image/png": "png", "image/webp": "webp", "application/pdf": "pdf" };
+  const extension = byType[file.type] ?? "jpg";
   const safeCedula = cedula.replace(/\D/g, "") || "participante";
-  const path = `${safeCedula}-${Date.now()}.${extension}`;
-
-  const response = await fetch(`${url}/storage/v1/object/participant-selfies/${path}`, {
+  const path = `${prefix}-${safeCedula}-${Date.now()}.${extension}`;
+  const response = await fetch(`${url}/storage/v1/object/${bucket}/${path}`, {
     method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": file.type,
-      "x-upsert": "false",
-    },
+    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": file.type, "x-upsert": "false" },
     body: await file.arrayBuffer(),
     cache: "no-store",
   });
-
-  if (!response.ok) throw new Error("SELFIE_UPLOAD_FAILED");
+  if (!response.ok) throw new Error(`${bucket.toUpperCase().replace(/-/g, "_")}_UPLOAD_FAILED`);
   return path;
 }
 
-export async function getSignedSelfieUrl(path: string, expiresIn = 900) {
+export async function uploadParticipantSelfie(file: File, cedula: string) {
+  return uploadPrivateFile("participant-selfies", file, cedula, "selfie");
+}
+
+export async function uploadPaymentProof(file: File, cedula: string) {
+  return uploadPrivateFile("payment-proofs", file, cedula, "comprobante");
+}
+
+async function getSignedPrivateUrl(bucket: string, path: string, expiresIn = 900) {
   if (!path) return "";
   const { url, key } = getConfig();
-  const response = await fetch(
-    `${url}/storage/v1/object/sign/participant-selfies/${encodeURIComponent(path)}`,
-    {
-      method: "POST",
-      headers: authHeaders(key),
-      body: JSON.stringify({ expiresIn }),
-      cache: "no-store",
-    },
-  );
+  const response = await fetch(`${url}/storage/v1/object/sign/${bucket}/${encodeURIComponent(path)}`, {
+    method: "POST",
+    headers: authHeaders(key),
+    body: JSON.stringify({ expiresIn }),
+    cache: "no-store",
+  });
   if (!response.ok) return "";
   const data = (await response.json()) as { signedURL?: string; signedUrl?: string };
   const signedPath = data.signedURL ?? data.signedUrl ?? "";
@@ -109,7 +104,15 @@ export async function getSignedSelfieUrl(path: string, expiresIn = 900) {
   return signedPath.startsWith("http") ? signedPath : `${url}/storage/v1${signedPath}`;
 }
 
-export async function saveRegistration(payload: RegistrationPayload, selfiePath = "") {
+export async function getSignedSelfieUrl(path: string, expiresIn = 900) {
+  return getSignedPrivateUrl("participant-selfies", path, expiresIn);
+}
+
+export async function getSignedPaymentProofUrl(path: string, expiresIn = 900) {
+  return getSignedPrivateUrl("payment-proofs", path, expiresIn);
+}
+
+export async function saveRegistration(payload: RegistrationPayload, selfiePath = "", paymentProofPath = "") {
   const { url, key } = getConfig();
   const age = Number(payload.edad);
   const response = await fetch(`${url}/rest/v1/registrations`, {
@@ -130,30 +133,25 @@ export async function saveRegistration(payload: RegistrationPayload, selfiePath 
       enfermedad_base: payload.enfermedadBase || null,
       contacto_emergencia_nombre: payload.contactoEmergenciaNombre || null,
       contacto_emergencia_telefono: payload.contactoEmergenciaTelefono || null,
-      observaciones: payload.observaciones || null,
-      forma_pago: payload.formaPago,
+      forma_pago: "transferencia",
       nombre_padre_madre: payload.nombrePadreMadre || null,
       telefono_padre_madre: payload.telefonoPadreMadre || null,
       selfie_path: selfiePath || null,
+      payment_proof_path: paymentProofPath || null,
     }),
     cache: "no-store",
   });
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    if (response.status === 409 || detail.includes("registrations_cedula_unique")) {
-      throw new Error("DUPLICATE_CEDULA");
-    }
+    if (response.status === 409 || detail.includes("registrations_cedula_unique")) throw new Error("DUPLICATE_CEDULA");
     throw new Error("REGISTRATION_SAVE_FAILED");
   }
 }
 
 export async function listRegistrations(): Promise<StoredRegistration[]> {
   const { url, key } = getConfig();
-  const response = await fetch(`${url}/rest/v1/registrations?select=*&order=created_at.desc`, {
-    headers: authHeaders(key),
-    cache: "no-store",
-  });
+  const response = await fetch(`${url}/rest/v1/registrations?select=*&order=created_at.desc`, { headers: authHeaders(key), cache: "no-store" });
   if (!response.ok) throw new Error("REGISTRATION_READ_FAILED");
   const rows = (await response.json()) as Array<Record<string, unknown>>;
   return rows.map(mapRow);
@@ -161,30 +159,25 @@ export async function listRegistrations(): Promise<StoredRegistration[]> {
 
 export async function getRegistrationById(id: string): Promise<StoredRegistration | null> {
   const { url, key } = getConfig();
-  const response = await fetch(
-    `${url}/rest/v1/registrations?select=*&id=eq.${encodeURIComponent(id)}&limit=1`,
-    { headers: authHeaders(key), cache: "no-store" },
-  );
+  const response = await fetch(`${url}/rest/v1/registrations?select=*&id=eq.${encodeURIComponent(id)}&limit=1`, { headers: authHeaders(key), cache: "no-store" });
   if (!response.ok) throw new Error("REGISTRATION_READ_FAILED");
   const rows = (await response.json()) as Array<Record<string, unknown>>;
   return rows[0] ? mapRow(rows[0]) : null;
 }
 
-export async function deleteRegistration(id: string, selfiePath = "") {
+async function deletePrivateFile(bucket: string, path: string) {
+  if (!path) return;
+  const { url, key } = getConfig();
+  await fetch(`${url}/storage/v1/object/${bucket}/${encodeURIComponent(path)}`, { method: "DELETE", headers: authHeaders(key), cache: "no-store" }).catch(() => null);
+}
+
+export async function deleteRegistration(id: string, selfiePath = "", paymentProofPath = "") {
   const { url, key } = getConfig();
   const response = await fetch(`${url}/rest/v1/registrations?id=eq.${encodeURIComponent(id)}`, {
     method: "DELETE",
     headers: { ...authHeaders(key), Prefer: "return=minimal" },
     cache: "no-store",
   });
-
   if (!response.ok) throw new Error("REGISTRATION_DELETE_FAILED");
-
-  if (selfiePath) {
-    await fetch(`${url}/storage/v1/object/participant-selfies/${encodeURIComponent(selfiePath)}`, {
-      method: "DELETE",
-      headers: authHeaders(key),
-      cache: "no-store",
-    }).catch(() => null);
-  }
+  await Promise.all([deletePrivateFile("participant-selfies", selfiePath), deletePrivateFile("payment-proofs", paymentProofPath)]);
 }
