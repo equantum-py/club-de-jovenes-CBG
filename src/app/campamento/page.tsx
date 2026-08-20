@@ -68,20 +68,23 @@ function KeyInfo() {
 
 function Pillars() {
   const items = [
-    ["Comunidad", "Conectá con jóvenes que comparten tu fe."],
-    ["Experiencia", "Juegos, desafíos y momentos que se recuerdan."],
-    ["Naturaleza", "Un lugar para salir de la rutina y desconectar."],
-    ["Palabra", "Tiempo para escuchar, pensar y crecer."],
+    ["Exaltar a Dios", ""],
+    ["Predicar el evangelio", ""],
+    ["Edificar a los creyentes", "con la enseñanza de Su Palabra."],
   ];
   return (
     <section className="bg-brand-warmWhite py-8 sm:py-12">
       <Container>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 text-center sm:mb-8">
+          <p className="text-xs font-semibold uppercase tracking-[.2em] text-brand-gold">Sobre el propósito</p>
+          <h2 className="mt-2 text-3xl font-semibold text-brand-forest sm:text-4xl">Tiene el propósito de</h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
           {items.map(([title, text], index) => (
-            <article key={title} className="rounded-[1.4rem] border border-brand-border bg-white p-5">
+            <article key={title} className="rounded-[1.4rem] border border-brand-border bg-white p-5 sm:p-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-forest text-sm font-bold text-white">0{index + 1}</div>
-              <h2 className="mt-4 text-xl font-semibold text-brand-forest">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-brand-muted">{text}</p>
+              <h3 className="mt-4 text-xl font-semibold text-brand-forest">{title}</h3>
+              {text ? <p className="mt-2 text-sm leading-6 text-brand-muted">{text}</p> : null}
             </article>
           ))}
         </div>
