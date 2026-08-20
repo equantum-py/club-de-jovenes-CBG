@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { saveRegistration, uploadParticipantSelfie, type RegistrationPayload } from "@/lib/registration-db";
+import { saveRegistration, uploadParticipantSelfie, uploadPaymentProof, type RegistrationPayload } from "@/lib/registration-db";
 
 const MAX_FIELD_LENGTH = 500;
 const MAX_SELFIE_BYTES = 5 * 1024 * 1024;
+const MAX_PROOF_BYTES = 10 * 1024 * 1024;
 const ALLOWED_SELFIE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const ALLOWED_PROOF_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
 
 function clean(value: unknown) {
   if (typeof value !== "string") return "";
@@ -11,12 +13,12 @@ function clean(value: unknown) {
 }
 function normalizePayload(payload: Partial<RegistrationPayload>): RegistrationPayload {
   return {
-    nombre: clean(payload.nombre), apellido: clean(payload.apellido), edad: clean(payload.edad), telefono: clean(payload.telefono), cedula: clean(payload.cedula), sexo: clean(payload.sexo), iglesia: clean(payload.iglesia), esInvitado: clean(payload.esInvitado), invitadoPor: clean(payload.invitadoPor), alergias: clean(payload.alergias), medicamentos: clean(payload.medicamentos), enfermedadBase: clean(payload.enfermedadBase), contactoEmergenciaNombre: clean(payload.contactoEmergenciaNombre), contactoEmergenciaTelefono: clean(payload.contactoEmergenciaTelefono), observaciones: clean(payload.observaciones), formaPago: clean(payload.formaPago), nombrePadreMadre: clean(payload.nombrePadreMadre), telefonoPadreMadre: clean(payload.telefonoPadreMadre),
+    nombre: clean(payload.nombre), apellido: clean(payload.apellido), edad: clean(payload.edad), telefono: clean(payload.telefono), cedula: clean(payload.cedula), sexo: clean(payload.sexo), iglesia: clean(payload.iglesia), esInvitado: clean(payload.esInvitado), invitadoPor: clean(payload.invitadoPor), alergias: clean(payload.alergias), medicamentos: clean(payload.medicamentos), enfermedadBase: clean(payload.enfermedadBase), contactoEmergenciaNombre: clean(payload.contactoEmergenciaNombre), contactoEmergenciaTelefono: clean(payload.contactoEmergenciaTelefono), formaPago: "transferencia", nombrePadreMadre: clean(payload.nombrePadreMadre), telefonoPadreMadre: clean(payload.telefonoPadreMadre),
   };
 }
 function validatePayload(payload: RegistrationPayload) {
   const missing: string[] = [];
-  const required: Array<keyof RegistrationPayload> = ["nombre", "apellido", "edad", "telefono", "cedula", "sexo", "esInvitado", "formaPago"];
+  const required: Array<keyof RegistrationPayload> = ["nombre", "apellido", "edad", "telefono", "cedula", "sexo", "esInvitado"];
   for (const field of required) if (!payload[field]) missing.push(field);
   const age = Number(payload.edad);
   if (!Number.isFinite(age) || age < 1 || age > 100) missing.push("edad");
@@ -33,9 +35,7 @@ export async function POST(request: Request) {
   if (!form) return NextResponse.json({ ok: false, error: "El formulario enviado no es válido." }, { status: 400 });
 
   const raw: Partial<RegistrationPayload> = {};
-  for (const key of ["nombre","apellido","edad","telefono","cedula","sexo","iglesia","esInvitado","invitadoPor","alergias","medicamentos","enfermedadBase","contactoEmergenciaNombre","contactoEmergenciaTelefono","observaciones","formaPago","nombrePadreMadre","telefonoPadreMadre"] as Array<keyof RegistrationPayload>) {
-    raw[key] = clean(form.get(key));
-  }
+  for (const key of ["nombre","apellido","edad","telefono","cedula","sexo","iglesia","esInvitado","invitadoPor","alergias","medicamentos","enfermedadBase","contactoEmergenciaNombre","contactoEmergenciaTelefono","formaPago","nombrePadreMadre","telefonoPadreMadre"] as Array<keyof RegistrationPayload>) raw[key] = clean(form.get(key));
   const payload = normalizePayload(raw);
   const missingFields = validatePayload(payload);
   if (missingFields.length) return NextResponse.json({ ok: false, error: "Faltan datos obligatorios o hay datos inválidos.", missingFields }, { status: 400 });
@@ -44,9 +44,14 @@ export async function POST(request: Request) {
   if (!(selfie instanceof File) || selfie.size === 0) return NextResponse.json({ ok: false, error: "Necesitamos una selfie del participante para completar la inscripción." }, { status: 400 });
   if (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type)) return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
 
+  const paymentProof = form.get("paymentProof");
+  if (!(paymentProof instanceof File) || paymentProof.size === 0) return NextResponse.json({ ok: false, error: "Adjuntá el comprobante de transferencia para completar la inscripción." }, { status: 400 });
+  if (paymentProof.size > MAX_PROOF_BYTES || !ALLOWED_PROOF_TYPES.has(paymentProof.type)) return NextResponse.json({ ok: false, error: "El comprobante debe ser JPG, PNG, WebP o PDF y pesar menos de 10 MB." }, { status: 400 });
+
   try {
     const selfiePath = await uploadParticipantSelfie(selfie, payload.cedula);
-    await saveRegistration(payload, selfiePath);
+    const paymentProofPath = await uploadPaymentProof(paymentProof, payload.cedula);
+    await saveRegistration(payload, selfiePath, paymentProofPath);
     return NextResponse.json({ ok: true, message: "Registro guardado correctamente." });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
