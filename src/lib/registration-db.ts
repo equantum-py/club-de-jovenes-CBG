@@ -16,6 +16,8 @@ export type RegistrationPayload = {
   formaPago: string;
   nombrePadreMadre: string;
   telefonoPadreMadre: string;
+  deseaRemera: string;
+  talleRemera: string;
 };
 
 export type StoredRegistration = RegistrationPayload & {
@@ -24,7 +26,13 @@ export type StoredRegistration = RegistrationPayload & {
   estado: string;
   selfiePath: string;
   paymentProofPath: string;
+  precioCampamento: number;
+  precioRemera: number;
+  totalTransferir: number;
 };
+
+const CAMP_PRICE = 400000;
+const SHIRT_PRICE = 100000;
 
 function getConfig() {
   const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
@@ -58,6 +66,11 @@ function mapRow(row: Record<string, unknown>): StoredRegistration {
     formaPago: String(row.forma_pago ?? "transferencia"),
     nombrePadreMadre: String(row.nombre_padre_madre ?? ""),
     telefonoPadreMadre: String(row.telefono_padre_madre ?? ""),
+    deseaRemera: row.desea_remera ? "Sí" : "No",
+    talleRemera: String(row.talle_remera ?? ""),
+    precioCampamento: Number(row.precio_campamento ?? CAMP_PRICE),
+    precioRemera: Number(row.precio_remera ?? SHIRT_PRICE),
+    totalTransferir: Number(row.total_transferir ?? CAMP_PRICE),
     estado: String(row.estado ?? "registrado"),
     selfiePath: String(row.selfie_path ?? ""),
     paymentProofPath: String(row.payment_proof_path ?? ""),
@@ -115,6 +128,8 @@ export async function getSignedPaymentProofUrl(path: string, expiresIn = 900) {
 export async function saveRegistration(payload: RegistrationPayload, selfiePath = "", paymentProofPath = "") {
   const { url, key } = getConfig();
   const age = Number(payload.edad);
+  const wantsShirt = ["si", "sí", "yes"].includes(payload.deseaRemera.trim().toLowerCase());
+  const total = CAMP_PRICE + (wantsShirt ? SHIRT_PRICE : 0);
   const response = await fetch(`${url}/rest/v1/registrations`, {
     method: "POST",
     headers: { ...authHeaders(key), Prefer: "return=minimal" },
@@ -136,6 +151,11 @@ export async function saveRegistration(payload: RegistrationPayload, selfiePath 
       forma_pago: "transferencia",
       nombre_padre_madre: payload.nombrePadreMadre || null,
       telefono_padre_madre: payload.telefonoPadreMadre || null,
+      desea_remera: wantsShirt,
+      talle_remera: wantsShirt ? payload.talleRemera || null : null,
+      precio_campamento: CAMP_PRICE,
+      precio_remera: SHIRT_PRICE,
+      total_transferir: total,
       selfie_path: selfiePath || null,
       payment_proof_path: paymentProofPath || null,
     }),
