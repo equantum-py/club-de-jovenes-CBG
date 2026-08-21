@@ -10,13 +10,17 @@ type FormData = {
   iglesia:string; esInvitado:string; invitadoPor:string; alergias:string; medicamentos:string;
   enfermedadBase:string; contactoEmergenciaNombre:string; contactoEmergenciaTelefono:string;
   formaPago:string; nombrePadreMadre:string; telefonoPadreMadre:string;
+  deseaRemera:string; talleRemera:string;
 };
 
 type PaymentSettings = { bankName:string; accountHolder:string; accountNumber:string; documentNumber:string };
 
-const initialForm:FormData={nombre:"",apellido:"",edad:"",telefono:"",cedula:"",sexo:"",iglesia:"",esInvitado:"",invitadoPor:"",alergias:"",medicamentos:"",enfermedadBase:"",contactoEmergenciaNombre:"",contactoEmergenciaTelefono:"",formaPago:"transferencia",nombrePadreMadre:"",telefonoPadreMadre:""};
+const CAMP_PRICE=400000;
+const SHIRT_PRICE=100000;
+const initialForm:FormData={nombre:"",apellido:"",edad:"",telefono:"",cedula:"",sexo:"",iglesia:"",esInvitado:"",invitadoPor:"",alergias:"",medicamentos:"",enfermedadBase:"",contactoEmergenciaNombre:"",contactoEmergenciaTelefono:"",formaPago:"transferencia",nombrePadreMadre:"",telefonoPadreMadre:"",deseaRemera:"",talleRemera:""};
 const emptyPayment:PaymentSettings={bankName:"",accountHolder:"",accountNumber:"",documentNumber:""};
 const DRAFT_KEY="gracia-camp-registro-draft";
+const formatGs=(value:number)=>`Gs. ${value.toLocaleString("es-PY")}`;
 
 export default function RegistroPage(){
   const router=useRouter();
@@ -38,19 +42,21 @@ export default function RegistroPage(){
   useEffect(()=>()=>streamRef.current?.getTracks().forEach(track=>track.stop()),[]);
 
   const esMenor=useMemo(()=>formData.edad!==""&&Number(formData.edad)<18,[formData.edad]);
+  const wantsShirt=formData.deseaRemera==="si";
+  const total=useMemo(()=>CAMP_PRICE+(wantsShirt?SHIRT_PRICE:0),[wantsShirt]);
   const paymentReady=Boolean(payment.bankName&&payment.accountHolder&&payment.accountNumber);
 
-  function handleChange(event:ChangeEvent<HTMLInputElement|HTMLSelectElement>){const{name,value}=event.target;setFormData(current=>({...current,[name]:value}));setSubmitError("");}
+  function handleChange(event:ChangeEvent<HTMLInputElement|HTMLSelectElement>){const{name,value}=event.target;setFormData(current=>({...current,[name]:value,...(name==="deseaRemera"&&value!=="si"?{talleRemera:""}: {})}));setSubmitError("");}
 
   async function openCamera(){setCameraError("");try{if(!navigator.mediaDevices?.getUserMedia){setCameraError("Este navegador no permite usar la cámara dentro de la página.");return;}const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:720},height:{ideal:720}},audio:false});streamRef.current=stream;setCameraOpen(true);requestAnimationFrame(()=>{if(videoRef.current){videoRef.current.srcObject=stream;videoRef.current.play().catch(()=>undefined);}});}catch{setCameraError("No pudimos abrir la cámara. Revisá el permiso e intentá nuevamente.");}}
   function stopCamera(){streamRef.current?.getTracks().forEach(track=>track.stop());streamRef.current=null;setCameraOpen(false);}
   function takeSelfie(){const video=videoRef.current;if(!video||!video.videoWidth||!video.videoHeight){setCameraError("La cámara todavía está cargando.");return;}const size=Math.min(video.videoWidth,video.videoHeight);const canvas=document.createElement("canvas");canvas.width=720;canvas.height=720;const context=canvas.getContext("2d");if(!context)return;const sx=(video.videoWidth-size)/2;const sy=(video.videoHeight-size)/2;context.translate(720,0);context.scale(-1,1);context.drawImage(video,sx,sy,size,size,0,0,720,720);canvas.toBlob(blob=>{if(!blob)return;const file=new File([blob],`selfie-${Date.now()}.jpg`,{type:"image/jpeg"});setSelfie(file);setPreview(canvas.toDataURL("image/jpeg",.88));setSubmitError("");stopCamera();},"image/jpeg",.88);}
 
-  async function handleSubmit(event:FormEvent<HTMLFormElement>){event.preventDefault();if(!selfie){setSubmitError("Necesitamos que te saques una selfie para completar la inscripción.");return;}if(!paymentProof){setSubmitError("Adjuntá el comprobante de transferencia para completar la inscripción.");return;}if(isSubmitting)return;setIsSubmitting(true);setSubmitError("");try{const body=new FormData();Object.entries(formData).forEach(([key,value])=>body.append(key,value));body.append("selfie",selfie);body.append("paymentProof",paymentProof);const response=await fetch("/api/registro",{method:"POST",body});const result=await response.json().catch(()=>({}));if(!response.ok){setSubmitError(result.error??"No se pudo guardar tu inscripción.");return;}try{sessionStorage.removeItem(DRAFT_KEY);}catch{}router.push("/reglamento");}catch{setSubmitError("No se pudo conectar con el servidor. Intentá nuevamente.");}finally{setIsSubmitting(false);}}
+  async function handleSubmit(event:FormEvent<HTMLFormElement>){event.preventDefault();if(wantsShirt&&!formData.talleRemera){setSubmitError("Elegí el talle de tu remera para continuar.");return;}if(!selfie){setSubmitError("Necesitamos que te saques una selfie para completar la inscripción.");return;}if(!paymentProof){setSubmitError(`Adjuntá el comprobante de transferencia por ${formatGs(total)} para completar la inscripción.`);return;}if(isSubmitting)return;setIsSubmitting(true);setSubmitError("");try{const body=new FormData();Object.entries(formData).forEach(([key,value])=>body.append(key,value));body.append("selfie",selfie);body.append("paymentProof",paymentProof);const response=await fetch("/api/registro",{method:"POST",body});const result=await response.json().catch(()=>({}));if(!response.ok){setSubmitError(result.error??"No se pudo guardar tu inscripción.");return;}try{sessionStorage.removeItem(DRAFT_KEY);}catch{}router.push("/reglamento");}catch{setSubmitError("No se pudo conectar con el servidor. Intentá nuevamente.");}finally{setIsSubmitting(false);}}
 
   return <div className="min-h-screen bg-brand-warmWhite text-brand-ink">
     <Header/>
-    <section className="bg-brand-cream py-14 sm:py-20"><div className="mx-auto max-w-5xl px-5"><p className="text-sm font-medium tracking-[.18em] text-brand-gold">Club de Jóvenes CBG</p><h1 className="mt-4 text-4xl font-semibold text-brand-forest sm:text-6xl">Registro Campamento 2026</h1><p className="mt-5 max-w-3xl text-lg leading-8 text-brand-muted">Completá tus datos, sacate una selfie y adjuntá tu comprobante de transferencia.</p></div></section>
+    <section className="bg-brand-cream py-14 sm:py-20"><div className="mx-auto max-w-5xl px-5"><p className="text-sm font-medium tracking-[.18em] text-brand-gold">Club de Jóvenes CBG</p><h1 className="mt-4 text-4xl font-semibold text-brand-forest sm:text-6xl">Registro Campamento 2026</h1><p className="mt-5 max-w-3xl text-lg leading-8 text-brand-muted">Completá tus datos y confirmá tu inscripción con la transferencia.</p><div className="mt-5 inline-flex items-center gap-3 rounded-full border border-brand-border bg-white px-5 py-3"><span className="text-sm text-brand-muted">Valor del campamento</span><strong className="text-lg text-brand-forest">{formatGs(CAMP_PRICE)}</strong></div></div></section>
 
     <form onSubmit={handleSubmit} className="mx-auto max-w-5xl space-y-10 px-5 py-12">
       <Section number="01" title="Datos personales"/>
@@ -69,15 +75,19 @@ export default function RegistroPage(){
       <Section number="05" title="Emergencia"/>
       <div className="grid gap-5 md:grid-cols-2"><Field label="Contacto de emergencia" name="contactoEmergenciaNombre" value={formData.contactoEmergenciaNombre} onChange={handleChange} required={false}/><Field label="Teléfono de emergencia" name="contactoEmergenciaTelefono" value={formData.contactoEmergenciaTelefono} onChange={handleChange} required={false}/></div>
 
-      <Section number="06" title="Pago"/>
+      <Section number="06" title="Remera oficial"/>
+      <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7"><div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Merch oficial</p><h3 className="mt-2 text-xl font-semibold text-brand-forest">¿Querés adquirir la remera oficial del campamento?</h3><p className="mt-2 text-sm text-brand-muted">Podés agregarla a tu inscripción por <strong className="text-brand-forest">{formatGs(SHIRT_PRICE)}</strong>.</p></div><div className="w-full md:w-56"><Select label="Remera oficial" name="deseaRemera" value={formData.deseaRemera} onChange={handleChange} options={[["","Seleccionar"],["no","No, gracias"],["si","Sí, quiero"]]}/></div></div>{wantsShirt?<div className="mt-5 border-t border-brand-border pt-5"><Select label="Talle de remera" name="talleRemera" value={formData.talleRemera} onChange={handleChange} options={[["","Seleccionar talle"],["S","S"],["M","M"],["L","L"],["XL","XL"],["XXL","XXL"]]}/></div>:null}</section>
+
+      <Section number="07" title="Pago"/>
       <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
-        <div className="flex flex-col gap-2 border-b border-brand-border pb-5"><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Transferencia bancaria</p><h3 className="text-xl font-semibold text-brand-forest">Realizá la transferencia y adjuntá el comprobante</h3><p className="text-sm text-brand-muted">Los datos de pago están administrados por el equipo de Gracia Camp.</p></div>
+        <div className="flex flex-col gap-2 border-b border-brand-border pb-5"><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Transferencia bancaria</p><h3 className="text-xl font-semibold text-brand-forest">Revisá el total antes de transferir</h3><p className="text-sm text-brand-muted">La inscripción solo se completa cuando adjuntás el comprobante.</p></div>
+        <div className="my-5 rounded-2xl bg-brand-cream p-5"><div className="flex items-center justify-between gap-4 border-b border-brand-border pb-3"><span className="text-sm text-brand-muted">Campamento</span><strong className="text-brand-forest">{formatGs(CAMP_PRICE)}</strong></div>{wantsShirt?<div className="flex items-center justify-between gap-4 border-b border-brand-border py-3"><span className="text-sm text-brand-muted">Remera oficial · talle {formData.talleRemera||"—"}</span><strong className="text-brand-forest">{formatGs(SHIRT_PRICE)}</strong></div>:null}<div className="flex items-end justify-between gap-4 pt-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Total a transferir</p><p className="mt-1 text-xs text-brand-muted">Este es el monto que debe figurar en tu comprobante.</p></div><strong className="text-2xl text-brand-forest sm:text-3xl">{formatGs(total)}</strong></div></div>
         {paymentReady?<div className="divide-y divide-brand-border"><PaymentRow label="Banco" value={payment.bankName}/><PaymentRow label="Titular" value={payment.accountHolder}/><PaymentRow label="Cuenta / Alias" value={payment.accountNumber}/>{payment.documentNumber?<PaymentRow label="CI / RUC" value={payment.documentNumber}/>:null}</div>:<div className="py-5 text-sm text-brand-muted">Los datos bancarios todavía no fueron configurados por administración.</div>}
         <div className="border-t border-brand-border pt-5"><label className="block"><span className="text-sm font-semibold text-brand-forest">Adjuntar comprobante *</span><span className="mt-1 block text-xs font-medium text-red-400">Sujeto a verificación*</span><input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required onChange={e=>{setPaymentProof(e.target.files?.[0]??null);setSubmitError("");}} className="mt-4 block w-full rounded-xl border border-brand-border bg-white p-3 text-sm"/></label>{paymentProof?<p className="mt-3 text-sm font-medium text-brand-forest">✓ {paymentProof.name}</p>:null}</div>
       </section>
 
       {submitError?<p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{submitError}</p>:null}
-      <div className="flex flex-col-reverse gap-3 border-t border-brand-border pt-8 sm:flex-row sm:justify-between"><Link href="/bienvenida" className="rounded-full border border-brand-border px-6 py-3 text-center text-sm font-semibold">Volver</Link><button disabled={isSubmitting} className="rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white disabled:opacity-60">{isSubmitting?"Enviando...":"Enviar registro"}</button></div>
+      <div className="flex flex-col-reverse gap-3 border-t border-brand-border pt-8 sm:flex-row sm:justify-between"><Link href="/bienvenida" className="rounded-full border border-brand-border px-6 py-3 text-center text-sm font-semibold">Volver</Link><button disabled={isSubmitting||!paymentProof} className="rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">{isSubmitting?"Enviando...":paymentProof?"Enviar registro":"Adjuntá el comprobante para finalizar"}</button></div>
     </form>
   </div>;
 }
