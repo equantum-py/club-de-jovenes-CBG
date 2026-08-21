@@ -13,12 +13,12 @@ function clean(value: unknown) {
 }
 function normalizePayload(payload: Partial<RegistrationPayload>): RegistrationPayload {
   return {
-    nombre: clean(payload.nombre), apellido: clean(payload.apellido), edad: clean(payload.edad), telefono: clean(payload.telefono), cedula: clean(payload.cedula), sexo: clean(payload.sexo), iglesia: clean(payload.iglesia), esInvitado: clean(payload.esInvitado), invitadoPor: clean(payload.invitadoPor), alergias: clean(payload.alergias), medicamentos: clean(payload.medicamentos), enfermedadBase: clean(payload.enfermedadBase), contactoEmergenciaNombre: clean(payload.contactoEmergenciaNombre), contactoEmergenciaTelefono: clean(payload.contactoEmergenciaTelefono), formaPago: "transferencia", nombrePadreMadre: clean(payload.nombrePadreMadre), telefonoPadreMadre: clean(payload.telefonoPadreMadre),
+    nombre: clean(payload.nombre), apellido: clean(payload.apellido), edad: clean(payload.edad), telefono: clean(payload.telefono), cedula: clean(payload.cedula), sexo: clean(payload.sexo), iglesia: clean(payload.iglesia), esInvitado: clean(payload.esInvitado), invitadoPor: clean(payload.invitadoPor), alergias: clean(payload.alergias), medicamentos: clean(payload.medicamentos), enfermedadBase: clean(payload.enfermedadBase), contactoEmergenciaNombre: clean(payload.contactoEmergenciaNombre), contactoEmergenciaTelefono: clean(payload.contactoEmergenciaTelefono), formaPago: "transferencia", nombrePadreMadre: clean(payload.nombrePadreMadre), telefonoPadreMadre: clean(payload.telefonoPadreMadre), deseaRemera: clean(payload.deseaRemera), talleRemera: clean(payload.talleRemera),
   };
 }
 function validatePayload(payload: RegistrationPayload) {
   const missing: string[] = [];
-  const required: Array<keyof RegistrationPayload> = ["nombre", "apellido", "edad", "telefono", "cedula", "sexo", "esInvitado"];
+  const required: Array<keyof RegistrationPayload> = ["nombre", "apellido", "edad", "telefono", "cedula", "sexo", "esInvitado", "deseaRemera"];
   for (const field of required) if (!payload[field]) missing.push(field);
   const age = Number(payload.edad);
   if (!Number.isFinite(age) || age < 1 || age > 100) missing.push("edad");
@@ -27,6 +27,7 @@ function validatePayload(payload: RegistrationPayload) {
     if (!payload.telefonoPadreMadre) missing.push("telefonoPadreMadre");
   }
   if (["si", "sí"].includes(payload.esInvitado.toLowerCase()) && !payload.invitadoPor) missing.push("invitadoPor");
+  if (["si", "sí"].includes(payload.deseaRemera.toLowerCase()) && !payload.talleRemera) missing.push("talleRemera");
   return Array.from(new Set(missing));
 }
 
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
   if (!form) return NextResponse.json({ ok: false, error: "El formulario enviado no es válido." }, { status: 400 });
 
   const raw: Partial<RegistrationPayload> = {};
-  for (const key of ["nombre","apellido","edad","telefono","cedula","sexo","iglesia","esInvitado","invitadoPor","alergias","medicamentos","enfermedadBase","contactoEmergenciaNombre","contactoEmergenciaTelefono","formaPago","nombrePadreMadre","telefonoPadreMadre"] as Array<keyof RegistrationPayload>) raw[key] = clean(form.get(key));
+  for (const key of ["nombre","apellido","edad","telefono","cedula","sexo","iglesia","esInvitado","invitadoPor","alergias","medicamentos","enfermedadBase","contactoEmergenciaNombre","contactoEmergenciaTelefono","formaPago","nombrePadreMadre","telefonoPadreMadre","deseaRemera","talleRemera"] as Array<keyof RegistrationPayload>) raw[key] = clean(form.get(key));
   const payload = normalizePayload(raw);
   const missingFields = validatePayload(payload);
   if (missingFields.length) return NextResponse.json({ ok: false, error: "Faltan datos obligatorios o hay datos inválidos.", missingFields }, { status: 400 });
