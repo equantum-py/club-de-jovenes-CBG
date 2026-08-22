@@ -2,24 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const REVEAL_EVENT = "gracia-reveal-progress";
-
-function emitRevealProgress(progress: number, active: boolean) {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(
-    new CustomEvent(REVEAL_EVENT, {
-      detail: { progress: Math.max(0, Math.min(1, progress)), active },
-    }),
-  );
-}
-
 export default function LaunchReveal() {
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [musicUrl, setMusicUrl] = useState("");
+  const [musicVolume, setMusicVolume] = useState(35);
+  const [musicStarted, setMusicStarted] = useState(false);
   const progressRef = useRef(0);
   const targetRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    fetch("/api/site-settings", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d?.showMusic || !d?.musicUrl) return;
+        setMusicUrl(d.musicUrl);
+        setMusicVolume(Number(d.musicVolume) || 35);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -28,7 +32,6 @@ export default function LaunchReveal() {
       const cleanQuery = params.toString();
       const cleanUrl = `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ""}${window.location.hash}`;
       window.history.replaceState({}, "", cleanUrl);
-      emitRevealProgress(1, false);
       setActive(false);
       return;
     }
@@ -37,7 +40,6 @@ export default function LaunchReveal() {
     progressRef.current = 0;
     targetRef.current = 0;
     setProgress(0);
-    emitRevealProgress(0, true);
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -47,12 +49,32 @@ export default function LaunchReveal() {
     let finished = false;
     let finishTimer: number | null = null;
 
+    const applyVolume = (p: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      const base = Math.max(0, Math.min(1, musicVolume / 100));
+      const fade = 1 - Math.max(0, Math.min(1, p)) * 0.92;
+      audio.volume = Math.max(0.02, base * fade);
+    };
+
+    const startMusic = async () => {
+      const audio = audioRef.current;
+      if (!audio || !musicUrl) return;
+      try {
+        applyVolume(progressRef.current);
+        await audio.play();
+        setMusicStarted(true);
+      } catch {}
+    };
+
     const advance = (amount: number) => {
       if (finished) return;
       targetRef.current = Math.max(0, Math.min(1, targetRef.current + amount));
       if (targetRef.current >= 0.97) targetRef.current = 1;
-      emitRevealProgress(targetRef.current, true);
+      applyVolume(targetRef.current);
     };
+
+    const onPointerDown = () => startMusic();
 
     const onWheel = (event: WheelEvent) => {
       if (finished) return;
@@ -65,7 +87,7 @@ export default function LaunchReveal() {
     const onTouchStart = (event: TouchEvent) => {
       if (finished) return;
       touchStartY.current = event.touches[0]?.clientY ?? null;
-      emitRevealProgress(targetRef.current, true);
+      startMusic();
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -79,6 +101,7 @@ export default function LaunchReveal() {
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (finished) return;
+      startMusic();
       if (["ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
         event.preventDefault();
         advance(0.34);
@@ -94,6 +117,7 @@ export default function LaunchReveal() {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
@@ -101,8 +125,21 @@ export default function LaunchReveal() {
     const finish = () => {
       if (finished) return;
       finished = true;
-      emitRevealProgress(1, false);
       removeInteractionLocks();
+      const audio = audioRef.current;
+      if (audio) {
+        const start = audio.volume;
+        let step = 0;
+        const fadeTimer = window.setInterval(() => {
+          step += 1;
+          audio.volume = Math.max(0, start * (1 - step / 8));
+          if (step >= 8) {
+            window.clearInterval(fadeTimer);
+            audio.pause();
+            audio.currentTime = 0;
+          }
+        }, 45);
+      }
       finishTimer = window.setTimeout(() => setActive(false), 180);
     };
 
@@ -113,7 +150,7 @@ export default function LaunchReveal() {
       const next = current + (target - current) * 0.16;
       progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
       setProgress(progressRef.current);
-      emitRevealProgress(progressRef.current, true);
+      applyVolume(progressRef.current);
 
       if (target >= 1 && progressRef.current >= 0.985) {
         progressRef.current = 1;
@@ -125,6 +162,7 @@ export default function LaunchReveal() {
       rafRef.current = requestAnimationFrame(animate);
     };
 
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
@@ -135,10 +173,11 @@ export default function LaunchReveal() {
       finished = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (finishTimer) window.clearTimeout(finishTimer);
-      emitRevealProgress(1, false);
       removeInteractionLocks();
+      const audio = audioRef.current;
+      if (audio) audio.pause();
     };
-  }, []);
+  }, [musicUrl, musicVolume]);
 
   if (!active) return null;
 
@@ -158,13 +197,14 @@ export default function LaunchReveal() {
 
   return (
     <div className="fixed inset-0 z-[9999] overflow-hidden bg-[#030504]" aria-label="Presentación de Gracia Camp 2026">
+      {musicUrl ? <audio ref={audioRef} src={musicUrl} preload="auto" loop /> : null}
       <div className="absolute inset-y-0 left-0 w-[51%] origin-left will-change-transform shadow-[18px_0_42px_rgba(0,0,0,.45)]" style={{ ...curtainTexture, transform: `translate3d(-${curtainOffset}%,0,0) scaleX(${inwardScale})` }}><div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/55 to-transparent" /></div>
       <div className="absolute inset-y-0 right-0 w-[51%] origin-right will-change-transform shadow-[-18px_0_42px_rgba(0,0,0,.45)]" style={{ ...curtainTexture, transform: `translate3d(${curtainOffset}%,0,0) scaleX(${inwardScale})` }}><div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/55 to-transparent" /></div>
       <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-white/5 via-[#b99a4f]/35 to-white/5" style={{ opacity: seamOpacity }} />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" style={{ opacity: Math.max(0.25, 1 - progress) }} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,148,70,.22),transparent_38%)]" style={{ opacity: glowOpacity }} />
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white will-change-transform" style={{ opacity: textOpacity, transform: `translateY(${-progress * 16}px) scale(${1 + progress * 0.015})` }}><p className="mb-5 text-[10px] font-bold uppercase tracking-[.42em] text-[#b99a4f] sm:text-xs">Gracia Camp 2026</p><h1 className="max-w-6xl text-[clamp(3.2rem,10vw,9rem)] font-black uppercase leading-[.82] tracking-[-.055em]">¿Estás listo?</h1></div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 text-white/70 sm:bottom-10" style={{ opacity: hintOpacity }}><span className="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">Deslizá para descubrir</span><span className="flex h-10 w-6 justify-center rounded-full border border-white/35 p-1"><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#b99a4f]" /></span></div>
+      <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 text-white/70 sm:bottom-10" style={{ opacity: hintOpacity }}><span className="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">{musicStarted ? "Deslizá para descubrir" : "Tocá o hacé clic para activar el sonido"}</span><span className="flex h-10 w-6 justify-center rounded-full border border-white/35 p-1"><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#b99a4f]" /></span></div>
     </div>
   );
 }
