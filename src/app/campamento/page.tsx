@@ -50,7 +50,7 @@ function KeyInfo() {
   const items = [
     ["Fecha", "03–06", "Diciembre 2026"],
     ["Lugar", "San Bernardino", "Rancho Alegre"],
-    ["Precio", "Gs. 400.000", "Por persona"],
+    ["Precio", "Gs. 450.000", "Por persona"],
     ["Cupos", "Limitados", "Inscripciones abiertas"],
   ];
   return (
@@ -142,7 +142,7 @@ function CTA() {
   return (
     <section className="bg-brand-forest py-12 text-white sm:py-16">
       <Container className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div><p className="text-[10px] font-semibold uppercase tracking-[.18em] text-brand-gold">No te lo pierdas</p><h2 className="mt-2 max-w-3xl text-3xl font-semibold leading-[1.04] sm:text-4xl lg:text-5xl">Inscribite hoy y asegurá tu lugar.</h2><p className="mt-3 text-sm text-white/70">03–06 de diciembre · Gs. 400.000 · cupos limitados.</p></div>
+        <div><p className="text-[10px] font-semibold uppercase tracking-[.18em] text-brand-gold">No te lo pierdas</p><h2 className="mt-2 max-w-3xl text-3xl font-semibold leading-[1.04] sm:text-4xl lg:text-5xl">Inscribite hoy y asegurá tu lugar.</h2><p className="mt-3 text-sm text-white/70">03–06 de diciembre · Gs. 450.000 · cupos limitados.</p></div>
         <div className="flex flex-col gap-2 sm:flex-row lg:flex-col"><ButtonLink href="/registro" variant="light" className="min-h-11 px-7 text-sm">Inscribirme ahora</ButtonLink><ButtonLink href="/reglamento" variant="secondary" className="min-h-11 border-white/25 px-7 text-sm text-white">Reglamento</ButtonLink></div>
       </Container>
     </section>
