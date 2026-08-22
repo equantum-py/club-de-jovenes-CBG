@@ -17,12 +17,17 @@ function HeroVideo() {
   return (
     <section className="relative isolate overflow-hidden bg-black text-white">
       <div className="absolute inset-0 -z-30 overflow-hidden">
-        <iframe
-          src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&controls=0&loop=1&playlist=${YOUTUBE_VIDEO_ID}&playsinline=1&modestbranding=1&rel=0`}
-          title="Gracia Camp 2026"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
-          allow="autoplay; encrypted-media; picture-in-picture"
-        />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        >
+          <source src="/videos/video%20detras.mp4" type="video/mp4" />
+        </video>
       </div>
       <div className="absolute inset-0 -z-20 bg-black/55" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.18)_48%,rgba(0,0,0,.68)_100%)]" />
