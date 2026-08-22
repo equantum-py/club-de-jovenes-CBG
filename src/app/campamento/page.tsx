@@ -37,9 +37,8 @@ function HeroVideo() {
           <p className="text-xs font-bold uppercase tracking-[.28em] text-brand-gold sm:text-sm">Ministerio de Jóvenes CBG</p>
           <h1 className="mt-5 text-[clamp(3.7rem,10vw,8.2rem)] font-black uppercase leading-[.84] tracking-[-.055em]">Gracia Camp <span className="block text-brand-gold sm:inline">2026</span></h1>
           <p className="mx-auto mt-7 max-w-2xl text-lg font-medium leading-7 text-white/90 sm:text-2xl sm:leading-9">4 días para salir de la rutina y vivir lo que realmente importa.</p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex justify-center">
             <ButtonLink href="/registro" variant="light" className="min-h-12 px-8 text-base">Inscribirme ahora</ButtonLink>
-            <a href="#video-completo" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/70 px-8 text-sm font-semibold text-white transition hover:bg-white hover:text-brand-forest">▶ Ver video completo</a>
           </div>
         </div>
       </Container>
