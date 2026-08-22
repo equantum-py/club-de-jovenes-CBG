@@ -9,9 +9,7 @@ export default async function VideoOficialAdmin({ searchParams }: { searchParams
     <main className="p-5 sm:p-8 lg:p-10">
       <p className="text-xs font-semibold uppercase tracking-[.2em] text-brand-gold">Contenido del sitio</p>
       <h1 className="mt-2 text-4xl font-semibold text-brand-forest">Video oficial</h1>
-      <p className="mt-2 max-w-3xl text-brand-muted">
-        Administrá el video que aparece en la sección “Así se vive Gracia Camp”. Podés cargar el archivo directamente desde tu computadora y editar los textos sin tocar código.
-      </p>
+      <p className="mt-2 max-w-3xl text-brand-muted">Administrá la sección “Así se vive Gracia Camp”: visibilidad, textos, archivo y reproducción.</p>
       <VideoOfficialForm
         enabled={settings.enabled}
         eyebrow={settings.eyebrow}
@@ -20,6 +18,9 @@ export default async function VideoOficialAdmin({ searchParams }: { searchParams
         sourceType={settings.sourceType}
         youtubeUrl={settings.youtubeUrl}
         videoUrl={campVideoUrl(settings.videoPath)}
+        autoplay={settings.autoplay}
+        soundEnabled={settings.soundEnabled}
+        loop={settings.loop}
         saved={searchParams?.guardado === "1"}
       />
     </main>
