@@ -5,9 +5,11 @@ export type CampVideoSettings = {
   eyebrow: string;
   title: string;
   description: string;
-  sourceType: "youtube" | "upload";
+  sourceType: "youtube" | "upload" | "drive";
   youtubeUrl: string;
   videoPath: string;
+  driveFileId: string;
+  driveUrl: string;
   autoplay: boolean;
   soundEnabled: boolean;
   loop: boolean;
@@ -21,6 +23,8 @@ const defaults: CampVideoSettings = {
   sourceType: "youtube",
   youtubeUrl: "https://www.youtube.com/watch?v=_EpTnktKT-o",
   videoPath: "",
+  driveFileId: "",
+  driveUrl: "",
   autoplay: true,
   soundEnabled: true,
   loop: false,
@@ -50,9 +54,8 @@ export function youtubeVideoId(value: string) {
   return "";
 }
 
-export function campVideoUrl(path: string) {
-  return path ? publicAssetUrl(path) : "";
-}
+export function campVideoUrl(path: string) { return path ? publicAssetUrl(path) : ""; }
+export function drivePreviewUrl(fileId: string) { return fileId ? `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview` : ""; }
 
 export async function createCampVideoSignedUpload(fileName: string, mimeType: string) {
   const { url, key } = config();
@@ -62,61 +65,26 @@ export async function createCampVideoSignedUpload(fileName: string, mimeType: st
   else if (["video/quicktime", "video/mov", "video/x-quicktime"].includes(mimeType) || lowerName.endsWith(".mov")) ext = "mov";
   const safe = fileName.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/\.[^.]+$/, "").slice(0, 50) || "video";
   const path = `camp-video-${safe}-${Date.now()}.${ext}`;
-  const response = await fetch(`${url}/storage/v1/object/upload/sign/site-assets/${path}`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: "{}",
-    cache: "no-store",
-  });
+  const response = await fetch(`${url}/storage/v1/object/upload/sign/site-assets/${path}`, { method: "POST", headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" }, body: "{}", cache: "no-store" });
   if (!response.ok) throw new Error("SIGNED_UPLOAD_URL_FAILED");
   const data = await response.json();
-  const signedUrl = new URL(`/storage/v1${data.url}`, url).toString();
-  return { path, signedUrl };
+  return { path, signedUrl: new URL(`/storage/v1${data.url}`, url).toString() };
 }
 
 export async function getCampVideoSettings(): Promise<CampVideoSettings> {
   try {
     const { url, key } = config();
-    const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1&select=*`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
-      cache: "no-store",
-    });
+    const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1&select=*`, { headers: { apikey: key, Authorization: `Bearer ${key}` }, cache: "no-store" });
     if (!response.ok) return defaults;
     const [row] = await response.json();
     if (!row) return defaults;
-    return {
-      enabled: row.enabled ?? true,
-      eyebrow: row.eyebrow ?? defaults.eyebrow,
-      title: row.title ?? defaults.title,
-      description: row.description ?? defaults.description,
-      sourceType: row.source_type === "upload" ? "upload" : "youtube",
-      youtubeUrl: row.youtube_url ?? defaults.youtubeUrl,
-      videoPath: row.video_path || "",
-      autoplay: row.autoplay ?? true,
-      soundEnabled: row.sound_enabled ?? true,
-      loop: row.loop ?? false,
-    };
-  } catch {
-    return defaults;
-  }
+    const sourceType: CampVideoSettings["sourceType"] = row.source_type === "drive" ? "drive" : row.source_type === "upload" ? "upload" : "youtube";
+    return { enabled: row.enabled ?? true, eyebrow: row.eyebrow ?? defaults.eyebrow, title: row.title ?? defaults.title, description: row.description ?? defaults.description, sourceType, youtubeUrl: row.youtube_url ?? defaults.youtubeUrl, videoPath: row.video_path || "", driveFileId: row.drive_file_id || "", driveUrl: row.drive_url || "", autoplay: row.autoplay ?? true, soundEnabled: row.sound_enabled ?? true, loop: row.loop ?? false };
+  } catch { return defaults; }
 }
 
 export async function saveCampVideoSettings(data: Record<string, unknown>) {
   const { url, key } = config();
-  const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1`, {
-    method: "PATCH",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({ ...data, updated_at: new Date().toISOString() }),
-    cache: "no-store",
-  });
+  const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1`, { method: "PATCH", headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ ...data, updated_at: new Date().toISOString() }), cache: "no-store" });
   if (!response.ok) throw new Error("CAMP_VIDEO_SAVE_FAILED");
 }
