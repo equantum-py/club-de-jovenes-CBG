@@ -8,6 +8,9 @@ export type CampVideoSettings = {
   sourceType: "youtube" | "upload";
   youtubeUrl: string;
   videoPath: string;
+  autoplay: boolean;
+  soundEnabled: boolean;
+  loop: boolean;
 };
 
 const defaults: CampVideoSettings = {
@@ -18,6 +21,9 @@ const defaults: CampVideoSettings = {
   sourceType: "youtube",
   youtubeUrl: "https://www.youtube.com/watch?v=_EpTnktKT-o",
   videoPath: "",
+  autoplay: true,
+  soundEnabled: true,
+  loop: false,
 };
 
 function config() {
@@ -55,11 +61,7 @@ export async function createCampVideoSignedUpload(fileName: string, mimeType: st
   const path = `camp-video-${safe}-${Date.now()}.${ext}`;
   const response = await fetch(`${url}/storage/v1/object/upload/sign/site-assets/${path}`, {
     method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
+    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: "{}",
     cache: "no-store",
   });
@@ -73,8 +75,7 @@ export async function getCampVideoSettings(): Promise<CampVideoSettings> {
   try {
     const { url, key } = config();
     const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1&select=*`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` },
-      cache: "no-store",
+      headers: { apikey: key, Authorization: `Bearer ${key}` }, cache: "no-store",
     });
     if (!response.ok) return defaults;
     const [row] = await response.json();
@@ -87,24 +88,19 @@ export async function getCampVideoSettings(): Promise<CampVideoSettings> {
       sourceType: row.source_type === "upload" ? "upload" : "youtube",
       youtubeUrl: row.youtube_url ?? defaults.youtubeUrl,
       videoPath: row.video_path || "",
+      autoplay: row.autoplay ?? true,
+      soundEnabled: row.sound_enabled ?? true,
+      loop: row.loop ?? false,
     };
-  } catch {
-    return defaults;
-  }
+  } catch { return defaults; }
 }
 
 export async function saveCampVideoSettings(data: Record<string, unknown>) {
   const { url, key } = config();
   const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1`, {
     method: "PATCH",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({ ...data, updated_at: new Date().toISOString() }),
-    cache: "no-store",
+    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+    body: JSON.stringify({ ...data, updated_at: new Date().toISOString() }), cache: "no-store",
   });
   if (!response.ok) throw new Error("CAMP_VIDEO_SAVE_FAILED");
 }
