@@ -2,6 +2,7 @@ import { publicAssetUrl } from "@/lib/site-settings";
 
 export type CampVideoSettings = {
   enabled: boolean;
+  showText: boolean;
   eyebrow: string;
   title: string;
   description: string;
@@ -17,6 +18,7 @@ export type CampVideoSettings = {
 
 const defaults: CampVideoSettings = {
   enabled: true,
+  showText: true,
   eyebrow: "Reviví la experiencia",
   title: "Así se vive Gracia Camp.",
   description: "Un vistazo real a los momentos que hacen especial al campamento.",
@@ -79,12 +81,12 @@ export async function getCampVideoSettings(): Promise<CampVideoSettings> {
     const [row] = await response.json();
     if (!row) return defaults;
     const sourceType: CampVideoSettings["sourceType"] = row.source_type === "drive" ? "drive" : row.source_type === "upload" ? "upload" : "youtube";
-    return { enabled: row.enabled ?? true, eyebrow: row.eyebrow ?? defaults.eyebrow, title: row.title ?? defaults.title, description: row.description ?? defaults.description, sourceType, youtubeUrl: row.youtube_url ?? defaults.youtubeUrl, videoPath: row.video_path || "", driveFileId: row.drive_file_id || "", driveUrl: row.drive_url || "", autoplay: row.autoplay ?? true, soundEnabled: row.sound_enabled ?? true, loop: row.loop ?? false };
+    return { enabled: true, showText: row.show_text ?? true, eyebrow: row.eyebrow ?? defaults.eyebrow, title: row.title ?? defaults.title, description: row.description ?? defaults.description, sourceType, youtubeUrl: row.youtube_url ?? defaults.youtubeUrl, videoPath: row.video_path || "", driveFileId: row.drive_file_id || "", driveUrl: row.drive_url || "", autoplay: row.autoplay ?? true, soundEnabled: row.sound_enabled ?? true, loop: row.loop ?? false };
   } catch { return defaults; }
 }
 
 export async function saveCampVideoSettings(data: Record<string, unknown>) {
   const { url, key } = config();
-  const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1`, { method: "PATCH", headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ ...data, updated_at: new Date().toISOString() }), cache: "no-store" });
+  const response = await fetch(`${url}/rest/v1/camp_video_settings?id=eq.1`, { method: "PATCH", headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ ...data, enabled: true, updated_at: new Date().toISOString() }), cache: "no-store" });
   if (!response.ok) throw new Error("CAMP_VIDEO_SAVE_FAILED");
 }
