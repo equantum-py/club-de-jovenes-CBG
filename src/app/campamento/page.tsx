@@ -1,16 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 
 import Header from "@/components/Header";
 import PreacherSection from "@/components/PreacherSection";
 import MerchSectionPublic from "@/components/MerchSectionPublic";
+import CampVideoSection from "@/components/CampVideoSection";
 import { ButtonLink, Container, Eyebrow } from "@/components/ui/design";
 
 const MAPS_URL = "https://maps.app.goo.gl/bVdDJtbaZFsJN7Eo7";
-const YOUTUBE_VIDEO_ID = "_EpTnktKT-o";
 const WHATSAPP_NUMBER = "595985194953";
 
 function HeroVideo() {
@@ -98,34 +96,6 @@ function Pillars() {
   );
 }
 
-function VideoSection() {
-  const [showPlayer, setShowPlayer] = useState(false);
-  const thumbnail = `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg`;
-  return (
-    <section id="video-completo" className="scroll-mt-24 bg-brand-warmWhite py-12 sm:py-16">
-      <Container>
-        <article className="overflow-hidden rounded-[1.7rem] bg-brand-forestDark text-white lg:grid lg:grid-cols-[.42fr_.58fr]">
-          <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-            <Eyebrow className="text-brand-gold">Reviví la experiencia</Eyebrow>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-.03em] sm:text-4xl">Así se vive Gracia Camp.</h2>
-            <p className="mt-4 text-sm leading-6 text-white/65 sm:text-base">Un vistazo real a los momentos que hacen especial al campamento.</p>
-          </div>
-          <div className="aspect-video lg:aspect-auto lg:min-h-[360px]">
-            {showPlayer ? (
-              <iframe src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`} title="Video Gracia Camp" className="h-full w-full" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
-            ) : (
-              <button type="button" onClick={() => setShowPlayer(true)} className="group relative h-full w-full" aria-label="Reproducir video Gracia Camp">
-                <Image src={thumbnail} alt="Video Gracia Camp" fill sizes="(min-width:1024px)60vw,100vw" className="object-cover opacity-70" />
-                <span className="absolute inset-0 flex items-center justify-center"><span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/70 bg-black/35 text-xl text-white backdrop-blur">▶</span></span>
-              </button>
-            )}
-          </div>
-        </article>
-      </Container>
-    </section>
-  );
-}
-
 function FAQ() {
   const items = [["¿Cómo me inscribo?", "Completá el formulario de registro y seguí las indicaciones del equipo."],["¿Qué incluye?", "La organización comunicará el detalle completo y las recomendaciones antes del campamento."],["¿Dónde veo el reglamento?", "Podés abrirlo desde el botón al final de esta página."]];
   return (
@@ -172,7 +142,7 @@ export default function CampamentoPage() {
         <Pillars />
         <PreacherSection />
         <MerchSectionPublic />
-        <VideoSection />
+        <CampVideoSection />
         <FAQ />
         <CTA />
       </main>
