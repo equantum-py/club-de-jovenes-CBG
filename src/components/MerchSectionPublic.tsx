@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {useEffect,useState} from "react";
 import MerchSection from "@/components/MerchSection";
 import type {MerchSettings} from "@/lib/merch-settings";
@@ -19,10 +20,12 @@ export default function MerchSectionPublic(){
   return <>
     {settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl)?<section id="merch-banner" className="bg-brand-cream py-4 sm:py-6">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <picture>
-          {bannerMobileUrl?<source media="(max-width: 767px)" srcSet={bannerMobileUrl}/>:null}
-          <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block w-full rounded-[1.4rem] object-cover shadow-sm sm:rounded-[1.8rem]"/>
-        </picture>
+        <Link href="/reservar-merch" aria-label="Reservar merch oficial Gracia Camp" className="group block overflow-hidden rounded-[1.4rem] focus:outline-none focus:ring-4 focus:ring-brand-gold/30 sm:rounded-[1.8rem]">
+          <picture>
+            {bannerMobileUrl?<source media="(max-width: 767px)" srcSet={bannerMobileUrl}/>:null}
+            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block w-full object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"/>
+          </picture>
+        </Link>
       </div>
     </section>:null}
     {settings.sectionEnabled?<MerchSection settings={settings} shirtImageUrl={shirtImageUrl} capImageUrl={capImageUrl}/>:null}
