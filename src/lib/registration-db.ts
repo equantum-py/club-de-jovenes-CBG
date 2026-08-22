@@ -35,7 +35,7 @@ export type StoredRegistration = RegistrationPayload & {
   totalTransferir: number;
 };
 
-const CAMP_PRICE = 400000;
+const CAMP_PRICE = 450000;
 const SHIRT_PRICE = 100000;
 const SHIRT_XL_PRICE = 120000;
 const CAP_PRICE = 30000;
