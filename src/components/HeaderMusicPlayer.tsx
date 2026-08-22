@@ -27,6 +27,7 @@ export default function HeaderMusicPlayer({
   const [playing, setPlaying] = useState(false);
   const [eligible, setEligible] = useState(true);
   const revealProgressRef = useRef(0);
+  const revealActiveRef = useRef(false);
 
   useEffect(() => {
     if (!viewport) {
@@ -51,14 +52,13 @@ export default function HeaderMusicPlayer({
     const setRevealVolume = (progress: number) => {
       const normalized = Math.max(0, Math.min(1, progress));
       revealProgressRef.current = normalized;
-      const factor = 1 - normalized * 0.78;
-      audio.volume = Math.max(0, Math.min(1, baseVolume * factor));
+      const factor = 1 - normalized * 0.9;
+      audio.volume = Math.max(0.025, Math.min(1, baseVolume * factor));
     };
 
     setRevealVolume(revealProgressRef.current);
 
     const saved = Number(sessionStorage.getItem(TIME_KEY) || 0);
-    const wanted = sessionStorage.getItem(PLAY_KEY) !== "0" && autoplay;
     const restore = () => {
       if (saved > 0 && Number.isFinite(saved)) {
         audio.currentTime = Math.min(saved, audio.duration || saved);
@@ -66,32 +66,47 @@ export default function HeaderMusicPlayer({
     };
     audio.addEventListener("loadedmetadata", restore, { once: true });
 
-    const tryPlay = () => {
-      if (!wanted) return;
-      audio.play().then(() => setPlaying(true)).catch(() => undefined);
+    const tryPlay = async (force = false) => {
+      if (!autoplay && !force) return;
+      try {
+        await audio.play();
+        setPlaying(true);
+        sessionStorage.setItem(PLAY_KEY, "1");
+      } catch {
+        // El navegador puede bloquear audio hasta la primera interacción real.
+      }
     };
 
-    tryPlay();
+    // Para la experiencia de lanzamiento no respetamos un estado "pausado" viejo:
+    // si autoplay está activo, siempre intentamos arrancar nuevamente al cargar.
+    if (autoplay) void tryPlay(true);
 
     const unlock = () => {
-      tryPlay();
+      if (revealActiveRef.current || autoplay) void tryPlay(true);
     };
+
     document.addEventListener("pointerdown", unlock, { once: true });
     document.addEventListener("keydown", unlock, { once: true });
     window.addEventListener("wheel", unlock, { once: true, passive: true });
     window.addEventListener("touchstart", unlock, { once: true, passive: true });
 
     const onRevealProgress = (event: Event) => {
-      const detail = (event as CustomEvent<{ progress?: number }>).detail;
+      const detail = (event as CustomEvent<{ progress?: number; active?: boolean }>).detail;
       const nextProgress = Number(detail?.progress ?? 0);
+      revealActiveRef.current = Boolean(detail?.active);
       setRevealVolume(nextProgress);
-      if (wanted && audio.paused) tryPlay();
+
+      if (detail?.active && audio.paused) {
+        void tryPlay(true);
+      }
     };
     window.addEventListener(REVEAL_EVENT, onRevealProgress as EventListener);
 
     const save = () => {
       sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
-      sessionStorage.setItem(PLAY_KEY, audio.paused ? "0" : "1");
+      if (!revealActiveRef.current) {
+        sessionStorage.setItem(PLAY_KEY, audio.paused ? "0" : "1");
+      }
     };
     const timer = window.setInterval(save, 1000);
 
@@ -125,7 +140,7 @@ export default function HeaderMusicPlayer({
   if (!src) return null;
   return (
     <div className="flex min-w-0 items-center gap-2 rounded-full border border-brand-border bg-white/80 px-2 py-1.5 shadow-sm" title={title}>
-      <audio ref={audioRef} src={src} loop={loop} preload="metadata" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
+      <audio ref={audioRef} src={src} loop={loop} preload="auto" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
       <button type="button" onClick={toggle} aria-label={playing ? "Pausar música" : "Reproducir música"} className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-forest text-xs text-white">
         {playing ? "Ⅱ" : "▶"}
       </button>
