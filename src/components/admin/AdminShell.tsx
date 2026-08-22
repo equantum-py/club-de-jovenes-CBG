@@ -16,6 +16,7 @@ const siteItems = [
   ["Formulario de inscripción", "/admin/registro"],
   ["Predicador", "/admin/predicador"],
   ["Merch oficial", "/admin/merch"],
+  ["Video oficial", "/admin/video-oficial"],
   ["Datos de transferencia", "/admin/pago"],
   ["Apariencia / Header", "/admin/apariencia"],
   ["Música de fondo", "/admin/musica"],
