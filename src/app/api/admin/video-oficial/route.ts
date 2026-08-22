@@ -6,7 +6,6 @@ const text = (form: FormData, key: string, max = 300) => String(form.get(key) ||
 
 export async function POST(request: Request) {
   if (!hasAdminSession()) return NextResponse.json({ error: "No autorizado." }, { status: 401 });
-
   try {
     const form = await request.formData();
     const current = await getCampVideoSettings();
@@ -14,15 +13,9 @@ export async function POST(request: Request) {
     const uploadedPath = text(form, "video_path", 500);
     const youtubeUrl = text(form, "youtube_url", 500) || current.youtubeUrl;
     const sourceType = requestedSource === "upload" || uploadedPath ? "upload" : requestedSource === "youtube" ? "youtube" : current.sourceType;
-
-    if (sourceType === "youtube" && !youtubeVideoId(youtubeUrl)) {
-      return NextResponse.json({ error: "Ingresá un enlace válido de YouTube o cargá un archivo de video." }, { status: 400 });
-    }
-
+    if (sourceType === "youtube" && !youtubeVideoId(youtubeUrl)) return NextResponse.json({ error: "Ingresá un enlace válido de YouTube o cargá un archivo de video." }, { status: 400 });
     const videoPath = uploadedPath || current.videoPath;
-    if (sourceType === "upload" && !videoPath) {
-      return NextResponse.json({ error: "Seleccioná un archivo MP4 o WebM." }, { status: 400 });
-    }
+    if (sourceType === "upload" && !videoPath) return NextResponse.json({ error: "Seleccioná un archivo MP4 o WebM." }, { status: 400 });
 
     await saveCampVideoSettings({
       enabled: form.get("enabled") === "on",
@@ -32,8 +25,10 @@ export async function POST(request: Request) {
       source_type: sourceType,
       youtube_url: youtubeUrl,
       video_path: videoPath,
+      autoplay: form.get("autoplay") === "on",
+      sound_enabled: form.get("sound_enabled") === "on",
+      loop: form.get("loop") === "on",
     });
-
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(error);
