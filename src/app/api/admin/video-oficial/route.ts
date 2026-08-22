@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     if (sourceType === "upload" && !videoPath) return NextResponse.json({ error: "Seleccioná un archivo MP4 o WebM." }, { status: 400 });
 
     await saveCampVideoSettings({
-      enabled: form.get("enabled") === "on",
+      show_text: form.get("show_text") === "on",
       eyebrow: text(form, "eyebrow", 80),
       title: text(form, "title", 140),
       description: text(form, "description", 320),
