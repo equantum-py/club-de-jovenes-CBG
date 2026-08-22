@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-type Props = { enabled:boolean; eyebrow:string; title:string; description:string; sourceType:"youtube"|"upload"; youtubeUrl:string; videoUrl:string; autoplay:boolean; soundEnabled:boolean; loop:boolean; saved?:boolean };
+type Props = { enabled:boolean; eyebrow:string; title:string; description:string; sourceType:"youtube"|"upload"|"drive"; youtubeUrl:string; videoUrl:string; autoplay:boolean; soundEnabled:boolean; loop:boolean; saved?:boolean };
 
 const inputClass="min-h-12 w-full rounded-xl border border-[#c9bea9] bg-white px-4 text-[#0b3b30] placeholder:text-[#807869] focus:border-[#0b4a3b] focus:outline-none focus:ring-2 focus:ring-[#0b4a3b]/15";
 const ALLOWED_TYPES=["video/mp4","video/webm","video/quicktime","video/mov","video/x-quicktime"];
