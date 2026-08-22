@@ -14,7 +14,7 @@ type FormData = {
 };
 type PaymentSettings = { bankName:string; accountHolder:string; accountNumber:string; documentNumber:string };
 
-const CAMP_PRICE=400000;
+const CAMP_PRICE=450000;
 const SHIRT_PRICE=100000;
 const SHIRT_XL_PRICE=120000;
 const CAP_PRICE=30000;
