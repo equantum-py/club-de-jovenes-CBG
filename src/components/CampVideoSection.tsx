@@ -8,7 +8,9 @@ type CampVideoPayload = {
   eyebrow: string;
   title: string;
   description: string;
+  sourceType: "youtube" | "upload";
   videoId: string;
+  videoUrl: string;
   thumbnailUrl: string;
   embedUrl: string;
 };
@@ -24,7 +26,10 @@ export default function CampVideoSection() {
       .catch(() => {});
   }, []);
 
-  if (!settings?.enabled || !settings.videoId) return null;
+  if (!settings?.enabled) return null;
+  const isUpload = settings.sourceType === "upload" && Boolean(settings.videoUrl);
+  const isYoutube = settings.sourceType === "youtube" && Boolean(settings.videoId);
+  if (!isUpload && !isYoutube) return null;
 
   return (
     <section id="video-completo" className="scroll-mt-24 bg-brand-warmWhite py-12 sm:py-16">
@@ -37,7 +42,17 @@ export default function CampVideoSection() {
           </div>
 
           <div className="aspect-video lg:aspect-auto lg:min-h-[360px]">
-            {showPlayer ? (
+            {isUpload ? (
+              <video
+                src={settings.videoUrl}
+                controls
+                playsInline
+                preload="metadata"
+                className="h-full w-full bg-black object-cover"
+              >
+                Tu navegador no puede reproducir este video.
+              </video>
+            ) : showPlayer ? (
               <iframe
                 src={`${settings.embedUrl}?autoplay=1`}
                 title={settings.title || "Video oficial Gracia Camp"}
