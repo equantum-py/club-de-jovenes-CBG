@@ -2,6 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const REVEAL_EVENT = "gracia-reveal-progress";
+
+function emitRevealProgress(progress: number, active: boolean) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(REVEAL_EVENT, {
+      detail: { progress: Math.max(0, Math.min(1, progress)), active },
+    }),
+  );
+}
+
 export default function LaunchReveal() {
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -17,6 +28,7 @@ export default function LaunchReveal() {
       const cleanQuery = params.toString();
       const cleanUrl = `${window.location.pathname}${cleanQuery ? `?${cleanQuery}` : ""}${window.location.hash}`;
       window.history.replaceState({}, "", cleanUrl);
+      emitRevealProgress(1, false);
       setActive(false);
       return;
     }
@@ -25,6 +37,7 @@ export default function LaunchReveal() {
     progressRef.current = 0;
     targetRef.current = 0;
     setProgress(0);
+    emitRevealProgress(0, true);
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -38,6 +51,7 @@ export default function LaunchReveal() {
       if (finished) return;
       targetRef.current = Math.max(0, Math.min(1, targetRef.current + amount));
       if (targetRef.current >= 0.97) targetRef.current = 1;
+      emitRevealProgress(targetRef.current, true);
     };
 
     const onWheel = (event: WheelEvent) => {
@@ -51,6 +65,7 @@ export default function LaunchReveal() {
     const onTouchStart = (event: TouchEvent) => {
       if (finished) return;
       touchStartY.current = event.touches[0]?.clientY ?? null;
+      emitRevealProgress(targetRef.current, true);
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -86,6 +101,7 @@ export default function LaunchReveal() {
     const finish = () => {
       if (finished) return;
       finished = true;
+      emitRevealProgress(1, false);
       removeInteractionLocks();
       finishTimer = window.setTimeout(() => setActive(false), 180);
     };
@@ -97,6 +113,7 @@ export default function LaunchReveal() {
       const next = current + (target - current) * 0.16;
       progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
       setProgress(progressRef.current);
+      emitRevealProgress(progressRef.current, true);
 
       if (target >= 1 && progressRef.current >= 0.985) {
         progressRef.current = 1;
@@ -118,6 +135,7 @@ export default function LaunchReveal() {
       finished = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (finishTimer) window.clearTimeout(finishTimer);
+      emitRevealProgress(1, false);
       removeInteractionLocks();
     };
   }, []);
