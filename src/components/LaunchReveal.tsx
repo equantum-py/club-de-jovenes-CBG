@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const SESSION_KEY = "gracia-camp-launch-reveal-seen";
-
 export default function LaunchReveal() {
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -13,18 +11,18 @@ export default function LaunchReveal() {
   const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem(SESSION_KEY) === "1") return;
-    } catch {}
-
     setActive(true);
+    progressRef.current = 0;
+    targetRef.current = 0;
+    setProgress(0);
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const animate = () => {
       const current = progressRef.current;
       const target = targetRef.current;
-      const next = current + (target - current) * 0.1;
+      const next = current + (target - current) * 0.16;
       progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
       setProgress(progressRef.current);
 
@@ -34,8 +32,7 @@ export default function LaunchReveal() {
         window.setTimeout(() => {
           setActive(false);
           document.body.style.overflow = previousOverflow;
-          try { sessionStorage.setItem(SESSION_KEY, "1"); } catch {}
-        }, 420);
+        }, 260);
         return;
       }
 
@@ -46,14 +43,14 @@ export default function LaunchReveal() {
 
     const advance = (amount: number) => {
       targetRef.current = Math.max(0, Math.min(1, targetRef.current + amount));
-      if (targetRef.current >= 0.985) targetRef.current = 1;
+      if (targetRef.current >= 0.97) targetRef.current = 1;
     };
 
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       const direction = event.deltaY >= 0 ? 1 : -1;
-      const magnitude = Math.min(Math.abs(event.deltaY), 140);
-      advance(direction * magnitude / 1700);
+      const magnitude = Math.min(Math.abs(event.deltaY), 180);
+      advance(direction * magnitude / 900);
     };
 
     const onTouchStart = (event: TouchEvent) => {
@@ -65,18 +62,18 @@ export default function LaunchReveal() {
       event.preventDefault();
       const currentY = event.touches[0]?.clientY ?? touchStartY.current;
       const delta = touchStartY.current - currentY;
-      advance(delta / 900);
+      advance(delta / 520);
       touchStartY.current = currentY;
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (["ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
         event.preventDefault();
-        advance(0.2);
+        advance(0.34);
       }
       if (["ArrowUp", "PageUp"].includes(event.key)) {
         event.preventDefault();
-        advance(-0.2);
+        advance(-0.34);
       }
     };
 
