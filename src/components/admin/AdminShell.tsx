@@ -13,6 +13,7 @@ const managementItems = [
 ] as const;
 
 const siteItems = [
+  ["Formulario de inscripción", "/admin/registro"],
   ["Predicador", "/admin/predicador"],
   ["Merch oficial", "/admin/merch"],
   ["Datos de transferencia", "/admin/pago"],
