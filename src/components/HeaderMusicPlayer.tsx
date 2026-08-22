@@ -2,40 +2,124 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type Props = { src: string; title: string; autoplay?: boolean; loop?: boolean; volume?: number };
+type Props = {
+  src: string;
+  title: string;
+  autoplay?: boolean;
+  loop?: boolean;
+  volume?: number;
+  viewport?: "desktop" | "mobile";
+};
+
 const TIME_KEY = "gracia-music-time";
 const PLAY_KEY = "gracia-music-playing";
+const REVEAL_EVENT = "gracia-reveal-progress";
 
-export default function HeaderMusicPlayer({ src, title, autoplay = true, loop = true, volume = 35 }: Props) {
+export default function HeaderMusicPlayer({
+  src,
+  title,
+  autoplay = true,
+  loop = true,
+  volume = 35,
+  viewport,
+}: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [eligible, setEligible] = useState(true);
+  const revealProgressRef = useRef(0);
+
+  useEffect(() => {
+    if (!viewport) {
+      setEligible(true);
+      return;
+    }
+    const media = window.matchMedia(viewport === "desktop" ? "(min-width: 1024px)" : "(max-width: 1023px)");
+    const sync = () => setEligible(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [viewport]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !src) return;
-    audio.volume = Math.max(0, Math.min(1, volume / 100));
+    if (!audio || !src || !eligible) {
+      if (audio && !eligible) audio.pause();
+      return;
+    }
+
+    const baseVolume = Math.max(0, Math.min(1, volume / 100));
+    const setRevealVolume = (progress: number) => {
+      const normalized = Math.max(0, Math.min(1, progress));
+      revealProgressRef.current = normalized;
+      const factor = 1 - normalized * 0.78;
+      audio.volume = Math.max(0, Math.min(1, baseVolume * factor));
+    };
+
+    setRevealVolume(revealProgressRef.current);
+
     const saved = Number(sessionStorage.getItem(TIME_KEY) || 0);
     const wanted = sessionStorage.getItem(PLAY_KEY) !== "0" && autoplay;
-    const restore = () => { if (saved > 0 && Number.isFinite(saved)) audio.currentTime = Math.min(saved, audio.duration || saved); };
+    const restore = () => {
+      if (saved > 0 && Number.isFinite(saved)) {
+        audio.currentTime = Math.min(saved, audio.duration || saved);
+      }
+    };
     audio.addEventListener("loadedmetadata", restore, { once: true });
 
     const tryPlay = () => {
       if (!wanted) return;
       audio.play().then(() => setPlaying(true)).catch(() => undefined);
     };
+
     tryPlay();
-    const unlock = () => { tryPlay(); document.removeEventListener("pointerdown", unlock); document.removeEventListener("keydown", unlock); };
+
+    const unlock = () => {
+      tryPlay();
+    };
     document.addEventListener("pointerdown", unlock, { once: true });
     document.addEventListener("keydown", unlock, { once: true });
-    const save = () => { sessionStorage.setItem(TIME_KEY, String(audio.currentTime)); sessionStorage.setItem(PLAY_KEY, audio.paused ? "0" : "1"); };
+    window.addEventListener("wheel", unlock, { once: true, passive: true });
+    window.addEventListener("touchstart", unlock, { once: true, passive: true });
+
+    const onRevealProgress = (event: Event) => {
+      const detail = (event as CustomEvent<{ progress?: number }>).detail;
+      const nextProgress = Number(detail?.progress ?? 0);
+      setRevealVolume(nextProgress);
+      if (wanted && audio.paused) tryPlay();
+    };
+    window.addEventListener(REVEAL_EVENT, onRevealProgress as EventListener);
+
+    const save = () => {
+      sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
+      sessionStorage.setItem(PLAY_KEY, audio.paused ? "0" : "1");
+    };
     const timer = window.setInterval(save, 1000);
-    return () => { save(); window.clearInterval(timer); document.removeEventListener("pointerdown", unlock); document.removeEventListener("keydown", unlock); };
-  }, [src, autoplay, volume]);
+
+    return () => {
+      save();
+      window.clearInterval(timer);
+      document.removeEventListener("pointerdown", unlock);
+      document.removeEventListener("keydown", unlock);
+      window.removeEventListener("wheel", unlock);
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener(REVEAL_EVENT, onRevealProgress as EventListener);
+    };
+  }, [src, autoplay, volume, eligible]);
 
   const toggle = async () => {
-    const audio = audioRef.current; if (!audio) return;
-    if (audio.paused) { try { await audio.play(); setPlaying(true); sessionStorage.setItem(PLAY_KEY,"1"); } catch {} }
-    else { audio.pause(); setPlaying(false); sessionStorage.setItem(PLAY_KEY,"0"); }
+    const audio = audioRef.current;
+    if (!audio || !eligible) return;
+    if (audio.paused) {
+      try {
+        await audio.play();
+        setPlaying(true);
+        sessionStorage.setItem(PLAY_KEY, "1");
+      } catch {}
+    } else {
+      audio.pause();
+      setPlaying(false);
+      sessionStorage.setItem(PLAY_KEY, "0");
+    }
   };
 
   if (!src) return null;
