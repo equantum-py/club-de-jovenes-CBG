@@ -16,37 +16,22 @@ export default function LaunchReveal() {
     targetRef.current = 0;
     setProgress(0);
 
-    const previousOverflow = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
-    const animate = () => {
-      const current = progressRef.current;
-      const target = targetRef.current;
-      const next = current + (target - current) * 0.16;
-      progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
-      setProgress(progressRef.current);
-
-      if (target >= 1 && progressRef.current >= 0.99) {
-        progressRef.current = 1;
-        setProgress(1);
-        window.setTimeout(() => {
-          setActive(false);
-          document.body.style.overflow = previousOverflow;
-        }, 260);
-        return;
-      }
-
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
+    let finished = false;
+    let finishTimer: number | null = null;
 
     const advance = (amount: number) => {
+      if (finished) return;
       targetRef.current = Math.max(0, Math.min(1, targetRef.current + amount));
       if (targetRef.current >= 0.97) targetRef.current = 1;
     };
 
     const onWheel = (event: WheelEvent) => {
+      if (finished) return;
       event.preventDefault();
       const direction = event.deltaY >= 0 ? 1 : -1;
       const magnitude = Math.min(Math.abs(event.deltaY), 180);
@@ -54,11 +39,12 @@ export default function LaunchReveal() {
     };
 
     const onTouchStart = (event: TouchEvent) => {
+      if (finished) return;
       touchStartY.current = event.touches[0]?.clientY ?? null;
     };
 
     const onTouchMove = (event: TouchEvent) => {
-      if (touchStartY.current === null) return;
+      if (finished || touchStartY.current === null) return;
       event.preventDefault();
       const currentY = event.touches[0]?.clientY ?? touchStartY.current;
       const delta = touchStartY.current - currentY;
@@ -67,6 +53,7 @@ export default function LaunchReveal() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (finished) return;
       if (["ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
         event.preventDefault();
         advance(0.34);
@@ -77,18 +64,53 @@ export default function LaunchReveal() {
       }
     };
 
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const removeInteractionLocks = () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      removeInteractionLocks();
+      finishTimer = window.setTimeout(() => {
+        setActive(false);
+      }, 180);
+    };
+
+    const animate = () => {
+      if (finished) return;
+      const current = progressRef.current;
+      const target = targetRef.current;
+      const next = current + (target - current) * 0.16;
+      progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
+      setProgress(progressRef.current);
+
+      if (target >= 1 && progressRef.current >= 0.985) {
+        progressRef.current = 1;
+        setProgress(1);
+        finish();
+        return;
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("keydown", onKeyDown);
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      finished = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (finishTimer) window.clearTimeout(finishTimer);
+      removeInteractionLocks();
     };
   }, []);
 
@@ -124,39 +146,18 @@ export default function LaunchReveal() {
         <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/55 to-transparent" />
       </div>
 
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-white/5 via-[#b99a4f]/35 to-white/5"
-        style={{ opacity: seamOpacity }}
-      />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-white/5 via-[#b99a4f]/35 to-white/5" style={{ opacity: seamOpacity }} />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" style={{ opacity: Math.max(0.25, 1 - progress) }} />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,148,70,.22),transparent_38%)]" style={{ opacity: glowOpacity }} />
 
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent"
-        style={{ opacity: Math.max(0.25, 1 - progress) }}
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,148,70,.22),transparent_38%)]"
-        style={{ opacity: glowOpacity }}
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white will-change-transform"
-        style={{ opacity: textOpacity, transform: `translateY(${-progress * 16}px) scale(${1 + progress * 0.015})` }}
-      >
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white will-change-transform" style={{ opacity: textOpacity, transform: `translateY(${-progress * 16}px) scale(${1 + progress * 0.015})` }}>
         <p className="mb-5 text-[10px] font-bold uppercase tracking-[.42em] text-[#b99a4f] sm:text-xs">Gracia Camp 2026</p>
-        <h1 className="max-w-6xl text-[clamp(3.2rem,10vw,9rem)] font-black uppercase leading-[.82] tracking-[-.055em]">
-          ¿Estás listo?
-        </h1>
+        <h1 className="max-w-6xl text-[clamp(3.2rem,10vw,9rem)] font-black uppercase leading-[.82] tracking-[-.055em]">¿Estás listo?</h1>
       </div>
 
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 text-white/70 sm:bottom-10"
-        style={{ opacity: hintOpacity }}
-      >
+      <div className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 text-white/70 sm:bottom-10" style={{ opacity: hintOpacity }}>
         <span className="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">Deslizá para descubrir</span>
-        <span className="flex h-10 w-6 justify-center rounded-full border border-white/35 p-1">
-          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#b99a4f]" />
-        </span>
+        <span className="flex h-10 w-6 justify-center rounded-full border border-white/35 p-1"><span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#b99a4f]" /></span>
       </div>
     </div>
   );
