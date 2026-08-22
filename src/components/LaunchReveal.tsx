@@ -24,18 +24,18 @@ export default function LaunchReveal() {
     const animate = () => {
       const current = progressRef.current;
       const target = targetRef.current;
-      const next = current + (target - current) * 0.055;
+      const next = current + (target - current) * 0.1;
       progressRef.current = Math.abs(target - next) < 0.001 ? target : next;
       setProgress(progressRef.current);
 
-      if (target >= 1 && progressRef.current >= 0.992) {
+      if (target >= 1 && progressRef.current >= 0.99) {
         progressRef.current = 1;
         setProgress(1);
         window.setTimeout(() => {
           setActive(false);
           document.body.style.overflow = previousOverflow;
           try { sessionStorage.setItem(SESSION_KEY, "1"); } catch {}
-        }, 900);
+        }, 420);
         return;
       }
 
@@ -52,8 +52,8 @@ export default function LaunchReveal() {
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       const direction = event.deltaY >= 0 ? 1 : -1;
-      const magnitude = Math.min(Math.abs(event.deltaY), 120);
-      advance(direction * magnitude / 3200);
+      const magnitude = Math.min(Math.abs(event.deltaY), 140);
+      advance(direction * magnitude / 1700);
     };
 
     const onTouchStart = (event: TouchEvent) => {
@@ -65,18 +65,18 @@ export default function LaunchReveal() {
       event.preventDefault();
       const currentY = event.touches[0]?.clientY ?? touchStartY.current;
       const delta = touchStartY.current - currentY;
-      advance(delta / 1700);
+      advance(delta / 900);
       touchStartY.current = currentY;
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (["ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) {
         event.preventDefault();
-        advance(0.12);
+        advance(0.2);
       }
       if (["ArrowUp", "PageUp"].includes(event.key)) {
         event.preventDefault();
-        advance(-0.12);
+        advance(-0.2);
       }
     };
 
@@ -97,13 +97,13 @@ export default function LaunchReveal() {
 
   if (!active) return null;
 
-  const eased = 1 - Math.pow(1 - progress, 2.35);
+  const eased = 1 - Math.pow(1 - progress, 2.15);
   const curtainOffset = eased * 106;
-  const inwardScale = 1 - eased * 0.025;
-  const textOpacity = Math.max(0, 1 - progress * 1.65);
-  const hintOpacity = Math.max(0, 1 - progress * 2.35);
+  const inwardScale = 1 - eased * 0.02;
+  const textOpacity = Math.max(0, 1 - progress * 1.85);
+  const hintOpacity = Math.max(0, 1 - progress * 2.7);
   const glowOpacity = Math.max(0, 0.28 - progress * 0.24);
-  const seamOpacity = Math.max(0, 0.9 - progress * 1.3);
+  const seamOpacity = Math.max(0, 0.9 - progress * 1.45);
 
   const curtainTexture = {
     backgroundImage:
@@ -115,20 +115,14 @@ export default function LaunchReveal() {
     <div className="fixed inset-0 z-[9999] overflow-hidden bg-[#030504]" aria-label="Presentación de Gracia Camp 2026">
       <div
         className="absolute inset-y-0 left-0 w-[51%] origin-left will-change-transform shadow-[18px_0_42px_rgba(0,0,0,.45)]"
-        style={{
-          ...curtainTexture,
-          transform: `translate3d(-${curtainOffset}%,0,0) scaleX(${inwardScale})`,
-        }}
+        style={{ ...curtainTexture, transform: `translate3d(-${curtainOffset}%,0,0) scaleX(${inwardScale})` }}
       >
         <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/55 to-transparent" />
       </div>
 
       <div
         className="absolute inset-y-0 right-0 w-[51%] origin-right will-change-transform shadow-[-18px_0_42px_rgba(0,0,0,.45)]"
-        style={{
-          ...curtainTexture,
-          transform: `translate3d(${curtainOffset}%,0,0) scaleX(${inwardScale})`,
-        }}
+        style={{ ...curtainTexture, transform: `translate3d(${curtainOffset}%,0,0) scaleX(${inwardScale})` }}
       >
         <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/55 to-transparent" />
       </div>
@@ -150,10 +144,7 @@ export default function LaunchReveal() {
 
       <div
         className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white will-change-transform"
-        style={{
-          opacity: textOpacity,
-          transform: `translateY(${-progress * 18}px) scale(${1 + progress * 0.018})`,
-        }}
+        style={{ opacity: textOpacity, transform: `translateY(${-progress * 16}px) scale(${1 + progress * 0.015})` }}
       >
         <p className="mb-5 text-[10px] font-bold uppercase tracking-[.42em] text-[#b99a4f] sm:text-xs">Gracia Camp 2026</p>
         <h1 className="max-w-6xl text-[clamp(3.2rem,10vw,9rem)] font-black uppercase leading-[.82] tracking-[-.055em]">
@@ -165,7 +156,7 @@ export default function LaunchReveal() {
         className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-3 text-white/70 sm:bottom-10"
         style={{ opacity: hintOpacity }}
       >
-        <span className="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">Deslizá lentamente para descubrir</span>
+        <span className="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">Deslizá para descubrir</span>
         <span className="flex h-10 w-6 justify-center rounded-full border border-white/35 p-1">
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#b99a4f]" />
         </span>
