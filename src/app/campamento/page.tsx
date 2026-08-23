@@ -6,7 +6,6 @@ import Header from "@/components/Header";
 import PreacherSection from "@/components/PreacherSection";
 import MerchSectionPublic from "@/components/MerchSectionPublic";
 import CampVideoSection from "@/components/CampVideoSection";
-import LaunchReveal from "@/components/LaunchReveal";
 import { ButtonLink, Container, Eyebrow } from "@/components/ui/design";
 
 function HeroVideo() {
@@ -31,4 +30,4 @@ function CTA(){return <section className="bg-brand-forest py-12 text-white sm:py
 function Footer(){return <footer className="bg-brand-forestDark py-6 text-white"><Container className="flex flex-col gap-2 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold text-white">Ministerio de Jóvenes CBG</p><p className="mt-1">Gracia Camp 2026</p></div><p>© 2026 Ministerio de Jóvenes CBG.</p></Container></footer>}
 function StickyMobileActions(){return <div className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-border bg-brand-warmWhite/95 p-2.5 backdrop-blur md:hidden"><Link href="/registro" className="flex min-h-11 items-center justify-center rounded-full bg-brand-forest px-4 text-sm font-semibold text-white">Inscribirme</Link></div>}
 
-export default function CampamentoPage(){return <div className="min-h-screen bg-brand-warmWhite pb-16 text-brand-ink antialiased md:pb-0"><LaunchReveal/><Header/><main><HeroVideo/><KeyInfo/><Pillars/><PreacherSection/><MerchSectionPublic/><CampVideoSection/><FAQ/><CTA/></main><Footer/><StickyMobileActions/></div>}
+export default function CampamentoPage(){return <div className="min-h-screen bg-brand-warmWhite pb-16 text-brand-ink antialiased md:pb-0"><Header/><main><HeroVideo/><KeyInfo/><Pillars/><PreacherSection/><MerchSectionPublic/><CampVideoSection/><FAQ/><CTA/></main><Footer/><StickyMobileActions/></div>}
