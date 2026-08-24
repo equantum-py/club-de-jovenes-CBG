@@ -23,7 +23,7 @@ export default function MerchSectionPublic(){
         <Link href="/reservar-merch" aria-label="Reservar merch oficial Gracia Camp" className="group block overflow-hidden rounded-[1.4rem] focus:outline-none focus:ring-4 focus:ring-brand-gold/30 sm:rounded-[1.8rem]">
           <picture>
             {bannerMobileUrl?<source media="(max-width: 767px)" srcSet={bannerMobileUrl}/>:null}
-            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block w-full object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"/>
+            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block h-auto w-full object-cover shadow-sm [image-rendering:auto]" decoding="async"/>
           </picture>
         </Link>
       </div>
