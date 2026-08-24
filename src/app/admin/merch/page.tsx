@@ -1,5 +1,6 @@
 import HighQualityImageInput from "@/components/admin/HighQualityImageInput";
-import {getMerchSettings,merchImageUrl}from '@/lib/merch-settings';
+import MerchVideoInput from "@/components/admin/MerchVideoInput";
+import {getMerchSettings,merchImageUrl,merchVideoUrl}from '@/lib/merch-settings';
 
 export const dynamic='force-dynamic';
 
@@ -11,6 +12,7 @@ export default async function MerchAdmin({searchParams}:{searchParams?:{guardado
   const s=await getMerchSettings();
   const desktop=merchImageUrl(s.bannerDesktopPath,'');
   const mobile=merchImageUrl(s.bannerMobilePath,'');
+  const video=merchVideoUrl(s.videoPath);
   return <main className="p-5 sm:p-8 lg:p-10">
     <p className="text-xs font-semibold uppercase tracking-[.2em] text-brand-gold">Gracia Camp 2026</p>
     <h1 className="mt-2 text-4xl font-semibold text-brand-forest">Merch oficial</h1>
@@ -35,6 +37,7 @@ export default async function MerchAdmin({searchParams}:{searchParams?:{guardado
             <HighQualityImageInput name="banner_mobile" minWidth={1080} minHeight={1080} recommended="1080 × 1350 px" className="mt-4 block w-full rounded-xl border border-brand-border bg-white p-3 text-sm text-brand-forest"/>
           </div>
         </div>
+        <div className="mt-5"><MerchVideoInput currentPath={s.videoPath} currentUrl={video}/></div>
         <div className="mt-5"><Input name="banner_alt" label="Descripción del banner" value={s.bannerAlt}/></div>
       </section>
 
