@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { saveMerchReservation } from "@/lib/merch-reservations";
 
-const COLORS=new Set(["blanco","verde","azul"]); const SIZES=new Set(["S","M","L","XL","XXL","XXXL"]);
+const COLORS=new Set(["blanco","negro","gris","azul"]); const SIZES=new Set(["S","M","L","XL","XXL","XXXL"]);
 const PROOF_TYPES=new Set(["image/jpeg","image/png","image/webp","application/pdf"]);
 const clean=(v:FormDataEntryValue|null)=>String(v||"").replace(/[\u0000-\u001F\u007F]/g," ").trim().slice(0,180);
 
