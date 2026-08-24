@@ -5,10 +5,10 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 
 const fmt=(n:number)=>`Gs. ${n.toLocaleString("es-PY")}`;
-const colors=[["blanco","Blanco"],["verde","Verde"],["azul","Azul"]] as const;
+const colors=[["blanco","Blanco"],["negro","Negro"],["gris","Gris"],["azul","Azul"]] as const;
 
 export default function ReservarMerchPage(){
- const[shirt,setShirt]=useState(false),[size,setSize]=useState("M"),[shirtColor,setShirtColor]=useState("verde"),[cap,setCap]=useState(false),[capColor,setCapColor]=useState("verde");
+ const[shirt,setShirt]=useState(false),[size,setSize]=useState("M"),[shirtColor,setShirtColor]=useState("negro"),[cap,setCap]=useState(false),[capColor,setCapColor]=useState("negro");
  const[payment,setPayment]=useState({bankName:"",accountHolder:"",accountNumber:"",documentNumber:""}); const[error,setError]=useState(""),[sending,setSending]=useState(false),[done,setDone]=useState(false);
  useEffect(()=>{fetch("/api/payment-settings").then(r=>r.json()).then(setPayment).catch(()=>{});},[]);
  const shirtPrice=shirt?(["XL","XXL","XXXL"].includes(size)?120000:100000):0; const total=useMemo(()=>shirtPrice+(cap?30000:0),[shirtPrice,cap]);
