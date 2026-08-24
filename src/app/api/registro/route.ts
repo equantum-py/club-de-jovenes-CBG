@@ -6,7 +6,7 @@ const MAX_SELFIE_BYTES = 5 * 1024 * 1024;
 const MAX_PROOF_BYTES = 10 * 1024 * 1024;
 const ALLOWED_SELFIE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const ALLOWED_PROOF_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
-const COLORS = new Set(["blanco", "verde", "azul"]);
+const COLORS = new Set(["blanco", "negro", "gris", "azul"]);
 const SIZES = new Set(["S", "M", "L", "XL", "XXL", "XXXL"]);
 
 function clean(value: unknown) { if (typeof value !== "string") return ""; return value.replace(/[\u0000-\u001F\u007F]/g, " ").trim().slice(0, MAX_FIELD_LENGTH); }
