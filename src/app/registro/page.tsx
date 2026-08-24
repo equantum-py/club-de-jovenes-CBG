@@ -35,7 +35,9 @@ export default function RegistroPage(){
   const[cameraOpen,setCameraOpen]=useState(false);
   const[cameraError,setCameraError]=useState("");
   const[submitError,setSubmitError]=useState("");
-  const[isSubmitting,setIsSubmitting]=useState(false);\n  const[aceptaReglamento,setAceptaReglamento]=useState(false);\n  const[autorizaResponsable,setAutorizaResponsable]=useState(false);
+  const[isSubmitting,setIsSubmitting]=useState(false);
+  const[aceptaReglamento,setAceptaReglamento]=useState(false);
+  const[autorizaResponsable,setAutorizaResponsable]=useState(false);
   const videoRef=useRef<HTMLVideoElement>(null);
   const streamRef=useRef<MediaStream|null>(null);
 
