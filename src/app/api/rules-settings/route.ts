@@ -1,0 +1,1 @@
+import{NextResponse}from'next/server';import{getCampRulesSettings}from'@/lib/camp-rules';export const dynamic='force-dynamic';export async function GET(){const s=await getCampRulesSettings();return NextResponse.json({pageEnabled:s.pageEnabled,showInRegistration:s.showInRegistration},{headers:{'Cache-Control':'no-store'}})}
