@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   const payload = normalizePayload(raw);
   const missingFields = validatePayload(payload);
   if (missingFields.length) return NextResponse.json({ ok: false, error: "Faltan datos obligatorios o hay datos inválidos.", missingFields }, { status: 400 });
-  const selfie = form.get("selfie");
+  const aceptaReglamento = clean(form.get("aceptaReglamento"));\n  const autorizaResponsable = clean(form.get("autorizaResponsable"));\n  if (aceptaReglamento !== "si") return NextResponse.json({ ok: false, error: "Debés aceptar el reglamento, las normas de convivencia y las políticas del campamento." }, { status: 400 });\n  if (Number(payload.edad) < 18 && autorizaResponsable !== "si") return NextResponse.json({ ok: false, error: "El responsable del menor debe autorizar su participación y aceptar las normas del campamento." }, { status: 400 });\n    const selfie = form.get("selfie");
   if (!(selfie instanceof File) || selfie.size === 0) return NextResponse.json({ ok: false, error: "Necesitamos una selfie del participante para completar la inscripción." }, { status: 400 });
   if (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type)) return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
   const paymentProof = form.get("paymentProof");
