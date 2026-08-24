@@ -9,6 +9,7 @@ export type MerchSettings={
   bannerDesktopPath:string;
   bannerMobilePath:string;
   bannerAlt:string;
+  videoPath:string;
   shirtEnabled:boolean;
   shirtName:string;
   shirtDescription:string;
@@ -39,6 +40,7 @@ const defaults:MerchSettings={
   bannerDesktopPath:'',
   bannerMobilePath:'',
   bannerAlt:'Merch oficial Gracia Camp 2026',
+  videoPath:'',
   shirtEnabled:true,
   shirtName:'Remera oficial Gracia Camp 2026',
   shirtDescription:'Diseño oficial del campamento. Edición limitada.',
@@ -83,6 +85,7 @@ export async function getMerchSettings():Promise<MerchSettings>{
       bannerDesktopPath:x.banner_desktop_path||'',
       bannerMobilePath:x.banner_mobile_path||'',
       bannerAlt:x.banner_alt||defaults.bannerAlt,
+      videoPath:x.video_path||'',
       shirtEnabled:x.shirt_enabled,
       shirtName:x.shirt_name,
       shirtDescription:x.shirt_description,
@@ -119,3 +122,4 @@ export async function saveMerch(data:Record<string,unknown>){
 
 export async function uploadMerchImage(file:File,prefix:string){return uploadSiteAsset(file,`merch-${prefix}`);}
 export function merchImageUrl(path:string,fallback:string){return path?publicAssetUrl(path):fallback;}
+export function merchVideoUrl(path:string){return path?publicAssetUrl(path):'';}
