@@ -23,7 +23,7 @@ const initialForm:FormData={nombre:"",apellido:"",edad:"",telefono:"",cedula:"",
 const emptyPayment:PaymentSettings={bankName:"",accountHolder:"",accountNumber:"",documentNumber:""};
 const DRAFT_KEY="gracia-camp-registro-draft";
 const formatGs=(value:number)=>`Gs. ${value.toLocaleString("es-PY")}`;
-const colorOptions=[["","Seleccionar color"],["blanco","Blanco"],["verde","Verde"],["azul","Azul"]];
+const colorOptions=[["","Seleccionar color"],["blanco","Blanco"],["negro","Negro"],["gris","Gris"],["azul","Azul"]];
 
 export default function RegistroPage(){
   const router=useRouter();
@@ -98,7 +98,7 @@ export default function RegistroPage(){
     </form></div>;
 }
 
-function ColorPreview({selected}:{selected:string}){const colors=[{id:"blanco",label:"Blanco",hex:"#FFFFFF"},{id:"verde",label:"Verde",hex:"#142B23"},{id:"azul",label:"Azul",hex:"#09193A"}];return <div className="mt-4 flex flex-wrap gap-3">{colors.map(c=><div key={c.id} className={`flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold ${selected===c.id?"border-brand-forest bg-brand-cream":"border-brand-border"}`}><span className="h-5 w-5 rounded-full border border-black/15" style={{backgroundColor:c.hex}}/><span>{c.label}</span></div>)}</div>;}
+function ColorPreview({selected}:{selected:string}){const colors=[{id:"blanco",label:"Blanco",hex:"#FFFFFF"},{id:"negro",label:"Negro",hex:"#111111"},{id:"gris",label:"Gris",hex:"#9CA3AF"},{id:"azul",label:"Azul",hex:"#09193A"}];return <div className="mt-4 flex flex-wrap gap-3">{colors.map(c=><div key={c.id} className={`flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold ${selected===c.id?"border-brand-forest bg-brand-cream":"border-brand-border"}`}><span className="h-5 w-5 rounded-full border border-black/15" style={{backgroundColor:c.hex}}/><span>{c.label}</span></div>)}</div>;}
 function PriceRow({label,value}:{label:string;value:number}){return <div className="flex items-center justify-between gap-4 border-b border-brand-border py-3 first:pt-0"><span className="text-sm text-brand-muted">{label}</span><strong className="text-brand-forest">{formatGs(value)}</strong></div>;}
 function PaymentRow({label,value}:{label:string;value:string}){return <div className="grid gap-1 py-4 sm:grid-cols-[180px_1fr] sm:items-center"><span className="text-xs font-semibold uppercase tracking-[.12em] text-brand-gold">{label}</span><span className="break-words font-semibold text-brand-forest">{value}</span></div>;}
 function Section({number,title}:{number:string;title:string}){return <div className="grid gap-3 border-t border-brand-border pt-8 sm:grid-cols-[64px_1fr]"><span className="text-3xl font-semibold text-brand-gold">{number}</span><h2 className="text-3xl font-semibold text-brand-forest">{title}</h2></div>;}
