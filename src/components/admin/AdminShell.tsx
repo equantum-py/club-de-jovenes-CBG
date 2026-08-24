@@ -19,6 +19,7 @@ const siteItems = [
   ["Merch oficial", "/admin/merch"],
   ["Video oficial", "/admin/video-oficial"],
   ["Datos de transferencia", "/admin/pago"],
+  ["Reglamento y normas", "/admin/reglamento"],
   ["Apariencia / Header", "/admin/apariencia"],
   ["Música de fondo", "/admin/musica"],
 ] as const;
