@@ -34,6 +34,9 @@ export async function POST(req:Request){
       whatsapp_number:t(f,'whatsapp_number').replace(/\D/g,'')
     };
 
+    const videoPath=t(f,'video_path');
+    if(videoPath)data.video_path=videoPath;
+
     for(const[field,prefix,column]of[
       ['banner_desktop','banner-desktop','banner_desktop_path'],
       ['banner_mobile','banner-mobile','banner_mobile_path'],
