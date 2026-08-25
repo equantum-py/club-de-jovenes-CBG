@@ -14,6 +14,7 @@ type FormData = {
   deseaRemera:string; talleRemera:string; colorRemera:string; deseaGorra:string; colorGorra:string;
 };
 type PaymentSettings = { bankName:string; accountHolder:string; accountNumber:string; documentNumber:string };
+type AcceptanceSettings={acceptanceEyebrow:string;acceptanceHeading:string;acceptanceIntro:string;acceptanceLabel:string;acceptanceText:string;acceptanceNote:string;guardianAcceptanceLabel:string;guardianAcceptanceText:string};
 
 const CAMP_PRICE=450000;
 const SHIRT_PRICE=100000;
@@ -21,6 +22,7 @@ const SHIRT_XL_PRICE=120000;
 const CAP_PRICE=30000;
 const initialForm:FormData={nombre:"",apellido:"",edad:"",telefono:"",cedula:"",sexo:"",iglesia:"",esInvitado:"",invitadoPor:"",alergias:"",medicamentos:"",enfermedadBase:"",contactoEmergenciaNombre:"",contactoEmergenciaTelefono:"",formaPago:"transferencia",nombrePadreMadre:"",telefonoPadreMadre:"",deseaRemera:"",talleRemera:"",colorRemera:"",deseaGorra:"",colorGorra:""};
 const emptyPayment:PaymentSettings={bankName:"",accountHolder:"",accountNumber:"",documentNumber:""};
+const defaultAcceptance:AcceptanceSettings={acceptanceEyebrow:"Obligatorio para finalizar",acceptanceHeading:"Normas y convivencia del campamento",acceptanceIntro:"Antes de enviar tu inscripción, confirmá que conocés y aceptás las condiciones de participación de Gracia Camp.",acceptanceLabel:"Compromiso del participante",acceptanceText:"Declaro que leí, comprendí y me comprometo a respetar el reglamento, las normas de convivencia, las indicaciones de los líderes y las políticas generales de Gracia Camp durante toda la actividad.",acceptanceNote:"El incumplimiento de las normas podrá implicar medidas disciplinarias o la exclusión de actividades, según corresponda.",guardianAcceptanceLabel:"Autorización del padre, madre o tutor",guardianAcceptanceText:"Como responsable del menor, autorizo su participación y declaro conocer y aceptar el reglamento, las normas y las condiciones generales del campamento."};
 const DRAFT_KEY="gracia-camp-registro-draft";
 const formatGs=(value:number)=>`Gs. ${value.toLocaleString("es-PY")}`;
 const colorOptions=[["","Seleccionar color"],["blanco","Blanco"],["negro","Negro"],["gris","Gris"],["azul","Azul"]];
@@ -31,6 +33,7 @@ export default function RegistroPage(){
   const[selfie,setSelfie]=useState<File|null>(null);
   const[paymentProof,setPaymentProof]=useState<File|null>(null);
   const[payment,setPayment]=useState<PaymentSettings>(emptyPayment);
+  const[acceptance,setAcceptance]=useState<AcceptanceSettings>(defaultAcceptance);
   const[preview,setPreview]=useState("");
   const[cameraOpen,setCameraOpen]=useState(false);
   const[cameraError,setCameraError]=useState("");
@@ -44,6 +47,7 @@ export default function RegistroPage(){
   useEffect(()=>{try{const saved=sessionStorage.getItem(DRAFT_KEY);if(saved)setFormData({...initialForm,...JSON.parse(saved),formaPago:"transferencia"});}catch{}},[]);
   useEffect(()=>{try{sessionStorage.setItem(DRAFT_KEY,JSON.stringify(formData));}catch{}},[formData]);
   useEffect(()=>{fetch("/api/payment-settings",{cache:"no-store"}).then(r=>r.ok?r.json():emptyPayment).then(setPayment).catch(()=>setPayment(emptyPayment));},[]);
+  useEffect(()=>{fetch("/api/registration-settings",{cache:"no-store"}).then(r=>r.ok?r.json():defaultAcceptance).then(data=>setAcceptance({...defaultAcceptance,...data})).catch(()=>setAcceptance(defaultAcceptance));},[]);
   useEffect(()=>()=>streamRef.current?.getTracks().forEach(track=>track.stop()),[]);
 
   const esMenor=useMemo(()=>formData.edad!==""&&Number(formData.edad)<18,[formData.edad]);
@@ -80,18 +84,18 @@ export default function RegistroPage(){
       <Section number="08" title="Compromiso y aceptación"/>
       <section className="rounded-2xl border border-brand-border bg-white p-5 sm:p-7">
         <div className="border-b border-brand-border pb-5">
-          <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">Obligatorio para finalizar</p>
-          <h3 className="mt-2 text-xl font-semibold text-brand-forest">Normas y convivencia del campamento</h3>
-          <p className="mt-2 text-sm leading-6 text-brand-muted">Antes de enviar tu inscripción, confirmá que conocés y aceptás las condiciones de participación de Gracia Camp.</p>
+          <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-gold">{acceptance.acceptanceEyebrow}</p>
+          <h3 className="mt-2 text-xl font-semibold text-brand-forest">{acceptance.acceptanceHeading}</h3>
+          <p className="mt-2 text-sm leading-6 text-brand-muted">{acceptance.acceptanceIntro}</p>
         </div>
         <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-brand-border bg-brand-cream p-4">
           <input type="checkbox" checked={aceptaReglamento} onChange={e=>{setAceptaReglamento(e.target.checked);setSubmitError("");}} required className="mt-1 h-5 w-5 shrink-0 accent-brand-forest"/>
-          <span className="text-sm leading-6 text-brand-ink"><strong className="text-brand-forest">Compromiso del participante *</strong><br/>Declaro que leí, comprendí y me comprometo a respetar el reglamento, las normas de convivencia, las indicaciones de los líderes y las políticas generales de Gracia Camp durante toda la actividad.</span>
+          <span className="text-sm leading-6 text-brand-ink"><strong className="text-brand-forest">{acceptance.acceptanceLabel} *</strong><br/>{acceptance.acceptanceText}</span>
         </label>
-        <p className="ml-8 mt-2 text-xs leading-5 text-brand-muted">El incumplimiento de las normas podrá implicar medidas disciplinarias o la exclusión de actividades, según corresponda.</p>
+        <p className="ml-8 mt-2 text-xs leading-5 text-brand-muted">{acceptance.acceptanceNote}</p>
         {esMenor?<label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-brand-border bg-brand-cream p-4">
           <input type="checkbox" checked={autorizaResponsable} onChange={e=>{setAutorizaResponsable(e.target.checked);setSubmitError("");}} required className="mt-1 h-5 w-5 shrink-0 accent-brand-forest"/>
-          <span className="text-sm leading-6 text-brand-ink"><strong className="text-brand-forest">Autorización del padre, madre o tutor *</strong><br/>Como responsable del menor, autorizo su participación y declaro conocer y aceptar el reglamento, las normas y las condiciones generales del campamento.</span>
+          <span className="text-sm leading-6 text-brand-ink"><strong className="text-brand-forest">{acceptance.guardianAcceptanceLabel} *</strong><br/>{acceptance.guardianAcceptanceText}</span>
         </label>:null}
       </section>
       {submitError?<p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{submitError}</p>:null}<div className="flex flex-col-reverse gap-3 border-t border-brand-border pt-8 sm:flex-row sm:justify-between"><Link href="/bienvenida" className="rounded-full border border-brand-border px-6 py-3 text-center text-sm font-semibold">Volver</Link><button disabled={isSubmitting||!paymentProof||!aceptaReglamento||(esMenor&&!autorizaResponsable)} className="rounded-full bg-brand-forest px-8 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">{isSubmitting?"Enviando...":paymentProof?"Enviar registro":"Adjuntá el comprobante para finalizar"}</button></div>
