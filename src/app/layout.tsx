@@ -5,7 +5,7 @@ const socialDescription =
   "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://club-de-jovenes-cbg.vercel.app"),
+  metadataBase: new URL("https://campamentocbg-equantum-pys-projects.vercel.app"),
   title: {
     default: "Gracia Camp 2026",
     template: "%s | Gracia Camp 2026",
