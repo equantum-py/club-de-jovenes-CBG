@@ -1,21 +1,35 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const socialDescription =
+  "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://club-de-jovenes-cbg.vercel.app"),
   title: {
-    default: "Jóvenes CBG | Campamento 2026",
-    template: "%s | Jóvenes CBG",
+    default: "Gracia Camp 2026",
+    template: "%s | Gracia Camp 2026",
   },
-  description:
-    "Información y registro del Campamento 2026 del Club de Jóvenes CBG.",
+  description: socialDescription,
   openGraph: {
-    title: "Jóvenes CBG | Campamento 2026",
-    description:
-      "Información y registro del Campamento 2026 del Club de Jóvenes CBG.",
-    images: ["/og/gracia-camp-2026-whatsapp.jpg"],
-    locale: "es_PY",
+    title: "Gracia Camp 2026",
+    description: socialDescription,
     type: "website",
+    locale: "es_PY",
+    images: [
+      {
+        url: "/og/gracia-camp-social.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Gracia Camp 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gracia Camp 2026",
+    description: socialDescription,
+    images: ["/og/gracia-camp-social.jpg"],
   },
   robots: {
     index: true,
