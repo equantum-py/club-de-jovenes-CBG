@@ -3,6 +3,7 @@ import "./globals.css";
 
 const socialDescription =
   "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
+const socialImage = "/og/gracia-camp-oficial-2026-v2.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://graciacamp.vercel.app"),
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
     locale: "es_PY",
     images: [
       {
-        url: "/og/gracia-camp-social.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Gracia Camp 2026",
+        url: socialImage,
+        width: 1920,
+        height: 1080,
+        alt: "Gracia Camp 2026 - Campamento de Jóvenes",
       },
     ],
   },
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Gracia Camp 2026",
     description: socialDescription,
-    images: ["/og/gracia-camp-social.jpg"],
+    images: [socialImage],
   },
   robots: {
     index: true,
