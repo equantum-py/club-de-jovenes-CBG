@@ -3,7 +3,7 @@ import "./globals.css";
 
 const socialDescription =
   "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
-const socialImage = "/og/gracia-camp-oficial-2026-v3.jpg";
+const socialImage = "/og/gracia-camp-oficial-2026-v2.jpeg";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://graciacamp.vercel.app"),
@@ -20,8 +20,6 @@ export const metadata: Metadata = {
     images: [
       {
         url: socialImage,
-        width: 1200,
-        height: 848,
         alt: "Gracia Camp 2026 - Campamento de Jóvenes",
       },
     ],
