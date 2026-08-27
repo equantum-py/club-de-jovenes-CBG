@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-const title = "Gracia Camp 2026 | Jóvenes CBG";
+const title = "Gracia Camp 2026";
 const description =
-  "Campamento 2026 de Jóvenes CBG. Por gracia somos salvos — Efesios 2:8.";
-const siteUrl = "https://jovenescbg.vercel.app";
+  "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
+const siteUrl = "https://graciacamp.vercel.app";
 const pageUrl = `${siteUrl}/campamento`;
-const imageUrl = `${siteUrl}/og/gracia-camp-2026-whatsapp.jpg`;
+const imageUrl = `${siteUrl}/og/gracia-camp-oficial-2026-v2.jpeg`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -18,16 +18,14 @@ export const metadata: Metadata = {
     title,
     description,
     url: pageUrl,
-    siteName: "Jóvenes CBG",
+    siteName: "Gracia Camp 2026",
     type: "website",
     locale: "es_PY",
     images: [
       {
         url: imageUrl,
         secureUrl: imageUrl,
-        width: 1200,
-        height: 630,
-        alt: "Gracia Camp 2026 - Jóvenes CBG",
+        alt: "Gracia Camp 2026 - Campamento de Jóvenes",
         type: "image/jpeg",
       },
     ],
