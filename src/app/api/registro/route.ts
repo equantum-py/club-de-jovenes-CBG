@@ -112,7 +112,10 @@ export async function POST(request: Request) {
 
   const selfieValue = form.get("selfie");
   const selfie = selfieValue instanceof File && selfieValue.size > 0 ? selfieValue : null;
-  if (selfie && (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type))) {
+  if (!selfie) {
+    return NextResponse.json({ ok: false, error: "La selfie es obligatoria. Abrí la cámara y sacate una foto para continuar." }, { status: 400 });
+  }
+  if (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type)) {
     return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
   }
 
@@ -123,7 +126,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const selfiePath = selfie ? await uploadParticipantSelfie(selfie, payload.cedula) : "";
+    const selfiePath = await uploadParticipantSelfie(selfie, payload.cedula);
     const paymentProofPath = paymentProof ? await uploadPaymentProof(paymentProof, payload.cedula) : "";
     await saveRegistration(payload, selfiePath, paymentProofPath);
     return NextResponse.json({ ok: true, message: "Registro guardado correctamente." }, { headers: { "Cache-Control": "no-store" } });
