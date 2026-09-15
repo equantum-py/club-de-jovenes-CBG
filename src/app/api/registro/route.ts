@@ -97,7 +97,6 @@ export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   if (!form) return NextResponse.json({ ok: false, error: "El formulario enviado no es válido." }, { status: 400 });
 
-  // Honeypot: los usuarios reales nunca completan este campo oculto.
   if (clean(form.get("website"))) return NextResponse.json({ ok: true, message: "Registro recibido." });
 
   const raw: Partial<RegistrationPayload> = {};
@@ -111,17 +110,21 @@ export async function POST(request: Request) {
   if (aceptaReglamento !== "si") return NextResponse.json({ ok: false, error: "Debés aceptar el reglamento, las normas de convivencia y las políticas del campamento." }, { status: 400 });
   if (Number(payload.edad) < 18 && autorizaResponsable !== "si") return NextResponse.json({ ok: false, error: "El responsable del menor debe autorizar su participación y aceptar las normas del campamento." }, { status: 400 });
 
-  const selfie = form.get("selfie");
-  if (!(selfie instanceof File) || selfie.size === 0) return NextResponse.json({ ok: false, error: "Necesitamos una selfie del participante para completar la inscripción." }, { status: 400 });
-  if (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type)) return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
+  const selfieValue = form.get("selfie");
+  const selfie = selfieValue instanceof File && selfieValue.size > 0 ? selfieValue : null;
+  if (selfie && (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type))) {
+    return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
+  }
 
-  const paymentProof = form.get("paymentProof");
-  if (!(paymentProof instanceof File) || paymentProof.size === 0) return NextResponse.json({ ok: false, error: "Adjuntá el comprobante de transferencia para completar la inscripción." }, { status: 400 });
-  if (paymentProof.size > MAX_PROOF_BYTES || !ALLOWED_PROOF_TYPES.has(paymentProof.type)) return NextResponse.json({ ok: false, error: "El comprobante debe ser JPG, PNG, WebP o PDF y pesar menos de 10 MB." }, { status: 400 });
+  const paymentProofValue = form.get("paymentProof");
+  const paymentProof = paymentProofValue instanceof File && paymentProofValue.size > 0 ? paymentProofValue : null;
+  if (paymentProof && (paymentProof.size > MAX_PROOF_BYTES || !ALLOWED_PROOF_TYPES.has(paymentProof.type))) {
+    return NextResponse.json({ ok: false, error: "El comprobante debe ser JPG, PNG, WebP o PDF y pesar menos de 10 MB." }, { status: 400 });
+  }
 
   try {
-    const selfiePath = await uploadParticipantSelfie(selfie, payload.cedula);
-    const paymentProofPath = await uploadPaymentProof(paymentProof, payload.cedula);
+    const selfiePath = selfie ? await uploadParticipantSelfie(selfie, payload.cedula) : "";
+    const paymentProofPath = paymentProof ? await uploadPaymentProof(paymentProof, payload.cedula) : "";
     await saveRegistration(payload, selfiePath, paymentProofPath);
     return NextResponse.json({ ok: true, message: "Registro guardado correctamente." }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
