@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { saveRegistration, uploadParticipantSelfie, uploadPaymentProof, type RegistrationPayload } from "@/lib/registration-db";
+import { saveRegistration, uploadPaymentProof, type RegistrationPayload } from "@/lib/registration-db";
 
 const MAX_FIELD_LENGTH = 500;
-const MAX_SELFIE_BYTES = 5 * 1024 * 1024;
 const MAX_PROOF_BYTES = 10 * 1024 * 1024;
-const MAX_REQUEST_BYTES = 17 * 1024 * 1024;
+const MAX_REQUEST_BYTES = 12 * 1024 * 1024;
 const RATE_WINDOW_MS = 15 * 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 8;
-const ALLOWED_SELFIE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const ALLOWED_PROOF_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
 const COLORS = new Set(["blanco", "negro", "gris", "azul"]);
 const SIZES = new Set(["S", "M", "L", "XL", "XXL", "XXXL"]);
@@ -110,15 +108,6 @@ export async function POST(request: Request) {
   if (aceptaReglamento !== "si") return NextResponse.json({ ok: false, error: "Debés aceptar el reglamento, las normas de convivencia y las políticas del campamento." }, { status: 400 });
   if (Number(payload.edad) < 18 && autorizaResponsable !== "si") return NextResponse.json({ ok: false, error: "El responsable del menor debe autorizar su participación y aceptar las normas del campamento." }, { status: 400 });
 
-  const selfieValue = form.get("selfie");
-  const selfie = selfieValue instanceof File && selfieValue.size > 0 ? selfieValue : null;
-  if (!selfie) {
-    return NextResponse.json({ ok: false, error: "La selfie es obligatoria. Abrí la cámara y sacate una foto para continuar." }, { status: 400 });
-  }
-  if (selfie.size > MAX_SELFIE_BYTES || !ALLOWED_SELFIE_TYPES.has(selfie.type)) {
-    return NextResponse.json({ ok: false, error: "La selfie debe ser JPG, PNG o WebP y pesar menos de 5 MB." }, { status: 400 });
-  }
-
   const paymentProofValue = form.get("paymentProof");
   const paymentProof = paymentProofValue instanceof File && paymentProofValue.size > 0 ? paymentProofValue : null;
   if (paymentProof && (paymentProof.size > MAX_PROOF_BYTES || !ALLOWED_PROOF_TYPES.has(paymentProof.type))) {
@@ -126,9 +115,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const selfiePath = await uploadParticipantSelfie(selfie, payload.cedula);
     const paymentProofPath = paymentProof ? await uploadPaymentProof(paymentProof, payload.cedula) : "";
-    await saveRegistration(payload, selfiePath, paymentProofPath);
+    await saveRegistration(payload, "", paymentProofPath);
     return NextResponse.json({ ok: true, message: "Registro guardado correctamente." }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
