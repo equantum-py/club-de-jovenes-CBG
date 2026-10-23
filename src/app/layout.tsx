@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 const socialDescription =
-  "Campamento de Jóvenes Gracia Camp 2026: palabra, aventura, juegos y comunión.";
+  "Gracia Camp 2026: 04–06 de diciembre en Monte Aramí, Paraguarí. Tres días de palabra, aventura, juegos y comunión.";
 const socialImage = "/og/gracia-camp-oficial-2026-v2.jpeg";
 
 export const metadata: Metadata = {
