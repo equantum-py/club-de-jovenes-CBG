@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 function getTimeRemaining() {
-  const target = new Date("2026-12-03T08:00:00-03:00");
+  const target = new Date("2026-12-04T08:00:00-03:00");
   const now = new Date();
   const diff = target.getTime() - now.getTime();
 
