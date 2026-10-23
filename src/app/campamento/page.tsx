@@ -60,7 +60,7 @@ function Hero(){
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
           <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]">
             <iframe
-              src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1418411315349210&show_text=false&width=1280"
+              src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1418411315349210&show_text=false&autoplay=true&width=1280"
               title="Video Gracia Camp"
               className="absolute inset-0 h-full w-full border-0"
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
