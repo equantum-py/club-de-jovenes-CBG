@@ -4,7 +4,6 @@ import Link from "next/link";
 import Countdown from "@/components/Countdown";
 import PreacherSection from "@/components/PreacherSection";
 import MerchSectionPublic from "@/components/MerchSectionPublic";
-import CampVideoSection from "@/components/CampVideoSection";
 
 const LOGO_URL="https://tiqvcxasaqboxyydwzhz.supabase.co/storage/v1/object/public/site-assets/logo-1787424725781.png";
 
@@ -59,9 +58,7 @@ function Hero(){
         <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <video autoPlay muted loop playsInline preload="metadata" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]" aria-hidden="true">
-            <source src="/videos/video%20detras.mp4" type="video/mp4"/>
-          </video>
+          <img src="/campamento-hero.jpg" alt="Gracia Camp 2026" fetchPriority="high" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]"/>
           <div className="absolute inset-0 bg-gradient-to-t from-[#071f1a]/75 via-transparent to-transparent"/>
           <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
             <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
@@ -127,6 +124,35 @@ function Pillars(){
           <h3 className="mt-3 max-w-sm text-base font-semibold tracking-[-.01em] sm:mt-14 sm:text-3xl sm:tracking-[-.03em]">{title}</h3>
           {text?<p className="mt-1 max-w-sm text-xs leading-5 text-white/55 sm:mt-4 sm:text-sm sm:leading-6">{text}</p>:null}
         </article>)}
+      </div>
+    </div>
+  </section>
+}
+
+function ExperienceGallery(){
+  return <section id="momentos" className="bg-white py-10 sm:py-20">
+    <div className="mx-auto max-w-[1380px] px-5 sm:px-8">
+      <div className="grid gap-5 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">La experiencia</p>
+          <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-5xl">Tres días para compartir, aprender y vivir algo distinto.</h2>
+        </div>
+        <p className="max-w-xl text-sm leading-6 text-[#667a74] sm:justify-self-end sm:text-base sm:leading-7">Un entorno pensado para salir de la rutina, conectar con otros y enfocarnos en lo esencial.</p>
+      </div>
+      <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-[1.15fr_.85fr]">
+        <article className="overflow-hidden rounded-[1.3rem] border border-[#0b493d]/10 bg-[#f7f3e9] sm:rounded-[2rem]">
+          <img src="/campamento-bg.jpg" alt="Experiencia Gracia Camp" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+        </article>
+        <div className="grid gap-3">
+          <article className="overflow-hidden rounded-[1.3rem] border border-[#0b493d]/10 bg-[#f7f3e9] sm:rounded-[2rem]">
+            <img src="/bienvenida-bg..jpg" alt="Momentos Gracia Camp" loading="lazy" className="aspect-[16/9] h-full w-full object-cover"/>
+          </article>
+          <article className="rounded-[1.3rem] border border-[#0b493d]/10 bg-[#0b493d] p-5 text-white sm:rounded-[2rem] sm:p-7">
+            <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#d8be70]">Monte Aramí · Paraguarí</p>
+            <p className="mt-3 text-xl font-semibold tracking-[-.03em] sm:text-2xl">Palabra, comunión y propósito.</p>
+            <p className="mt-2 text-sm leading-6 text-white/65">04–06 de diciembre · Gracia Camp 2026</p>
+          </article>
+        </div>
       </div>
     </div>
   </section>
@@ -200,7 +226,7 @@ export default function CampamentoPage(){
       <KeyInfo/>
       <Pillars/>
       <MerchSectionPublic/>
-      <CampVideoSection/>
+      <ExperienceGallery/>
       <FAQ/>
       <CTA/>
     </main>
