@@ -138,34 +138,50 @@ function Pillars(){
 }
 
 function ExperienceGallery(){
+  const photos=[
+    "https://scontent.fasu4-1.fna.fbcdn.net/v/t51.75761-15/467728634_18249175168287245_6217892445326613116_n.jpg?stp=dst-jpg_tt6&cstp=mx1200x1200&ctp=s1200x1200&_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=127cfc&_nc_ohc=yK05HHTHFx8Q7kNvwGVfFui&_nc_oc=Ado61goERFm_Oq5bufeH5cS53mc1Dv7kOQ2jg8bsmwMsdTy_1EX8iXNWpwF4TJT0xns&_nc_zt=23&_nc_ht=scontent.fasu4-1.fna&_nc_gid=kMOeFokJEz3g2Z9XbIgFwg&_nc_ss=7d2a8&oh=00_AQOmuLO9g9QiS98PlRNN_-9V6d5AwA6PmnHX2ZObWR72tA&oe=6AE15520",
+    "https://scontent.fasu3-1.fna.fbcdn.net/v/t51.75761-15/463774154_18244619797287245_7491826258637776928_n.jpg?stp=dst-jpg_tt6&cstp=mx1440x1440&ctp=s1440x1440&_nc_cat=109&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=127cfc&_nc_ohc=SHfcV39MjZMQ7kNvwFHOV2W&_nc_oc=AdoRb8ONXrqWfInS6pIb8SIJ1cKHkikw6dhJ3on3SC9cp9_gb_cWA2hcNewjtiWxEHQ&_nc_zt=23&_nc_ht=scontent.fasu3-1.fna&_nc_gid=03XXqzRtdnaMCnhgSoz-Uw&_nc_ss=7d2a8&oh=00_AQO3pP330vE7INSIslwP_e6N9bMWw_UOBpOs9_MoFaRDTw&oe=6AE15FD5",
+    "https://scontent.fasu3-1.fna.fbcdn.net/v/t39.30808-6/469590539_18251106427287245_1973854245760209958_n.jpg?stp=dst-jpg_tt6&cstp=mx1284x1283&ctp=s1284x1283&_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=127cfc&_nc_ohc=3Q2DAVlNnv8Q7kNvwGCL5T7&_nc_oc=AdomTf15BPqyz2q95Kluqi_tK93oVW7GxqsImI7KlAS0NrWM-53zfshWWU9FEyv_b3U&_nc_zt=23&_nc_ht=scontent.fasu3-1.fna&_nc_gid=qtvseKPnZcSUj_9sPK2ukQ&_nc_ss=7d2a8&oh=00_AQOLE6RsvvhT_yf2D3mXZGFhEiuMFGLQDiNnX6y2jmMk6A&oe=6AE13315",
+    "https://scontent.fasu4-1.fna.fbcdn.net/v/t1.6435-9/81429482_825571651204645_4906395361335050240_n.jpg?stp=dst-jpg_tt6&cstp=mx1656x630&ctp=s1656x630&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=KPgQZDiZ8hcQ7kNvwHHaGDs&_nc_oc=AdqCM75r2XmxsTk6qagFBtNGBCxsjLA3tDZc102q3x6UY7IjhwzTkpMkaF5kH0kHqtY&_nc_zt=23&_nc_ht=scontent.fasu4-1.fna&_nc_gid=-2-_pdH64M6FZOjIFivfUQ&_nc_ss=7d2a8&oh=00_AQNjQKltoBf3CSgGBj6xfPs2Ez3CanZTKmEMlzMxlusrFQ&oe=6B02CB57",
+    "https://scontent.fasu4-1.fna.fbcdn.net/v/t51.82787-15/791144195_18334056082287245_7369366710206220414_n.jpg?stp=dst-jpg_tt6&cstp=mx1600x2004&ctp=s1600x2004&_nc_cat=109&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Mhu_igZWCx8Q7kNvwGiAEhB&_nc_oc=AdqPezs1Z-qB0uWSRxf5cbJbvsMlfPjBpJsEX7MZLks9VJP8yiiqBXy1QbRwGJaA1sA&_nc_zt=23&_nc_ht=scontent.fasu4-1.fna&_nc_gid=r9Fm6w7D5v59Itgm2nGgxA&_nc_ss=7d2a8&oh=00_AQPZduU6vF-kWs8fLW07ujzrgBFxIPQzcMxyHWVIVOOI2A&oe=6AE15453"
+  ];
   return <section id="momentos" className="bg-white py-10 sm:py-20">
     <div className="mx-auto max-w-[1380px] px-5 sm:px-8">
       <div className="grid gap-5 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">La experiencia</p>
-          <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-5xl">Tres días para compartir, aprender y vivir algo distinto.</h2>
+          <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Conocé el lugar</p>
+          <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-5xl">Monte Aramí, Paraguarí.</h2>
         </div>
-        <p className="max-w-xl text-sm leading-6 text-[#667a74] sm:justify-self-end sm:text-base sm:leading-7">Un entorno pensado para salir de la rutina, conectar con otros y enfocarnos en lo esencial.</p>
+        <p className="max-w-xl text-sm leading-6 text-[#667a74] sm:justify-self-end sm:text-base sm:leading-7">El espacio donde vamos a vivir Gracia Camp 2026 durante tres días.</p>
       </div>
-      <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-[1.15fr_.85fr]">
-        <article className="overflow-hidden rounded-[1.3rem] border border-[#0b493d]/10 bg-[#f7f3e9] sm:rounded-[2rem]">
-          <img src="/campamento-bg.jpg" alt="Experiencia Gracia Camp" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+
+      <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-12">
+        <article className="overflow-hidden rounded-[1.3rem] sm:col-span-7 sm:row-span-2 sm:rounded-[2rem]">
+          <img src={photos[0]} alt="Monte Aramí, Paraguarí" loading="lazy" className="h-full min-h-[280px] w-full object-cover sm:min-h-[560px]"/>
         </article>
-        <div className="grid gap-3">
-          <article className="overflow-hidden rounded-[1.3rem] border border-[#0b493d]/10 bg-[#f7f3e9] sm:rounded-[2rem]">
-            <img src="/bienvenida-bg..jpg" alt="Momentos Gracia Camp" loading="lazy" className="aspect-[16/9] h-full w-full object-cover"/>
-          </article>
-          <article className="rounded-[1.3rem] border border-[#0b493d]/10 bg-[#0b493d] p-5 text-white sm:rounded-[2rem] sm:p-7">
+        <article className="overflow-hidden rounded-[1.3rem] sm:col-span-5 sm:rounded-[2rem]">
+          <img src={photos[1]} alt="Monte Aramí" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+        </article>
+        <article className="overflow-hidden rounded-[1.3rem] sm:col-span-5 sm:rounded-[2rem]">
+          <img src={photos[2]} alt="Monte Aramí" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+        </article>
+        <article className="overflow-hidden rounded-[1.3rem] sm:col-span-4 sm:rounded-[2rem]">
+          <img src={photos[3]} alt="Monte Aramí" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+        </article>
+        <article className="overflow-hidden rounded-[1.3rem] sm:col-span-4 sm:rounded-[2rem]">
+          <img src={photos[4]} alt="Monte Aramí" loading="lazy" className="aspect-[16/10] h-full w-full object-cover"/>
+        </article>
+        <article className="flex items-center rounded-[1.3rem] bg-[#0b493d] p-5 text-white sm:col-span-4 sm:rounded-[2rem] sm:p-7">
+          <div>
             <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#d8be70]">Monte Aramí · Paraguarí</p>
             <p className="mt-3 text-xl font-semibold tracking-[-.03em] sm:text-2xl">Palabra, comunión y propósito.</p>
             <p className="mt-2 text-sm leading-6 text-white/65">04–06 de diciembre · Gracia Camp 2026</p>
-          </article>
-        </div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 }
-
 function FAQ(){
   const items=[
     ["¿Cómo me inscribo?","Completá el formulario de registro y seguí las indicaciones del equipo."],
