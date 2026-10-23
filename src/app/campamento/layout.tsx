@@ -5,7 +5,7 @@ const description =
   "Gracia Camp 2026: 04–06 de diciembre en Monte Aramí, Paraguarí. Tres días de palabra, aventura, juegos y comunión.";
 const siteUrl = "https://graciacamp.vercel.app";
 const pageUrl = `${siteUrl}/campamento`;
-const imageUrl = `${siteUrl}/api/social-preview`;
+const imageUrl = `${siteUrl}/og/gracia-camp-social-2026-v3.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
