@@ -220,32 +220,6 @@ function ExperienceGallery(){
     </div>
   </section>
 }
-function FAQ(){
-  const items=[
-    ["¿Cómo me inscribo?","Completá el formulario de registro y seguí las indicaciones del equipo."],
-    ["¿Qué incluye?","La organización comunicará el detalle completo y las recomendaciones antes del campamento."],
-    ["¿Dónde veo el reglamento?","Podés abrirlo desde el botón al final de esta página."]
-  ];
-  return <section className="bg-white py-10 sm:py-28">
-    <div className="mx-auto grid max-w-[1380px] gap-6 px-5 sm:gap-12 sm:px-8 lg:grid-cols-[.72fr_1.28fr]">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Preguntas frecuentes</p>
-        <h2 className="mt-2 text-[1.65rem] font-semibold leading-[1.08] tracking-[-.03em] text-[#0b493d] sm:mt-4 sm:text-6xl sm:tracking-[-.045em]">Todo lo que necesitás saber.</h2>
-        <p className="mt-3 max-w-md text-sm leading-6 text-[#667a74] sm:mt-5 sm:text-base sm:leading-7">Encontrá rápido las respuestas antes de reservar tu lugar.</p>
-      </div>
-      <div className="divide-y divide-[#0b493d]/10 border-y border-[#0b493d]/10">
-        {items.map(([q,a],i)=><details key={q} className="group py-1">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-sm font-semibold text-[#0b493d] sm:py-6 sm:text-xl">
-            <span><span className="mr-5 text-xs font-medium text-[#b39a54]">0{i+1}</span>{q}</span>
-            <span className="text-2xl font-light transition group-open:rotate-45">+</span>
-          </summary>
-          <p className="max-w-2xl pb-4 pl-8 text-xs leading-5 text-[#667a74] sm:pb-7 sm:pl-10 sm:text-base sm:leading-7">{a}</p>
-        </details>)}
-      </div>
-    </div>
-  </section>
-}
-
 function CTA(){
   return <section className="bg-[#f7f3e9] px-5 py-7 sm:px-8 sm:py-16">
     <div className="mx-auto max-w-[1380px] overflow-hidden rounded-[1.4rem] bg-[#0b493d] px-5 py-7 text-white sm:rounded-[2.7rem] sm:px-10 sm:py-16 lg:px-16">
@@ -289,7 +263,6 @@ export default function CampamentoPage(){
       <Pillars/>
       <MerchSectionPublic/>
       <ExperienceGallery/>
-      <FAQ/>
       <CTA/>
     </main>
     <Footer/>
