@@ -90,7 +90,7 @@ function KeyInfo(){
         <h2 className="mt-3 text-[2rem] font-semibold leading-[1.08] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-6xl sm:tracking-[-.045em]">Una experiencia pensada para desconectarte y encontrarte con lo esencial.</h2>
       </div>
       <div className="grid gap-2.5 sm:gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.35rem] border border-[#0b493d]/10 bg-[#f7f3e9] p-4.5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:rounded-[1.6rem] sm:p-7">
+        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.35rem] border border-[#0b493d]/10 bg-[#f7f3e9] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:rounded-[1.6rem] sm:p-7">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#b39a54]">{n}</span>
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
