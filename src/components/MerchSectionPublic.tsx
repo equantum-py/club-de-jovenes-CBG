@@ -18,12 +18,12 @@ export default function MerchSectionPublic(){
   if(!data)return null;
   const{bannerDesktopUrl,bannerMobileUrl,shirtImageUrl,capImageUrl,...settings}=data;
   return <>
-    {settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl)?<section id="merch-banner" className="bg-brand-cream py-4 sm:py-6">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <Link href="/reservar-merch" aria-label="Reservar merch oficial Gracia Camp" className="group block overflow-hidden rounded-[1.4rem] focus:outline-none focus:ring-4 focus:ring-brand-gold/30 sm:rounded-[1.8rem]">
+    {settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl)?<section id="merch-banner" className="bg-brand-cream py-2.5 sm:py-6">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8">
+        <Link href="/reservar-merch" aria-label="Reservar merch oficial Gracia Camp" className="group block overflow-hidden rounded-[1rem] focus:outline-none focus:ring-4 focus:ring-brand-gold/30 sm:rounded-[1.8rem]">
           <picture>
             {bannerMobileUrl?<source media="(max-width: 767px)" srcSet={bannerMobileUrl}/>:null}
-            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block h-auto w-full object-cover shadow-sm [image-rendering:auto]" decoding="async"/>
+            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt} className="block max-h-[220px] w-full object-cover object-center shadow-sm [image-rendering:auto] sm:max-h-none" decoding="async"/>
           </picture>
         </Link>
       </div>
