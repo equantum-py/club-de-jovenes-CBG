@@ -37,13 +37,16 @@ function Hero(){
           <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
           Ministerio de Jóvenes CBG
         </div>
+
         <h1 className="mt-5 text-[clamp(3rem,13vw,4.2rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-7 sm:text-[clamp(4rem,8vw,8rem)] sm:leading-[.82] sm:tracking-[-.065em]">
           Gracia
           <span className="block text-[#b39a54]">Camp 2026</span>
         </h1>
+
         <p className="mt-5 max-w-xl text-base leading-7 text-[#4e625d] sm:mt-8 sm:text-xl sm:leading-8">
           3 días para salir de la rutina y vivir lo que realmente importa.
         </p>
+
         <div className="mt-6 flex flex-col gap-2.5 sm:mt-9 sm:flex-row sm:gap-3">
           <Link href="/registro" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0b493d] px-6 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#083d34] sm:min-h-13 sm:px-7">
             Inscribirme ahora
@@ -57,6 +60,7 @@ function Hero(){
       <div className="relative">
         <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
+
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
           <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]">
             <video
@@ -71,8 +75,24 @@ function Hero(){
               <source src="/videos/monte-arami.mp4" type="video/mp4"/>
             </video>
           </div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-base font-black leading-none text-white sm:text-lg">Monte Aramí</p><p className="mt-1 text-[10px] font-medium text-white/65 sm:text-xs">Paraguarí</p></div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p></div>
+
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#071f1a]/55 via-transparent to-transparent"/>
+
+          <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
+            <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/45 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p>
+                <p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p>
+                <p className="mt-1 text-base font-black leading-none text-white sm:text-lg">Monte Aramí</p>
+                <p className="mt-1 text-[10px] font-medium text-white/65 sm:text-xs">Paraguarí</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p>
+                <p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p>
+              </div>
             </div>
           </div>
         </div>
