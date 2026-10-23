@@ -66,7 +66,7 @@ function Hero(){
           <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
             <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p><p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p></div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-sm font-semibold sm:text-base">Paraguarí</p></div>
+              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-base font-black leading-none text-white sm:text-lg">Monte Aramí</p><p className="mt-1 text-[10px] font-medium text-white/65 sm:text-xs">Paraguarí</p></div>
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p></div>
             </div>
           </div>
@@ -79,7 +79,7 @@ function Hero(){
 function KeyInfo(){
   const items=[
     ["01","Fecha","04–06","Diciembre 2026"],
-    ["02","Lugar","Paraguarí","Monte Aramí"],
+    ["02","Lugar","Monte Aramí","Paraguarí"],
     ["03","Precio","Gs. 380.000","Por persona · nuevo valor"],
     ["04","Cupos","Limitados","Inscripciones abiertas"]
   ];
@@ -96,8 +96,8 @@ function KeyInfo(){
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
           </div>
           <p className="mt-4 text-[9px] font-semibold uppercase tracking-[.14em] text-[#698078] sm:mt-10 sm:text-xs">{label}</p>
-          <p className={`mt-1 text-[1.05rem] font-semibold tracking-[-.02em] sm:mt-2 sm:text-2xl sm:tracking-[-.03em] ${label==="Precio"?"inline-flex rounded-full bg-[#0b493d] px-3 py-1.5 text-white":"text-[#0b493d]"}`}>{value}</p>
-          <p className="mt-1 text-[11px] leading-4 text-[#6f7f7a] sm:mt-2 sm:text-sm">{sub}</p>
+          <p className={`mt-1 font-semibold tracking-[-.02em] sm:mt-2 sm:tracking-[-.03em] ${label==="Precio"?"inline-flex rounded-full bg-[#0b493d] px-3 py-1.5 text-[1.1rem] font-black text-white sm:text-2xl":label==="Lugar"?"text-[1.2rem] font-black text-[#0b493d] sm:text-[1.9rem]":"text-[1.05rem] text-[#0b493d] sm:text-2xl"}`}>{value}</p>
+          <p className={`mt-1 leading-4 text-[#6f7f7a] sm:mt-2 sm:text-sm ${label==="Lugar"?"text-xs font-semibold":"text-[11px]"}`}>{sub}</p>
         </article>)}
       </div>
     </div>
