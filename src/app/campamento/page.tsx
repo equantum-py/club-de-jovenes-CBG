@@ -32,8 +32,8 @@ function LandingHeader(){
 
 function Hero(){
   return <section className="overflow-hidden bg-[#f7f3e9]">
-    <div className="mx-auto grid min-h-[auto] max-w-[1480px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[760px] lg:grid-cols-[.88fr_1.12fr] lg:gap-16 lg:py-20">
-      <div className="relative z-10 max-w-2xl">
+    <div className="mx-auto grid min-h-[auto] max-w-[1480px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[620px] lg:grid-cols-[.88fr_1.12fr] lg:gap-14 lg:py-10 xl:min-h-[650px] xl:py-12">
+      <div className="relative z-10 max-w-2xl lg:self-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#0b493d]/15 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-[#0b493d]">
           <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
           Ministerio de Jóvenes CBG
@@ -59,7 +59,7 @@ function Hero(){
         <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <video autoPlay muted loop playsInline preload="metadata" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[610px]" aria-hidden="true">
+          <video autoPlay muted loop playsInline preload="metadata" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]" aria-hidden="true">
             <source src="/videos/video%20detras.mp4" type="video/mp4"/>
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-[#071f1a]/75 via-transparent to-transparent"/>
