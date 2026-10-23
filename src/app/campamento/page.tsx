@@ -32,24 +32,24 @@ function LandingHeader(){
 
 function Hero(){
   return <section className="overflow-hidden bg-[#f7f3e9]">
-    <div className="mx-auto grid min-h-[760px] max-w-[1480px] items-center gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[.88fr_1.12fr] lg:gap-16 lg:py-20">
+    <div className="mx-auto grid min-h-[auto] max-w-[1480px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[760px] lg:grid-cols-[.88fr_1.12fr] lg:gap-16 lg:py-20">
       <div className="relative z-10 max-w-2xl">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#0b493d]/15 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-[#0b493d]">
           <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
           Ministerio de Jóvenes CBG
         </div>
-        <h1 className="mt-7 text-[clamp(4rem,8vw,8rem)] font-black uppercase leading-[.82] tracking-[-.065em] text-[#0b493d]">
+        <h1 className="mt-5 text-[clamp(3rem,13vw,4.2rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-7 sm:text-[clamp(4rem,8vw,8rem)] sm:leading-[.82] sm:tracking-[-.065em]">
           Gracia
           <span className="block text-[#b39a54]">Camp 2026</span>
         </h1>
-        <p className="mt-8 max-w-xl text-lg leading-8 text-[#4e625d] sm:text-xl">
+        <p className="mt-5 max-w-xl text-base leading-7 text-[#4e625d] sm:mt-8 sm:text-xl sm:leading-8">
           3 días para salir de la rutina y vivir lo que realmente importa.
         </p>
-        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-          <Link href="/registro" className="inline-flex min-h-13 items-center justify-center rounded-full bg-[#0b493d] px-7 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#083d34]">
+        <div className="mt-6 flex flex-col gap-2.5 sm:mt-9 sm:flex-row sm:gap-3">
+          <Link href="/registro" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0b493d] px-6 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#083d34] sm:min-h-13 sm:px-7">
             Inscribirme ahora
           </Link>
-          <a href="#experiencia" className="inline-flex min-h-13 items-center justify-center rounded-full border border-[#0b493d]/15 bg-white px-7 text-sm font-semibold text-[#0b493d] transition hover:bg-[#efe8d9]">
+          <a href="#experiencia" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#0b493d]/15 bg-white px-6 text-sm font-semibold text-[#0b493d] transition hover:bg-[#efe8d9] sm:min-h-13 sm:px-7">
             Ver experiencia
           </a>
         </div>
@@ -59,15 +59,15 @@ function Hero(){
         <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <video autoPlay muted loop playsInline preload="metadata" className="aspect-[4/5] w-full object-cover sm:aspect-[16/10] lg:min-h-[610px]" aria-hidden="true">
+          <video autoPlay muted loop playsInline preload="metadata" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[610px]" aria-hidden="true">
             <source src="/videos/video%20detras.mp4" type="video/mp4"/>
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-[#071f1a]/75 via-transparent to-transparent"/>
-          <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
-            <div className="grid grid-cols-3 gap-2 rounded-[1.4rem] border border-white/15 bg-black/30 p-3 text-white backdrop-blur-xl sm:p-4">
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p><p className="mt-1 font-semibold">04–06 Dic</p></div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 font-semibold">Paraguarí</p></div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 font-semibold">Gs. 450.000</p></div>
+          <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
+            <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
+              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p><p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p></div>
+              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-sm font-semibold sm:text-base">Paraguarí</p></div>
+              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 text-sm font-semibold sm:text-base">Gs. 450.000</p></div>
             </div>
           </div>
         </div>
@@ -83,21 +83,21 @@ function KeyInfo(){
     ["03","Precio","Gs. 450.000","Por persona"],
     ["04","Cupos","Limitados","Inscripciones abiertas"]
   ];
-  return <section id="experiencia" className="bg-white py-20 sm:py-28">
+  return <section id="experiencia" className="bg-white py-14 sm:py-28">
     <div className="mx-auto max-w-[1380px] px-5 sm:px-8">
-      <div className="mb-10 max-w-3xl">
+      <div className="mb-7 max-w-3xl sm:mb-10">
         <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Todo en un mismo lugar</p>
-        <h2 className="mt-4 text-4xl font-semibold tracking-[-.045em] text-[#0b493d] sm:text-6xl">Una experiencia pensada para desconectarte y encontrarte con lo esencial.</h2>
+        <h2 className="mt-3 text-[2rem] font-semibold leading-[1.08] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-6xl sm:tracking-[-.045em]">Una experiencia pensada para desconectarte y encontrarte con lo esencial.</h2>
       </div>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.6rem] border border-[#0b493d]/10 bg-[#f7f3e9] p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:p-7">
+      <div className="grid gap-2.5 sm:gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.35rem] border border-[#0b493d]/10 bg-[#f7f3e9] p-4.5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:rounded-[1.6rem] sm:p-7">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#b39a54]">{n}</span>
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
           </div>
-          <p className="mt-10 text-xs font-semibold uppercase tracking-[.15em] text-[#698078]">{label}</p>
-          <p className="mt-2 text-2xl font-semibold tracking-[-.03em] text-[#0b493d]">{value}</p>
-          <p className="mt-2 text-sm text-[#6f7f7a]">{sub}</p>
+          <p className="mt-6 text-[10px] font-semibold uppercase tracking-[.15em] text-[#698078] sm:mt-10 sm:text-xs">{label}</p>
+          <p className="mt-1.5 text-xl font-semibold tracking-[-.02em] text-[#0b493d] sm:mt-2 sm:text-2xl sm:tracking-[-.03em]">{value}</p>
+          <p className="mt-1 text-[13px] text-[#6f7f7a] sm:mt-2 sm:text-sm">{sub}</p>
         </article>)}
       </div>
     </div>
@@ -110,7 +110,7 @@ function Pillars(){
     ["02","Predicar el evangelio",""],
     ["03","Edificar a los creyentes","con la enseñanza de Su Palabra."]
   ];
-  return <section id="propositos" className="overflow-hidden bg-[#082f29] py-20 text-white sm:py-28">
+  return <section id="propositos" className="overflow-hidden bg-[#082f29] py-14 text-white sm:py-28">
     <div className="mx-auto max-w-[1380px] px-5 sm:px-8">
       <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
         <div>
@@ -121,10 +121,10 @@ function Pillars(){
           Palabra, comunión y propósito en una experiencia de tres días.
         </p>
       </div>
-      <div className="mt-14 grid gap-3 lg:grid-cols-3">
-        {items.map(([n,title,text])=><article key={title} className="rounded-[1.6rem] border border-white/10 bg-white/[.05] p-6 backdrop-blur-sm sm:p-8">
+      <div className="mt-8 grid gap-2.5 sm:mt-14 sm:gap-3 lg:grid-cols-3">
+        {items.map(([n,title,text])=><article key={title} className="rounded-[1.35rem] border border-white/10 bg-white/[.05] p-5 backdrop-blur-sm sm:rounded-[1.6rem] sm:p-8">
           <p className="text-xs font-semibold text-[#d7be70]">{n}</p>
-          <h3 className="mt-14 max-w-sm text-2xl font-semibold tracking-[-.03em] sm:text-3xl">{title}</h3>
+          <h3 className="mt-8 max-w-sm text-xl font-semibold tracking-[-.02em] sm:mt-14 sm:text-3xl sm:tracking-[-.03em]">{title}</h3>
           {text?<p className="mt-4 max-w-sm text-sm leading-6 text-white/55">{text}</p>:null}
         </article>)}
       </div>
@@ -138,11 +138,11 @@ function FAQ(){
     ["¿Qué incluye?","La organización comunicará el detalle completo y las recomendaciones antes del campamento."],
     ["¿Dónde veo el reglamento?","Podés abrirlo desde el botón al final de esta página."]
   ];
-  return <section className="bg-white py-20 sm:py-28">
+  return <section className="bg-white py-14 sm:py-28">
     <div className="mx-auto grid max-w-[1380px] gap-12 px-5 sm:px-8 lg:grid-cols-[.72fr_1.28fr]">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Preguntas frecuentes</p>
-        <h2 className="mt-4 text-4xl font-semibold tracking-[-.045em] text-[#0b493d] sm:text-6xl">Todo lo que necesitás saber.</h2>
+        <h2 className="mt-3 text-[2rem] font-semibold leading-[1.08] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-6xl sm:tracking-[-.045em]">Todo lo que necesitás saber.</h2>
         <p className="mt-5 max-w-md text-base leading-7 text-[#667a74]">Encontrá rápido las respuestas antes de reservar tu lugar.</p>
       </div>
       <div className="divide-y divide-[#0b493d]/10 border-y border-[#0b493d]/10">
