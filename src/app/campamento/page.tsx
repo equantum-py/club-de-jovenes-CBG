@@ -196,9 +196,9 @@ export default function CampamentoPage(){
     <LandingHeader/>
     <main>
       <Hero/>
+      <PreacherSection/>
       <KeyInfo/>
       <Pillars/>
-      <PreacherSection/>
       <MerchSectionPublic/>
       <CampVideoSection/>
       <FAQ/>
