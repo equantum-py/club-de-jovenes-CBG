@@ -59,18 +59,18 @@ function Hero(){
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
           <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]">
-            <iframe
-              src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1418411315349210&show_text=false&autoplay=true&width=1280"
-              title="Video Gracia Camp"
-              className="absolute inset-0 h-full w-full border-0"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full object-cover"
+              aria-label="Monte Aramí, Paraguarí"
+            >
+              <source src="/videos/monte-arami.mp4" type="video/mp4"/>
+            </video>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#071f1a]/75 via-transparent to-transparent"/>
-          <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
-            <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p><p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p></div>
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-base font-black leading-none text-white sm:text-lg">Monte Aramí</p><p className="mt-1 text-[10px] font-medium text-white/65 sm:text-xs">Paraguarí</p></div>
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p></div>
             </div>
