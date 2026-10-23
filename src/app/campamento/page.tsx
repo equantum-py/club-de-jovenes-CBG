@@ -79,19 +79,19 @@ function Hero(){
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#071f1a]/55 via-transparent to-transparent"/>
 
           <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
-            <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/45 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-[1.1rem] border border-white/15 bg-black/50 p-3 text-white backdrop-blur-xl sm:grid-cols-3 sm:gap-2 sm:rounded-[1.4rem] sm:p-4">
               <div>
                 <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p>
                 <p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p>
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p>
-                <p className="mt-1 text-base font-black leading-none text-white sm:text-lg">Monte Aramí</p>
+                <p className="mt-1 whitespace-nowrap text-sm font-black leading-tight text-white sm:text-lg">Monte Aramí</p>
                 <p className="mt-1 text-[10px] font-medium text-white/65 sm:text-xs">Paraguarí</p>
               </div>
-              <div>
+              <div className="col-span-2 flex items-center justify-between gap-3 border-t border-white/10 pt-2 sm:col-span-1 sm:block sm:border-0 sm:pt-0">
                 <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p>
-                <p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p>
+                <p className="inline-flex whitespace-nowrap rounded-full bg-[#d8be70] px-3 py-1.5 text-sm font-black text-[#0a332c] shadow-sm sm:mt-1 sm:text-base">Gs. 380.000</p>
               </div>
             </div>
           </div>
