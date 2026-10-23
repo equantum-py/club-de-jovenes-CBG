@@ -58,7 +58,15 @@ function Hero(){
         <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <img src="/campamento-hero.jpg" alt="Gracia Camp 2026" fetchPriority="high" className="aspect-[16/11] w-full object-cover sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]"/>
+          <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[500px] xl:min-h-[540px]">
+            <iframe
+              src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1418411315349210&show_text=false&width=1280"
+              title="Video Gracia Camp"
+              className="absolute inset-0 h-full w-full border-0"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#071f1a]/75 via-transparent to-transparent"/>
           <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-8">
             <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
