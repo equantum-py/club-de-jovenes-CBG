@@ -67,7 +67,7 @@ function Hero(){
             <div className="grid grid-cols-3 gap-2 rounded-[1.1rem] border border-white/15 bg-black/30 p-2.5 text-white backdrop-blur-xl sm:rounded-[1.4rem] sm:p-4">
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p><p className="mt-1 text-sm font-semibold sm:text-base">04–06 Dic</p></div>
               <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p><p className="mt-1 text-sm font-semibold sm:text-base">Paraguarí</p></div>
-              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 text-sm font-semibold sm:text-base">Gs. 450.000</p></div>
+              <div><p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p><p className="mt-1 inline-flex rounded-full bg-[#d8be70] px-2.5 py-1 text-sm font-black text-[#0a332c] shadow-sm sm:text-base">Gs. 380.000</p></div>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@ function KeyInfo(){
   const items=[
     ["01","Fecha","04–06","Diciembre 2026"],
     ["02","Lugar","Paraguarí","Monte Aramí"],
-    ["03","Precio","Gs. 450.000","Por persona"],
+    ["03","Precio","Gs. 380.000","Por persona · nuevo valor"],
     ["04","Cupos","Limitados","Inscripciones abiertas"]
   ];
   return <section id="experiencia" className="bg-white py-10 sm:py-28">
@@ -96,7 +96,7 @@ function KeyInfo(){
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
           </div>
           <p className="mt-4 text-[9px] font-semibold uppercase tracking-[.14em] text-[#698078] sm:mt-10 sm:text-xs">{label}</p>
-          <p className="mt-1 text-[1.05rem] font-semibold tracking-[-.02em] text-[#0b493d] sm:mt-2 sm:text-2xl sm:tracking-[-.03em]">{value}</p>
+          <p className={`mt-1 text-[1.05rem] font-semibold tracking-[-.02em] sm:mt-2 sm:text-2xl sm:tracking-[-.03em] ${label==="Precio"?"inline-flex rounded-full bg-[#0b493d] px-3 py-1.5 text-white":"text-[#0b493d]"}`}>{value}</p>
           <p className="mt-1 text-[11px] leading-4 text-[#6f7f7a] sm:mt-2 sm:text-sm">{sub}</p>
         </article>)}
       </div>
@@ -165,7 +165,7 @@ function CTA(){
         <div>
           <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#d7be70]">Gracia Camp 2026</p>
           <h2 className="mt-3 max-w-4xl text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] sm:mt-4 sm:text-6xl sm:tracking-[-.05em] lg:text-7xl">Inscribite hoy y asegurá tu lugar.</h2>
-          <p className="mt-3 max-w-2xl text-xs leading-5 text-white/65 sm:mt-6 sm:text-base sm:leading-7">04–06 de diciembre · Monte Aramí, Paraguarí · Gs. 450.000 · cupos limitados.</p>
+          <p className="mt-3 max-w-2xl text-xs leading-5 text-white/65 sm:mt-6 sm:text-base sm:leading-7">04–06 de diciembre · Monte Aramí, Paraguarí · Gs. 380.000 · cupos limitados.</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
           <Link href="/registro" className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f7f3e9] px-7 text-sm font-semibold text-[#0b493d]">Inscribirme ahora</Link>
