@@ -38,14 +38,15 @@ function Hero(){
           <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
           Ministerio de Jóvenes CBG
         </div>
+        <p className="mt-5 text-xs font-bold uppercase tracking-[.22em] text-[#927f43]">Tema oficial · Gracia Camp 2026</p>
 
         <h1 className="mt-5 text-[clamp(3rem,13vw,4.2rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-7 sm:text-[clamp(4rem,8vw,8rem)] sm:leading-[.82] sm:tracking-[-.065em]">
-          Gracia
-          <span className="block text-[#b39a54]">Camp 2026</span>
+          Vivir es
+          <span className="block text-[#b39a54]">Cristo</span>
         </h1>
 
         <p className="mt-5 max-w-xl text-base leading-7 text-[#4e625d] sm:mt-8 sm:text-xl sm:leading-8">
-          3 días para salir de la rutina y vivir lo que realmente importa.
+          «Porque para mí el vivir es Cristo, y el morir es ganancia». <span className="font-semibold text-[#0b493d]">Filipenses 1:21</span>
         </p>
 
         <div className="mt-6 flex flex-col gap-2.5 sm:mt-9 sm:flex-row sm:gap-3">
