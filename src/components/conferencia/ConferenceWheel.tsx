@@ -32,18 +32,28 @@ export default function ConferenceWheel() {
       ctx.fillStyle = "#09264b";ctx.font = "bold 29px Inter, Arial, sans-serif";ctx.textAlign = "center";ctx.fillText("Sin participantes", 0, 12);
     } else {
       const arc = TAU / people.length;
+      const showNames = people.length <= 6;
       people.forEach((p, i) => {
         const start = i * arc - Math.PI / 2;
         ctx.beginPath();ctx.moveTo(0, 0);ctx.arc(0, 0, r, start, start + arc);ctx.closePath();
-        ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();ctx.strokeStyle = "#ffffff";ctx.lineWidth = 4;ctx.stroke();
-        ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(-(start + arc / 2) - angle);
-        let label = p.nombre + " " + p.apellido;
-        const max = r * .73;
-        const size = people.length > 25 ? 13 : people.length > 14 ? 17 : people.length > 8 ? 21 : 27;
+        ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();
+        ctx.strokeStyle = "#ffffff";ctx.lineWidth = people.length > 50 ? 1 : people.length > 20 ? 2 : 4;ctx.stroke();
+        if (!showNames) return;
+        // Mostrar nombres cortos solo cuando caben realmente en su sector.
+        // Con 7 o más participantes, el nombre completo se muestra al ganar.
+        const radius = r * .66;
+        const chord = 2 * radius * Math.sin(arc / 2);
+        const maxWidth = Math.min(r * .62, chord * .80);
+        const size = people.length >= 5 ? 21 : 25;
+        let label = p.nombre.trim().split(/\\s+/)[0] || "Participante";
+        ctx.save();
+        ctx.rotate(start + arc / 2);
+        ctx.translate(radius, 0);
+        ctx.rotate(-(start + arc / 2) - angle);
         ctx.font = `bold ${size}px Inter, Arial, sans-serif`;
-        while (ctx.measureText(label).width > max && label.length > 4) label = label.slice(0, -2) + "…";
-        ctx.textAlign = "center";ctx.textBaseline = "middle";
-        ctx.fillStyle = "#09264b";ctx.fillText(label, 0, 0);
+        while (ctx.measureText(label).width > maxWidth && label.length > 2) label = label.slice(0, -2) + "…";
+        ctx.textAlign = "center";ctx.textBaseline = "middle";ctx.fillStyle = "#09264b";
+        ctx.fillText(label, 0, 0, maxWidth);
         ctx.restore();
       });
     }
@@ -139,6 +149,7 @@ export default function ConferenceWheel() {
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
           <div className="relative mx-auto my-3 aspect-square w-full max-w-[min(590px,55vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
+            {eligible.length > 6 && <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center"><span className="rounded-full border-4 border-white bg-[#09264b] px-5 py-3 text-center text-xl font-extrabold text-white shadow-lg sm:text-2xl">{eligible.length} participantes</span></div>}
             <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#b48a2c]"/>
           </div>
           <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-lg bg-[#09264b] px-6 text-xl font-extrabold text-white shadow-lg transition hover:bg-[#174270] disabled:opacity-50">✦ GIRAR RULETA</button>
