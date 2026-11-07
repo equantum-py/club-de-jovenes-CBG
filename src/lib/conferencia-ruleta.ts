@@ -101,3 +101,10 @@ export async function resetConferenceDraw() {
 export async function deleteConferenceParticipant(id:string) {
  await query(`${TABLE}?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",prefer:"return=minimal"});
 }
+
+export async function updateConferenceParticipant(id:string,nombre:string,apellido:string,iglesia:string){
+ const rows=await query(`${TABLE}?id=eq.${encodeURIComponent(id)}&select=id,nombre,apellido,iglesia,sorteado,created_at`,{
+  method:"PATCH",prefer:"return=representation",body:{nombre,apellido,iglesia}
+ }) as ConferenceParticipant[]|null;
+ return rows?.[0]??null;
+}
