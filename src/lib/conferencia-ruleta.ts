@@ -61,7 +61,7 @@ export async function listConferenceParticipants(): Promise<ConferenceParticipan
 // Cuando una letra no tiene participantes disponibles, se salta a la siguiente.
 const CHURCH_ORDER = ["R", "I", "C"] as const;
 function churchGroup(iglesia: string): number {
-  const initial = iglesia.trim().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toUpperCase()[0];
+  const initial = iglesia.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()[0];
   return CHURCH_ORDER.indexOf(initial as (typeof CHURCH_ORDER)[number]);
 }
 
@@ -82,8 +82,8 @@ export async function pickConferenceParticipant(): Promise<ConferenceParticipant
       candidates = available.filter(p => churchGroup(p.iglesia) === nextGroup);
       if (candidates.length) break;
     }
-    // Iglesias con otras iniciales también participan, cuando no hay R/I/C.
-    if (!candidates.length) candidates = available;
+    // No elegir otra inicial: respetar estrictamente R → I → C.
+    if (!candidates.length) return null;
     const selected = candidates[Math.floor(Math.random() * candidates.length)];
     const updated = (await query(`${TABLE}?id=eq.${encodeURIComponent(selected.id)}&sorteado=eq.false&select=id,nombre,apellido,iglesia,sorteado,created_at`, {
       method: "PATCH", prefer: "return=representation",
