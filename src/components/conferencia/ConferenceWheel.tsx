@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConferenceParticipant } from "@/lib/conferencia-ruleta";
 
-const COLORS = ["#09264b","#c79519","#163b6d","#e0b548","#0e315e","#b9860d","#204a7b","#edc86a"];
+const COLORS = ["#e8edf3","#f4e8cd","#d5e0ed","#f8f1e3","#cbd9e8","#eee1c6","#dce5ee","#f6ead4"];
 const TAU = Math.PI * 2;
 
 export default function ConferenceWheel() {
@@ -35,7 +35,7 @@ export default function ConferenceWheel() {
       people.forEach((p, i) => {
         const start = i * arc - Math.PI / 2;
         ctx.beginPath();ctx.moveTo(0, 0);ctx.arc(0, 0, r, start, start + arc);ctx.closePath();
-        ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();ctx.strokeStyle = "#fff";ctx.lineWidth = 3;ctx.stroke();
+        ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();ctx.strokeStyle = "#ffffff";ctx.lineWidth = 4;ctx.stroke();
         ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(-(start + arc / 2) - angle);
         let label = p.nombre + " " + p.apellido;
         const max = r * .73;
@@ -43,7 +43,7 @@ export default function ConferenceWheel() {
         ctx.font = `bold ${size}px Inter, Arial, sans-serif`;
         while (ctx.measureText(label).width > max && label.length > 4) label = label.slice(0, -2) + "…";
         ctx.textAlign = "center";ctx.textBaseline = "middle";
-        ctx.fillStyle = i % 2 === 0 ? "#ffffff" : "#09264b";ctx.fillText(label, 0, 0);
+        ctx.fillStyle = "#09264b";ctx.fillText(label, 0, 0);
         ctx.restore();
       });
     }
@@ -141,9 +141,9 @@ export default function ConferenceWheel() {
           <p className="mt-2 text-[#526b86]">Un nombre. Un versículo. Un momento para compartir.</p>
           <div className="relative mx-auto my-3 aspect-square w-full max-w-[min(590px,55vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
-            <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#c89b23]"/>
+            <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#b48a2c]"/>
           </div>
-          <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-lg bg-[#d4a32b] px-6 text-xl font-extrabold text-[#09264b] shadow-lg transition hover:bg-[#e1b647] disabled:opacity-50">✦ GIRAR RULETA</button>
+          <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-lg bg-[#09264b] px-6 text-xl font-extrabold text-white shadow-lg transition hover:bg-[#174270] disabled:opacity-50">✦ GIRAR RULETA</button>
           <p role="status" className="mt-3 text-sm text-[#526b86]">{message}</p>
           {winner && <div role="status" className="mx-auto mt-5 max-w-xl rounded-2xl border-2 border-[#e9b967] bg-white p-6">
             <p className="text-xs font-extrabold uppercase tracking-widest text-[#b27a20]">¡Persona elegida!</p>
