@@ -134,7 +134,7 @@ export default function ConferenceWheel() {
         <div className="flex items-center gap-3"><Image src="/logo.png" width={45} height={45} alt="CBG" className="h-11 w-11 object-contain"/><div><p className="text-sm font-black uppercase tracking-widest">Conferencia de jóvenes</p><p className="text-xs text-[#526176]">Ministerio de Jóvenes CBG</p></div></div>
         <Link href="/conferencia/registro" target="_blank" className="text-sm font-bold text-[#092d5b] underline">Abrir formulario ↗</Link>
       </header>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="mx-auto max-w-5xl">
         <section className="min-w-0 text-center">
           <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#9d7112]">Momento del sorteo</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
@@ -144,6 +144,7 @@ export default function ConferenceWheel() {
             <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#b48a2c]"/>
           </div>
           <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-lg bg-[#09264b] px-6 text-xl font-extrabold text-white shadow-lg transition hover:bg-[#174270] disabled:opacity-50">✦ GIRAR RULETA</button>
+          <div className="mt-4"><button onClick={reset} disabled={busy} className="min-h-12 rounded-lg border border-[#cbd3dd] bg-white px-7 text-sm font-bold text-[#09264b] transition hover:bg-[#edf1f6] disabled:opacity-50">Reiniciar ruleta</button></div>
           <p role="status" className="mt-3 text-sm text-[#526b86]">{message}</p>
           {winner && <div role="status" className="mx-auto mt-5 max-w-xl rounded-2xl border-2 border-[#e9b967] bg-white p-6">
             <p className="text-xs font-extrabold uppercase tracking-widest text-[#b27a20]">¡Persona elegida!</p>
@@ -152,21 +153,7 @@ export default function ConferenceWheel() {
             <p className="mt-4 text-lg font-bold text-[#a46f1a]">¡Es tu turno de decir un versículo bíblico!</p>
           </div>}
         </section>
-        <aside className="rounded-lg border border-[#e0ddd5] bg-white p-5">
-          <div className="grid grid-cols-3 gap-2 border-b border-[#d7e2ef] pb-5 text-center">
-            <div><strong className="block text-3xl text-[#174e91]">{participants.length}</strong><span className="text-xs text-[#62748a]">Registrados</span></div>
-            <div><strong className="block text-3xl text-[#174e91]">{eligible.length}</strong><span className="text-xs text-[#62748a]">Disponibles</span></div>
-            <div><strong className="block text-3xl text-[#092d5b]">{participants.length - eligible.length}</strong><span className="text-xs text-[#788ba2]">Elegidos</span></div>
-          </div>
-          <div className="mt-5 flex items-center justify-between"><h2 className="text-lg font-extrabold">Participantes</h2><button onClick={() => void refresh()} className="text-xs font-bold text-[#9d7112]">Actualizar ↻</button></div>
-          <p className="mt-2 text-xs text-[#62748a]">Se actualiza automáticamente cada 4 segundos.</p>
-          <ul className="mt-4 max-h-[46vh] space-y-1 overflow-auto">
-            {participants.map(p => <li key={p.id} className="border-b border-[#e9e6e0] px-1 py-3"><p className={`text-sm font-bold ${p.sorteado ? "text-[#8897a7]" : "text-[#09264b]"}`}>{p.nombre} {p.apellido} {p.sorteado ? "· Elegido" : ""}</p><p className="mt-1 text-xs text-[#526176]">{p.iglesia}</p></li>)}
-            {!participants.length && <li className="py-8 text-center text-sm text-white/60">Esperando registros…</li>}
-          </ul>
-          <button onClick={reset} disabled={busy} className="mt-5 w-full rounded-xl border border-[#cbd3dd] bg-[#edf1f6] px-4 py-3 text-sm font-bold text-[#09264b] disabled:opacity-50">Reiniciar sorteo</button>
-          <p className="mt-2 text-center text-xs text-[#62748a]">No elimina a los participantes.</p>
-        </aside>
+
       </div>
     </div>
   </main>;
