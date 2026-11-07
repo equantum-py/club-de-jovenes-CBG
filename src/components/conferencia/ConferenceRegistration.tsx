@@ -33,7 +33,7 @@ export default function ConferenceRegistration() {
     <div className="mx-auto max-w-[530px]">
       <div className="mb-7 flex items-center justify-center gap-3">
         <Image src="/logo.png" width={44} height={44} alt="Jóvenes CBG" className="h-11 w-11 object-contain"/>
-        <span className="text-xs font-extrabold uppercase tracking-[.2em] text-[#163e69]">Club de Jóvenes CBG</span>
+        <span className="text-xs font-extrabold uppercase tracking-[.2em] text-[#163e69]">Ministerio de Jóvenes CBG</span>
       </div>
       <div className="rounded-[25px] border border-[#dae4ef] bg-white px-6 py-9 shadow-[0_18px_55px_#173a611c] sm:px-10 sm:py-11">
         {completed ? <div role="status" className="py-9 text-center">
