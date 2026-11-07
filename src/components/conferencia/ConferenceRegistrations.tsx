@@ -3,6 +3,16 @@ import Link from "next/link";
 import {useCallback,useEffect,useState} from "react";
 import type {ConferenceParticipant} from "@/lib/conferencia-ruleta";
 
+// Estimación orientativa a partir de nombres habituales; no determina identidad de género.
+const nombresFemeninos = new Set("aracely jazmin jazmín henia fiorella milagros leydi yes hiva yeshiva elizabeth elisabet gabriela nadia maria maría ana sofia sofía lucia lucía camila valentina florencia paola karen carolina alejandra rocio rocío belen belén raquel ester esther ruth noemi noemí debora débora abigail sarah sara marta rebeca julia diana liz".split(" "));
+const nombresMasculinos = new Set("david derlis juan jose josé pablo pedro daniel miguel angel ángel carlos luis diego jorge jesus jesús mateo santiago sebastian sebastián gabriel samuel matias matías nicolas nicolás andres andrés cristian christian rodrigo alexander fernando benjamin benjamín".split(" "));
+function estimarPorNombre(nombre:string):"mujer"|"hombre"|"sin clasificar"{
+ const primero=nombre.trim().toLocaleLowerCase("es").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").split(/\\s+/)[0];
+ const femenino=[...nombresFemeninos].some(n=>n.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")===primero);
+ const masculino=[...nombresMasculinos].some(n=>n.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")===primero);
+ return femenino&&!masculino?"mujer":masculino&&!femenino?"hombre":"sin clasificar";
+}
+
 export default function ConferenceRegistrations(){
  const [people,setPeople]=useState<ConferenceParticipant[]>([]);
  const [loading,setLoading]=useState(true);
@@ -27,15 +37,19 @@ export default function ConferenceRegistrations(){
   finally{setDeleting(null);}
  }
  const available=people.filter(p=>!p.sorteado).length;
+ const mujeres=people.filter(p=>estimarPorNombre(p.nombre)==="mujer").length;
+ const hombres=people.filter(p=>estimarPorNombre(p.nombre)==="hombre").length;
+ const sinClasificar=people.length-mujeres-hombres;
  return <main className="min-h-screen bg-[#f6f7f9] p-5 text-[#173452] sm:p-8">
   <div className="mx-auto max-w-6xl">
    <div className="flex flex-wrap items-start justify-between gap-4">
     <div><p className="text-xs font-bold uppercase tracking-widest text-[#9a6d21]">Conferencia de Jóvenes · 2026</p><h1 className="mt-2 text-3xl font-black sm:text-4xl">Registros de la ruleta</h1><p className="mt-2 text-[#60758d]">Administrá los participantes sin salir del panel.</p></div>
     <div className="flex flex-wrap gap-2"><button onClick={()=>void refresh()} className="rounded-xl border border-[#ccd9e7] bg-white px-4 py-3 text-sm font-bold">Actualizar</button><Link href="/conferencia/ruleta" target="_blank" className="rounded-xl bg-[#194b83] px-4 py-3 text-sm font-bold text-white">Abrir ruleta ↗</Link></div>
    </div>
-   <div className="mt-7 grid gap-3 sm:grid-cols-3">
-    {[[people.length,"Registrados"],[available,"Disponibles"],[people.length-available,"Ya elegidos"]].map(([value,label])=><div key={label} className="rounded-2xl border border-[#dce5ef] bg-white p-5"><strong className="block text-3xl">{value}</strong><span className="text-sm text-[#637a91]">{label}</span></div>)}
+   <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {[[people.length,"Registrados"],[available,"Disponibles"],[people.length-available,"Ya elegidos"],[mujeres,"Mujeres (estimado)"],[hombres,"Hombres (estimado)"],[sinClasificar,"Sin clasificar"]].map(([value,label])=><div key={label} className="rounded-2xl border border-[#dce5ef] bg-white p-5"><strong className="block text-3xl">{value}</strong><span className="text-sm text-[#637a91]">{label}</span></div>)}
    </div>
+   <p className="mt-2 text-xs text-[#60758d]">Los contadores de mujeres y hombres son estimaciones por nombre, no datos confirmados por las personas.</p>
    <section className="mt-6 overflow-hidden rounded-2xl border border-[#dce5ef] bg-white">
     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e4ebf3] p-5"><h2 className="text-lg font-black">Participantes</h2><span className="text-xs text-[#6a8098]">Actualización automática cada 5 segundos</span></div>
     {error&&<p role="alert" className="m-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
