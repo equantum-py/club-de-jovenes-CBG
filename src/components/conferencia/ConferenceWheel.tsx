@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConferenceParticipant } from "@/lib/conferencia-ruleta";
 
-const COLORS = ["#e7c66e","#d5e1ed","#f1e3c5","#b7c9de","#e9d8b5","#c8d7e5","#f2dca5","#c0d0df"];
+const COLORS = ["#09264b","#c79519","#163b6d","#e0b548","#0e315e","#b9860d","#204a7b","#edc86a"];
 const TAU = Math.PI * 2;
 
 export default function ConferenceWheel() {
@@ -36,14 +36,14 @@ export default function ConferenceWheel() {
         const start = i * arc - Math.PI / 2;
         ctx.beginPath();ctx.moveTo(0, 0);ctx.arc(0, 0, r, start, start + arc);ctx.closePath();
         ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();ctx.strokeStyle = "#fff";ctx.lineWidth = 3;ctx.stroke();
-        ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(Math.PI / 2 - (start + arc / 2) - angle);
+        ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(-(start + arc / 2) - angle);
         let label = p.nombre + " " + p.apellido;
         const max = r * .73;
         const size = people.length > 25 ? 13 : people.length > 14 ? 17 : people.length > 8 ? 21 : 27;
         ctx.font = `bold ${size}px Inter, Arial, sans-serif`;
         while (ctx.measureText(label).width > max && label.length > 4) label = label.slice(0, -2) + "…";
         ctx.textAlign = "center";ctx.textBaseline = "middle";
-        ctx.fillStyle = "#09264b";ctx.fillText(label, 0, 0);
+        ctx.fillStyle = i % 2 === 0 ? "#ffffff" : "#09264b";ctx.fillText(label, 0, 0);
         ctx.restore();
       });
     }
@@ -139,7 +139,7 @@ export default function ConferenceWheel() {
           <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#9d7112]">Momento del sorteo</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
           <p className="mt-2 text-[#526b86]">Un nombre. Un versículo. Un momento para compartir.</p>
-          <div className="relative mx-auto my-4 aspect-square w-full max-w-[min(630px,64vh)] drop-shadow-xl">
+          <div className="relative mx-auto my-3 aspect-square w-full max-w-[min(590px,55vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
             <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#c89b23]"/>
           </div>
@@ -161,10 +161,10 @@ export default function ConferenceWheel() {
           <div className="mt-5 flex items-center justify-between"><h2 className="text-lg font-extrabold">Participantes</h2><button onClick={() => void refresh()} className="text-xs font-bold text-[#9d7112]">Actualizar ↻</button></div>
           <p className="mt-2 text-xs text-[#62748a]">Se actualiza automáticamente cada 4 segundos.</p>
           <ul className="mt-4 max-h-[46vh] space-y-1 overflow-auto">
-            {participants.map(p => <li key={p.id} className="border-b border-[#e9e6e0] px-1 py-3"><p className={`text-sm font-bold ${p.sorteado ? "text-[#8897a7]" : "text-[#09264b]"}`}>{p.nombre} {p.apellido} {p.sorteado ? "· Elegido" : ""}</p><p className="mt-1 text-xs text-white/60">{p.iglesia}</p></li>)}
+            {participants.map(p => <li key={p.id} className="border-b border-[#e9e6e0] px-1 py-3"><p className={`text-sm font-bold ${p.sorteado ? "text-[#8897a7]" : "text-[#09264b]"}`}>{p.nombre} {p.apellido} {p.sorteado ? "· Elegido" : ""}</p><p className="mt-1 text-xs text-[#526176]">{p.iglesia}</p></li>)}
             {!participants.length && <li className="py-8 text-center text-sm text-white/60">Esperando registros…</li>}
           </ul>
-          <button onClick={reset} disabled={busy} className="mt-5 w-full rounded-xl border border-[#cbd3dd] bg-[#edf1f6] px-4 py-3 text-sm font-bold text-white disabled:opacity-50">Reiniciar sorteo</button>
+          <button onClick={reset} disabled={busy} className="mt-5 w-full rounded-xl border border-[#cbd3dd] bg-[#edf1f6] px-4 py-3 text-sm font-bold text-[#09264b] disabled:opacity-50">Reiniciar sorteo</button>
           <p className="mt-2 text-center text-xs text-[#62748a]">No elimina a los participantes.</p>
         </aside>
       </div>
