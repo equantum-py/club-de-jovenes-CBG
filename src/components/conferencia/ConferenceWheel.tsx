@@ -148,7 +148,13 @@ export default function ConferenceWheel() {
       </header>
       <div className="mx-auto max-w-5xl">
         <section className="min-w-0 text-center">
-          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
+          <div className="relative mx-auto max-w-5xl">
+            <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#d9d5cb] bg-white px-4 py-2 text-sm font-semibold text-[#09264b] shadow-sm sm:absolute sm:right-0 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2" aria-live="polite">
+              <span className="text-xl font-black tabular-nums">{participants.length}</span>
+              <span>{participants.length === 1 ? "participante" : "participantes"}</span>
+            </div>
+          </div>
           <div className="relative mx-auto my-3 aspect-square w-full max-w-[min(590px,55vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
             
