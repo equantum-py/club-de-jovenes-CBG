@@ -136,9 +136,7 @@ export default function ConferenceWheel() {
       </header>
       <div className="mx-auto max-w-5xl">
         <section className="min-w-0 text-center">
-          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#9d7112]">Momento del sorteo</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Ruleta de versículos bíblicos</h1>
-          <p className="mt-2 text-[#526b86]">Un nombre. Un versículo. Un momento para compartir.</p>
           <div className="relative mx-auto my-3 aspect-square w-full max-w-[min(590px,55vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
             <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#b48a2c]"/>
