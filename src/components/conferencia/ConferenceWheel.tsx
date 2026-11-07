@@ -36,10 +36,10 @@ export default function ConferenceWheel() {
         const start = i * arc - Math.PI / 2;
         ctx.beginPath();ctx.moveTo(0, 0);ctx.arc(0, 0, r, start, start + arc);ctx.closePath();
         ctx.fillStyle = COLORS[i % COLORS.length];ctx.fill();ctx.strokeStyle = "#fff";ctx.lineWidth = 2;ctx.stroke();
-        ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(Math.PI / 2);
+        ctx.save();ctx.rotate(start + arc / 2);ctx.translate(Math.max(90, r * .57), 0);ctx.rotate(Math.PI / 2 - (start + arc / 2) - angle);
         let label = p.nombre + " " + p.apellido;
-        const max = r * .62;
-        const size = people.length > 25 ? 11 : people.length > 14 ? 14 : people.length > 8 ? 18 : 22;
+        const max = r * .73;
+        const size = people.length > 25 ? 13 : people.length > 14 ? 17 : people.length > 8 ? 21 : 27;
         ctx.font = `bold ${size}px sans-serif`;
         while (ctx.measureText(label).width > max && label.length > 4) label = label.slice(0, -2) + "…";
         ctx.textAlign = "center";ctx.textBaseline = "middle";
@@ -128,44 +128,44 @@ export default function ConferenceWheel() {
     finally {busyRef.current = false;setBusy(false);void refresh();}
   }
 
-  return <main className="min-h-screen bg-[#eef3f9] p-5 text-[#173452] sm:p-8">
-    <div className="mx-auto max-w-[1550px]">
-      <header className="mb-7 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white px-6 py-4 shadow-sm">
-        <div className="flex items-center gap-3"><Image src="/logo.png" width={45} height={45} alt="CBG" className="h-11 w-11 object-contain"/><div><p className="text-sm font-black uppercase tracking-widest">Dinámica bíblica</p><p className="text-xs text-[#7a8b9d]">Conferencia de Jóvenes</p></div></div>
-        <Link href="/conferencia/registro" target="_blank" className="text-sm font-bold text-[#174984] underline">Abrir formulario ↗</Link>
+  return <main className="min-h-screen bg-[#0b2140] p-4 text-white sm:p-6">
+    <div className="mx-auto max-w-[1700px]">
+      <header className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-[#153659] px-5 py-3">
+        <div className="flex items-center gap-3"><Image src="/logo.png" width={45} height={45} alt="CBG" className="h-11 w-11 object-contain"/><div><p className="text-sm font-black uppercase tracking-widest">Dinámica bíblica</p><p className="text-xs text-white/60">Conferencia de Jóvenes</p></div></div>
+        <Link href="/conferencia/registro" target="_blank" className="text-sm font-bold text-[#f4c477] underline">Abrir formulario ↗</Link>
       </header>
-      <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
         <section className="min-w-0 text-center">
-          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#b17e28]">Momento del sorteo</p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">¿A quién le toca el versículo?</h1>
-          <p className="mt-3 text-[#657a93]">La ruleta elegirá al próximo participante.</p>
-          <div className="relative mx-auto my-6 aspect-square w-full max-w-[min(550px,60vh)] drop-shadow-xl">
+          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-[#f3bc61]">Momento del sorteo</p>
+          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">¿A quién le toca el versículo?</h1>
+          <p className="mt-2 text-white/65">La ruleta elegirá al próximo participante.</p>
+          <div className="relative mx-auto my-4 aspect-square w-full max-w-[min(630px,64vh)] drop-shadow-xl">
             <canvas ref={canvasRef} width={720} height={720} aria-label="Ruleta con los participantes" role="img" className="h-full w-full"/>
             <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 border-x-[18px] border-t-[40px] border-x-transparent border-t-[#e5a139]"/>
           </div>
-          <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-xl bg-[#c3821d] px-6 text-xl font-extrabold text-white shadow-lg transition hover:bg-[#a96b13] disabled:opacity-50">✦ GIRAR RULETA</button>
-          <p role="status" className="mt-3 text-sm text-[#677c95]">{message}</p>
+          <button onClick={spin} disabled={busy || !eligible.length} className="min-h-14 w-full max-w-sm rounded-xl bg-[#e9ad4c] px-6 text-xl font-extrabold text-[#142b4b] shadow-lg transition hover:bg-[#a96b13] disabled:opacity-50">✦ GIRAR RULETA</button>
+          <p role="status" className="mt-3 text-sm text-white/70">{message}</p>
           {winner && <div role="status" className="mx-auto mt-5 max-w-xl rounded-2xl border-2 border-[#e9b967] bg-white p-6">
             <p className="text-xs font-extrabold uppercase tracking-widest text-[#b27a20]">¡Persona elegida!</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-[#153e75] sm:text-5xl">{winner.nombre} {winner.apellido}</h2>
-            <p className="mt-2 text-[#71849d]">{winner.iglesia}</p>
+            <p className="mt-2 text-[#4e6681]">{winner.iglesia}</p>
             <p className="mt-4 text-lg font-bold text-[#a46f1a]">¡Es tu turno de decir un versículo bíblico!</p>
           </div>}
         </section>
-        <aside className="rounded-2xl border border-[#dce5f0] bg-white p-5 shadow-sm">
-          <div className="grid grid-cols-3 gap-2 border-b border-[#e8edf3] pb-5 text-center">
-            <div><strong className="block text-3xl text-[#1d4b83]">{participants.length}</strong><span className="text-xs text-[#788ba2]">Registrados</span></div>
+        <aside className="rounded-2xl border border-white/10 bg-[#153659] p-5 shadow-sm">
+          <div className="grid grid-cols-3 gap-2 border-b border-white/15 pb-5 text-center">
+            <div><strong className="block text-3xl text-white">{participants.length}</strong><span className="text-xs text-white/60">Registrados</span></div>
             <div><strong className="block text-3xl text-[#1d4b83]">{eligible.length}</strong><span className="text-xs text-[#788ba2]">Disponibles</span></div>
             <div><strong className="block text-3xl text-[#1d4b83]">{participants.length - eligible.length}</strong><span className="text-xs text-[#788ba2]">Elegidos</span></div>
           </div>
-          <div className="mt-5 flex items-center justify-between"><h2 className="text-lg font-extrabold">Participantes</h2><button onClick={() => void refresh()} className="text-xs font-bold text-[#1a538d]">Actualizar ↻</button></div>
-          <p className="mt-2 text-xs text-[#7d8fa3]">Se actualiza automáticamente cada 4 segundos.</p>
-          <ul className="mt-4 max-h-[52vh] space-y-1 overflow-auto">
-            {participants.map(p => <li key={p.id} className="border-b border-[#edf0f5] px-1 py-3"><p className={`text-sm font-bold ${p.sorteado ? "text-[#9aa7b7]" : "text-[#183b62]"}`}>{p.nombre} {p.apellido} {p.sorteado ? "· Elegido" : ""}</p><p className="mt-1 text-xs text-[#7f91a6]">{p.iglesia}</p></li>)}
-            {!participants.length && <li className="py-8 text-center text-sm text-[#8796a8]">Esperando registros…</li>}
+          <div className="mt-5 flex items-center justify-between"><h2 className="text-lg font-extrabold">Participantes</h2><button onClick={() => void refresh()} className="text-xs font-bold text-[#f4c477]">Actualizar ↻</button></div>
+          <p className="mt-2 text-xs text-white/55">Se actualiza automáticamente cada 4 segundos.</p>
+          <ul className="mt-4 max-h-[46vh] space-y-1 overflow-auto">
+            {participants.map(p => <li key={p.id} className="border-b border-white/10 px-1 py-3"><p className={`text-sm font-bold ${p.sorteado ? "text-white/45" : "text-white"}`}>{p.nombre} {p.apellido} {p.sorteado ? "· Elegido" : ""}</p><p className="mt-1 text-xs text-white/60">{p.iglesia}</p></li>)}
+            {!participants.length && <li className="py-8 text-center text-sm text-white/60">Esperando registros…</li>}
           </ul>
-          <button onClick={reset} disabled={busy} className="mt-5 w-full rounded-xl border border-[#d8e2ec] bg-[#f7f9fc] px-4 py-3 text-sm font-bold text-[#416080] disabled:opacity-50">Reiniciar sorteo</button>
-          <p className="mt-2 text-center text-xs text-[#8391a3]">No elimina a los participantes.</p>
+          <button onClick={reset} disabled={busy} className="mt-5 w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white disabled:opacity-50">Reiniciar sorteo</button>
+          <p className="mt-2 text-center text-xs text-white/55">No elimina a los participantes.</p>
         </aside>
       </div>
     </div>
