@@ -1,4 +1,4 @@
-import { randomInt } from "node:crypto";
+
 
 export type ConferenceParticipant = {
   id: string;
@@ -57,10 +57,41 @@ export async function listConferenceParticipants(): Promise<ConferenceParticipan
   return (rows ?? []) as ConferenceParticipant[];
 }
 
+// Turnos por inicial de iglesia: R → I → C → R…
+// Cuando una letra no tiene participantes disponibles, se salta a la siguiente.
+const CHURCH_ORDER = ["R", "I", "C"] as const;
+function churchGroup(iglesia: string): number {
+  const initial = iglesia.trim().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toUpperCase()[0];
+  return CHURCH_ORDER.indexOf(initial as (typeof CHURCH_ORDER)[number]);
+}
+
+type DrawRow = ConferenceParticipant & { sorteado_at?: string | null };
 export async function pickConferenceParticipant(): Promise<ConferenceParticipant | null> {
-  // La selección y la exclusión se ejecutan en una sola transacción en PostgreSQL.
-  const participant = await query("rpc/conferencia_elegir_2026", { method: "POST", body: {} });
-  return (participant ?? null) as ConferenceParticipant | null;
+  // El último sorteo determina la siguiente inicial. Las actualizaciones
+  // condicionales evitan elegir dos veces a una misma persona.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const rows = (await query(`${TABLE}?select=id,nombre,apellido,iglesia,sorteado,created_at,sorteado_at&order=created_at.asc&limit=1000`)) as DrawRow[];
+    const available = rows.filter(p => !p.sorteado);
+    if (!available.length) return null;
+    const last = rows.filter(p => p.sorteado && p.sorteado_at)
+      .sort((a,b) => (b.sorteado_at ?? "").localeCompare(a.sorteado_at ?? ""))[0];
+    const lastGroup = last ? churchGroup(last.iglesia) : -1;
+    let candidates: DrawRow[] = [];
+    for (let offset = 1; offset <= CHURCH_ORDER.length; offset++) {
+      const nextGroup = (lastGroup + offset) % CHURCH_ORDER.length;
+      candidates = available.filter(p => churchGroup(p.iglesia) === nextGroup);
+      if (candidates.length) break;
+    }
+    // Iglesias con otras iniciales también participan, cuando no hay R/I/C.
+    if (!candidates.length) candidates = available;
+    const selected = candidates[Math.floor(Math.random() * candidates.length)];
+    const updated = (await query(`${TABLE}?id=eq.${encodeURIComponent(selected.id)}&sorteado=eq.false&select=id,nombre,apellido,iglesia,sorteado,created_at`, {
+      method: "PATCH", prefer: "return=representation",
+      body: {sorteado: true, sorteado_at: new Date().toISOString()},
+    })) as ConferenceParticipant[] | null;
+    if (updated?.length) return updated[0];
+  }
+  throw new Error("CONFERENCIA_CONCURRENT_DRAW");
 }
 
 export async function resetConferenceDraw() {
