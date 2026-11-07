@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasAdminSession } from "@/lib/admin-auth";
-import { deleteConferenceParticipant, listConferenceParticipants, pickConferenceParticipant, resetConferenceDraw } from "@/lib/conferencia-ruleta";
+import { cleanField, updateConferenceParticipant, deleteConferenceParticipant, listConferenceParticipants, pickConferenceParticipant, resetConferenceDraw } from "@/lib/conferencia-ruleta";
 
 export const dynamic = "force-dynamic";
 
@@ -44,4 +44,20 @@ export async function DELETE(request:Request) {
  if(typeof id!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return NextResponse.json({error:"ID inválido."},{status:400});
  try{await deleteConferenceParticipant(id);return NextResponse.json({ok:true},{headers:{"Cache-Control":"no-store"}});}
  catch{return NextResponse.json({error:"No se pudo eliminar el registro."},{status:503});}
+}
+
+export async function PATCH(request:Request){
+ if(!hasAdminSession())return denied();
+ if(!validOrigin(request))return NextResponse.json({error:"Origen inválido."},{status:403});
+ if(!request.headers.get("content-type")?.startsWith("application/json"))return NextResponse.json({error:"Formato inválido."},{status:415});
+ const body=await request.json().catch(()=>null);
+ const id=body?.id;
+ if(typeof id!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return NextResponse.json({error:"ID inválido."},{status:400});
+ const nombre=cleanField(body?.nombre,80),apellido=cleanField(body?.apellido,80),iglesia=cleanField(body?.iglesia,120);
+ if(!nombre||!apellido||!iglesia)return NextResponse.json({error:"Completá nombre, apellido e iglesia con datos válidos."},{status:400});
+ try{
+  const participante=await updateConferenceParticipant(id,nombre,apellido,iglesia);
+  if(!participante)return NextResponse.json({error:"El registro ya no existe."},{status:404});
+  return NextResponse.json({participante},{headers:{"Cache-Control":"no-store"}});
+ }catch{return NextResponse.json({error:"No se pudieron guardar los cambios."},{status:503});}
 }
