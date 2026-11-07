@@ -66,3 +66,7 @@ export async function pickConferenceParticipant(): Promise<ConferenceParticipant
 export async function resetConferenceDraw() {
   await query("rpc/conferencia_reiniciar_2026", { method: "POST", body: {} });
 }
+
+export async function deleteConferenceParticipant(id:string) {
+ await query(`${TABLE}?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",prefer:"return=minimal"});
+}
