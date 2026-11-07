@@ -24,7 +24,7 @@ export async function POST(req:Request){
    const png=bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71;
    const webp=String.fromCharCode(...bytes.slice(0,4))==="RIFF"&&String.fromCharCode(...bytes.slice(8,12))==="WEBP";
    if(!(file.type==="image/jpeg"&&jpeg||file.type==="image/png"&&png||file.type==="image/webp"&&webp))return NextResponse.json({error:"Archivo de imagen inválido."},{status:400});
-   images.push(await uploadSiteAsset(file,"monte-arami"));
+   images.push(await uploadSiteAsset(file,`monte-arami-${crypto.randomUUID()}`));
   }
   await updateSiteSettings({page_banners:{...current,[KEY]:{images}}});
   return NextResponse.redirect(new URL("/admin/galeria-monte-arami?guardado=1",req.url),303);
