@@ -22,6 +22,7 @@ const siteItems = [
   ["Datos de transferencia", "/admin/pago"],
   ["Reglamento y normas", "/admin/reglamento"],
   ["Apariencia / Header", "/admin/apariencia"],
+  ["Fotos de Monte Aramí", "/admin/galeria-monte-arami"],
   ["Música de fondo", "/admin/musica"],
 ] as const;
 
