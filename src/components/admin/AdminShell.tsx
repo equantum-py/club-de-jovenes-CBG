@@ -11,7 +11,6 @@ const managementItems = [
   ["Reservas de merch", "/admin/reservas-merch"],
   ["Cabañas", "/admin/cabanas"],
   ["Equipos", "/admin/equipos"],
-  ["Ruleta · Conferencia", "/admin/conferencia"],
 ] as const;
 
 const siteItems = [
