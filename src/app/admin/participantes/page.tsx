@@ -23,12 +23,12 @@ export default async function ParticipantesPage() {
           <p className="mt-2 text-brand-muted">{rows.length} personas inscriptas actualmente.</p>
         </div>
 
-        <a
+        <div className="flex flex-wrap gap-3"><Link href="/admin/participantes/nuevo" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-gold px-5 py-3 text-sm font-bold text-brand-forest">+ Agregar acampante</Link><a
           href="/api/admin/export"
           className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-forest px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-forestLight"
         >
           Descargar Excel
-        </a>
+        </a></div>
       </div>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-white">
