@@ -7,7 +7,7 @@ import { saveRegistration, type RegistrationPayload } from "@/lib/registration-d
 export const dynamic="force-dynamic";
 const input="mt-1 w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-forest focus:outline-none focus:ring-2 focus:ring-brand-gold/40";
 const labels:Record<string,string>={nombre:"Nombre",apellido:"Apellido",edad:"Edad",sexo:"Sexo",cedula:"Cédula",telefono:"Teléfono",iglesia:"Iglesia",esInvitado:"¿Es invitado?",invitadoPor:"Invitado por",contactoEmergenciaNombre:"Contacto de emergencia",contactoEmergenciaTelefono:"Teléfono de emergencia",nombrePadreMadre:"Padre, madre o tutor",telefonoPadreMadre:"Teléfono del responsable",alergias:"Alergias",medicamentos:"Medicamentos",enfermedadBase:"Enfermedad de base",deseaRemera:"¿Desea remera?",talleRemera:"Talle",colorRemera:"Color de remera",deseaGorra:"¿Desea gorra?",colorGorra:"Color de gorra"};
-const required=["nombre","apellido","edad","cedula","telefono"];
+const required=["nombre","apellido"];
 async function createManual(formData:FormData){
  "use server";
  if(!hasAdminSession())throw new Error("Acceso no autorizado");
@@ -19,7 +19,7 @@ async function createManual(formData:FormData){
  nombrePadreMadre:val("nombrePadreMadre"),telefonoPadreMadre:val("telefonoPadreMadre"),deseaRemera:val("deseaRemera")||"No",
  talleRemera:val("talleRemera"),colorRemera:val("colorRemera"),deseaGorra:val("deseaGorra")||"No",colorGorra:val("colorGorra")
  };
- if(required.some(k=>!val(k))||!/^\d{3,12}$/.test(payload.cedula.replace(/[.\s]/g,""))||!/^\d{1,2}$/.test(payload.edad)||Number(payload.edad)<1||Number(payload.edad)>99)throw new Error("Revisá los campos obligatorios, la edad y la cédula.");
+ if(required.some(k=>!val(k))||(payload.cedula&&!/^\d{3,12}$/.test(payload.cedula.replace(/[.\s]/g,"")))||(payload.edad&&(!/^\d{1,2}$/.test(payload.edad)||Number(payload.edad)<1||Number(payload.edad)>99)))throw new Error("Revisá los campos obligatorios, la edad y la cédula.");
  await saveRegistration({...payload,cedula:payload.cedula.replace(/[.\s]/g,"")});
  revalidatePath("/admin/participantes");revalidatePath("/admin");
  redirect("/admin/participantes");
