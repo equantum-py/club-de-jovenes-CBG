@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import DeleteRegistrationButton from "@/components/admin/DeleteRegistrationButton";
+import RegistrationSearch from "@/components/admin/RegistrationSearch";
+import ImportRegistrations from "@/components/admin/ImportRegistrations";
 import { getSignedSelfieUrl, listRegistrations } from "@/lib/registration-db";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +33,8 @@ export default async function ParticipantesPage() {
         </a></div>
       </div>
 
+      <RegistrationSearch />
+      <ImportRegistrations />
       <div className="mt-8 overflow-hidden rounded-2xl border border-brand-border bg-white">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1120px] text-left text-sm">
@@ -52,7 +56,7 @@ export default async function ParticipantesPage() {
               {rows.map((registration) => {
                 const fullName = `${registration.nombre} ${registration.apellido}`.trim();
                 return (
-                  <tr key={registration.id} className="hover:bg-brand-cream/40">
+                  <tr key={registration.id} data-registration-row data-search={`${registration.nombre} ${registration.apellido} ${registration.cedula} ${registration.telefono} ${registration.iglesia}`} className="hover:bg-brand-cream/40">
                     <td className="px-5 py-4">
                       <Link href={`/admin/participantes/${registration.id}`} className="block h-14 w-14 overflow-hidden rounded-full border border-brand-border bg-brand-cream">
                         {registration.selfieUrl ? (
