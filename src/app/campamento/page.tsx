@@ -1,3 +1,4 @@
+import CampHeroVideo from "@/components/CampHeroVideo";
 "use client";
 
 import Link from "next/link";
@@ -33,9 +34,7 @@ function LandingHeader(){
 
 function Hero(){
   return <section className="relative isolate flex min-h-[510px] items-center overflow-hidden bg-[#092f29] text-white sm:min-h-[580px]">
-    <video autoPlay muted loop playsInline preload="metadata" aria-label="Vista de Monte Aramí" className="absolute inset-0 -z-20 h-full w-full object-cover">
-      <source src="/videos/monte-arami.mp4" type="video/mp4"/>
-    </video>
+    <CampHeroVideo />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(4,33,29,.94),rgba(5,40,35,.72)_55%,rgba(5,40,35,.45))]"/>
     <div className="mx-auto w-full max-w-[1240px] px-5 py-16 sm:px-8 sm:py-20">
       <div className="max-w-[720px]">
