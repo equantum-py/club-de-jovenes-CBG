@@ -1,5 +1,6 @@
-import CampHeroVideo from "@/components/CampHeroVideo";
 "use client";
+
+import CampHeroVideo from "@/components/CampHeroVideo";
 
 import Link from "next/link";
 import {useEffect,useRef,useState} from "react";
