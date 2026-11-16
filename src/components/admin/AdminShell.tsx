@@ -8,6 +8,7 @@ import { useState } from "react";
 const managementItems = [
   ["Resumen", "/admin"],
   ["Inscripciones", "/admin/participantes"],
+  ["Prelista", "/admin/prelista"],
   ["Reservas de merch", "/admin/reservas-merch"],
   ["Cabañas", "/admin/cabanas"],
   ["Equipos", "/admin/equipos"],
