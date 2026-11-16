@@ -1,0 +1,2 @@
+import PrelistaPanel from "@/components/admin/PrelistaPanel";
+export default function PrelistaPage(){return <main className="p-5 sm:p-8 lg:p-10"><p className="text-xs font-bold uppercase tracking-widest text-brand-gold">Gestión</p><h1 className="mt-2 text-4xl font-bold text-brand-forest">Prelista de acampantes</h1><p className="mt-2 text-sm text-brand-muted">Registro previo independiente de las inscripciones confirmadas.</p><PrelistaPanel/></main>}
