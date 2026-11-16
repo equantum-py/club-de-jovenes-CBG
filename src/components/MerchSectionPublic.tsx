@@ -34,6 +34,6 @@ export default function MerchSectionPublic(){
         </div>
       </div>
     </section>:null}
-    {settings.sectionEnabled?<MerchSection settings={settings} shirtImageUrl={shirtImageUrl} capImageUrl={capImageUrl}/>:null}
+    {settings.sectionEnabled?<MerchSection settings={settings} shirtImageUrl={shirtImageUrl} capImageUrl={capImageUrl} hideIntro={Boolean(settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl))}/>:null}
   </>;
 }
