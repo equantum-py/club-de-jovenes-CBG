@@ -5,8 +5,16 @@ type Row=Omit<PrelistaItem,"id"> & {id?:string};
 const blank=():Row=>({nombre:"",apellido:"",iglesia:"",sexo:"",monto_pagado:0,estado:"Pendiente",observaciones:""});
 const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 type Group="Acampante"|"Equipantes"|"Cocina";
-const getGroup=(r:{observaciones:string}):Group=>{const match=r.observaciones.match(/(?:^|;\\s*)Rol:\\s*(Equipantes|Cocina|Acampante)/i);return match?.[1]?.toLowerCase()==="equipantes"?"Equipantes":match?.[1]?.toLowerCase()==="cocina"?"Cocina":"Acampante"};
-const setGroup=(note:string,group:Group)=>{const clean=note.replace(/(?:^|;\\s*)Rol:\\s*(?:Equipantes|Cocina|Acampante)\\s*;?\\s*/gi,"").trim().replace(/^;\\s*/,"");return group==="Acampante"?clean:`Rol: ${group}${clean?"; "+clean:""}`};
+const staffEquipantes=new Set(["angel","stefani","daniel","agui","derlis","gaby"]);
+const staffCocina=new Set(["marlene","renata","hugo","rebeca","marcia","julia","homero","ricardo","patricia"]);
+const getGroup=(r:{nombre:string;apellido:string;iglesia:string;observaciones:string}):Group=>{
+ const match=(r.observaciones||"").match(/(?:^|;\s*)Rol:\s*(Equipantes|Cocina|Acampante)/i);
+ if(match)return match[1].toLowerCase()==="equipantes"?"Equipantes":match[1].toLowerCase()==="cocina"?"Cocina":"Acampante";
+ // Compatibilidad con la prelista ya importada: los nombres del staff no tenían etiqueta de rol.
+ if(!r.apellido?.trim()&&!r.iglesia?.trim()){const name=normalize(r.nombre);if(staffEquipantes.has(name))return "Equipantes";if(staffCocina.has(name))return "Cocina"}
+ return "Acampante";
+};
+const setGroup=(note:string,group:Group)=>{const clean=(note||"").replace(/(?:^|;\s*)Rol:\s*(?:Equipantes|Cocina|Acampante)\s*;?\s*/gi,"").trim().replace(/^;\s*/,"");return `Rol: ${group}${clean?"; "+clean:""}`};
 const money=(n:number)=>new Intl.NumberFormat("es-PY",{maximumFractionDigits:0}).format(n||0);
 const input="w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm text-brand-forest";
 function csv(text:string){const rows:string[][]=[];let row:string[]=[],cell="",quote=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quote&&text[i+1]==='"'){cell+='"';i++}else quote=!quote}else if(!quote&&(c===","||c===";"||c==="\t")){row.push(cell);cell=""}else if(!quote&&(c==="\r"||c==="\n")){if(c==="\r"&&text[i+1]==="\n")i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=""}else cell+=c}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
