@@ -18,7 +18,7 @@ function LandingHeader(){
       <nav className="hidden items-center gap-6 text-sm font-semibold xl:gap-8 text-[#49635c] lg:flex">
         <a href="#propositos" className="transition hover:text-[#0d493e]">Propósitos</a>
         <a href="#predicador" className="transition hover:text-[#0d493e]">Predicador</a>
-        <a href="#video-completo" className="transition hover:text-[#0d493e]">Experiencia</a>
+        
         <Link href="/reglamento" className="transition hover:text-[#0d493e]">Reglamento</Link>
       </nav>
       <div className="flex items-center gap-3 xl:gap-5">
