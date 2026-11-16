@@ -32,7 +32,7 @@ function LandingHeader(){
 
 function Hero(){
   return <section className="overflow-hidden bg-[#f7f3e9]">
-    <div className="mx-auto grid min-h-[auto] max-w-[1240px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[480px] lg:grid-cols-[.88fr_1.12fr] lg:gap-10 lg:py-10 xl:min-h-[520px] xl:py-12">
+    <div className="mx-auto grid min-h-[auto] max-w-[1240px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[380px] lg:grid-cols-[.88fr_1.12fr] lg:gap-10 lg:py-10 xl:min-h-[420px] xl:py-12">
       <div className="relative z-10 max-w-2xl lg:self-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#0b493d]/15 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-[#0b493d]">
           <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
@@ -40,7 +40,7 @@ function Hero(){
         </div>
         <p className="mt-5 text-xs font-bold uppercase tracking-[.22em] text-[#927f43]">Tema oficial · Gracia Camp 2026</p>
 
-        <h1 className="mt-5 text-[clamp(2.8rem,11vw,4rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-7 sm:text-[clamp(3.6rem,6.5vw,6rem)] sm:leading-[.82] sm:tracking-[-.065em]">
+        <h1 className="mt-5 text-[clamp(2.8rem,11vw,4rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-5 sm:text-[clamp(3rem,5vw,4.5rem)] sm:leading-[.82] sm:tracking-[-.065em]">
           Vivir es
           <span className="block text-[#b39a54]">Cristo</span>
         </h1>
@@ -64,7 +64,7 @@ function Hero(){
         <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
 
         <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[390px] xl:min-h-[420px]">
+          <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[300px] xl:min-h-[340px]">
             <video
               autoPlay
               muted
@@ -128,7 +128,7 @@ function KeyInfo(){
     ["03","Precio","Gs. 380.000","Por persona · nuevo valor"],
     ["04","Cupos","Limitados","Inscripciones abiertas"]
   ];
-  return <section id="experiencia" className="bg-white py-10 sm:py-16">
+  return <section id="experiencia" className="bg-white py-10 sm:py-12">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
       <div className="mb-5 max-w-3xl sm:mb-10">
         <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Todo en un mismo lugar</p>
@@ -140,7 +140,7 @@ function KeyInfo(){
             <span className="text-xs font-semibold text-[#b39a54]">{n}</span>
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
           </div>
-          <p className="mt-4 text-[9px] font-semibold uppercase tracking-[.14em] text-[#698078] sm:mt-10 sm:text-xs">{label}</p>
+          <p className="mt-4 text-[9px] font-semibold uppercase tracking-[.14em] text-[#698078] sm:mt-6 sm:text-xs">{label}</p>
           <p className={`mt-1 font-semibold tracking-[-.02em] sm:mt-2 sm:tracking-[-.03em] ${label==="Precio"?"inline-flex rounded-full bg-[#0b493d] px-3 py-1.5 text-[1.1rem] font-black text-white sm:text-2xl":label==="Lugar"?"text-[1.2rem] font-black text-[#0b493d] sm:text-[1.9rem]":"text-[1.05rem] text-[#0b493d] sm:text-2xl"}`}>{value}</p>
           <p className={`mt-1 leading-4 text-[#6f7f7a] sm:mt-2 sm:text-sm ${label==="Lugar"?"text-xs font-semibold":"text-[11px]"}`}>{sub}</p>
         </article>)}
@@ -155,7 +155,7 @@ function Pillars(){
     ["02","Predicar el evangelio",""],
     ["03","Edificar a los creyentes","con la enseñanza de Su Palabra."]
   ];
-  return <section id="propositos" className="overflow-hidden bg-[#082f29] py-10 text-white sm:py-16">
+  return <section id="propositos" className="overflow-hidden bg-[#082f29] py-10 text-white sm:py-12">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
       <div className="grid gap-4 sm:gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
         <div>
@@ -166,10 +166,10 @@ function Pillars(){
           Palabra, comunión y propósito en una experiencia de tres días.
         </p>
       </div>
-      <div className="mt-6 grid gap-2 sm:mt-7 sm:gap-3 lg:grid-cols-3">
+      <div className="mt-6 grid gap-2 sm:mt-5 sm:gap-3 lg:grid-cols-3">
         {items.map(([n,title,text])=><article key={title} className="rounded-[1rem] border border-white/10 bg-white/[.05] px-4 py-3.5 backdrop-blur-sm sm:rounded-[1.6rem] sm:p-6">
           <p className="text-xs font-semibold text-[#d7be70]">{n}</p>
-          <h3 className="mt-3 max-w-sm text-base font-semibold tracking-[-.01em] sm:mt-7 sm:text-3xl sm:tracking-[-.03em]">{title}</h3>
+          <h3 className="mt-3 max-w-sm text-base font-semibold tracking-[-.01em] sm:mt-5 sm:text-2xl sm:tracking-[-.03em]">{title}</h3>
           {text?<p className="mt-1 max-w-sm text-xs leading-5 text-white/55 sm:mt-4 sm:text-sm sm:leading-6">{text}</p>:null}
         </article>)}
       </div>
@@ -181,18 +181,18 @@ function ExperienceGallery(){
   const [photos,setPhotos]=useState<string[]>([]);
   useEffect(()=>{let active=true;fetch("/api/galeria-monte-arami",{cache:"no-store"}).then(r=>r.json()).then(data=>{if(active&&Array.isArray(data.images))setPhotos(data.images)}).catch(()=>{});return()=>{active=false}},[]);
   if(!photos.length)return null;
-  return <section id="momentos" className="bg-white py-10 sm:py-20">
+  return <section id="momentos" className="bg-white py-10 sm:py-12">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
       <div className="grid gap-5 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Conocé el lugar</p>
-          <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-5xl">Monte Aramí, Paraguarí.</h2>
+          <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-3xl">Monte Aramí, Paraguarí.</h2>
         </div>
         <p className="max-w-xl text-sm leading-6 text-[#667a74] sm:justify-self-end sm:text-base sm:leading-7">El espacio donde vamos a vivir Gracia Camp 2026 durante tres días.</p>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-12">
-        {photos.map((src,index)=><article key={src} className={`overflow-hidden rounded-[1.3rem] bg-[#f7f3e9] sm:rounded-[2rem] ${index===0?"sm:col-span-7 sm:row-span-2":"sm:col-span-5"}`}><img src={src} alt={`Monte Aramí, Paraguarí — fotografía ${index+1}`} loading="lazy" decoding="async" className={`block w-full object-cover ${index===0?"aspect-[4/3] sm:h-full sm:min-h-[440px]":"aspect-[16/10]"}`}/></article>)}
+      <div className="mt-6 grid gap-3 sm:mt-6 sm:grid-cols-12">
+        {photos.map((src,index)=><article key={src} className={`overflow-hidden rounded-[1.3rem] bg-[#f7f3e9] sm:rounded-[2rem] ${index===0?"sm:col-span-7 sm:row-span-2":"sm:col-span-5"}`}><img src={src} alt={`Monte Aramí, Paraguarí — fotografía ${index+1}`} loading="lazy" decoding="async" className={`block w-full object-cover ${index===0?"aspect-[4/3] sm:h-full sm:min-h-[320px]":"aspect-[16/10]"}`}/></article>)}
         <article className="flex items-center rounded-[1.3rem] bg-[#0b493d] p-5 text-white sm:col-span-4 sm:rounded-[2rem] sm:p-7">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#d8be70]">Monte Aramí · Paraguarí</p>
@@ -205,12 +205,12 @@ function ExperienceGallery(){
   </section>
 }
 function CTA(){
-  return <section className="bg-[#f7f3e9] px-5 py-7 sm:px-8 sm:py-16">
-    <div className="mx-auto max-w-[1240px] overflow-hidden rounded-[1.4rem] bg-[#0b493d] px-5 py-7 text-white sm:rounded-[2.7rem] sm:px-10 sm:py-16 lg:px-16">
+  return <section className="bg-[#f7f3e9] px-5 py-7 sm:px-8 sm:py-12">
+    <div className="mx-auto max-w-[1240px] overflow-hidden rounded-[1.4rem] bg-[#0b493d] px-5 py-7 text-white sm:rounded-[2.7rem] sm:px-10 sm:py-12 lg:px-16">
       <div className="grid gap-5 sm:gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#d7be70]">Gracia Camp 2026</p>
-          <h2 className="mt-3 max-w-4xl text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] sm:mt-4 sm:text-4xl sm:tracking-[-.05em] lg:text-7xl">Inscribite hoy y asegurá tu lugar.</h2>
+          <h2 className="mt-3 max-w-4xl text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] sm:mt-4 sm:text-4xl sm:tracking-[-.05em] lg:text-5xl">Inscribite hoy y asegurá tu lugar.</h2>
           <p className="mt-3 max-w-2xl text-xs leading-5 text-white/65 sm:mt-6 sm:text-base sm:leading-7">04–06 de diciembre · Monte Aramí, Paraguarí · Gs. 380.000 · cupos limitados.</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
