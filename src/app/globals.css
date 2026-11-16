@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --camp-forest: #0b493d;
+  --camp-gold: #b39a54;
+  --camp-cream: #f7f3e9;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 html {
@@ -41,3 +45,4 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+\n/* Base visual compartida: lectura y comportamiento responsive. */\nimg, video { max-width: 100%; }\nbutton, input, select, textarea { font: inherit; }\n@media (max-width: 639px) {\n  html { scroll-padding-top: 72px; }\n  main { min-width: 0; }\n}\n
