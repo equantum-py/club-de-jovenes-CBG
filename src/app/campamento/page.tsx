@@ -46,7 +46,7 @@ function Hero(){
         </h1>
 
         <p className="mt-5 max-w-xl text-base leading-7 text-[#4e625d] sm:mt-8 sm:text-xl sm:leading-8">
-          «Si, pues, habéis resucitado con Cristo, buscad las cosas de arriba, donde está Cristo sentado a la diestra de Dios». <span className="font-semibold text-[#0b493d]">Colosenses 3:1</span>
+          «Porque habéis muerto, y vuestra vida está escondida con Cristo en Dios». <span className="font-semibold text-[#0b493d]">Colosenses 3:3</span>
         </p>
 
         <div className="mt-6 flex flex-col gap-2.5 sm:mt-9 sm:flex-row sm:gap-3">
