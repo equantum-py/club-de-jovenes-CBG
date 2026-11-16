@@ -31,7 +31,7 @@ export default function Footer() {
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">Campamento</p>
-          <p className="mt-4 text-sm leading-7 text-white/60">11 de diciembre de 2026<br />Atyrá, Paraguay</p>
+          <p className="mt-4 text-sm leading-7 text-white/60">04–06 de diciembre de 2026<br />Monte Aramí, Paraguarí</p>
           <Link href="/registro" className="mt-5 inline-flex text-sm font-semibold text-white underline decoration-brand-gold underline-offset-4">Inscribirme</Link>
         </div>
       </Container>
