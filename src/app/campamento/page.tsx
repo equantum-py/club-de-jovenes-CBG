@@ -11,18 +11,18 @@ const LOGO_URL="https://tiqvcxasaqboxyydwzhz.supabase.co/storage/v1/object/publi
 
 function LandingHeader(){
   return <header className="sticky top-0 z-50 border-b border-[#123f36]/10 bg-[#f7f3e9]/92 backdrop-blur-xl">
-    <div className="mx-auto flex h-[68px] max-w-[1240px] items-center justify-between px-5 sm:px-8 lg:h-[76px]">
+    <div className="mx-auto flex h-[82px] max-w-[1400px] items-center justify-between px-5 sm:px-8 lg:h-[104px]">
       <Link href="/inicio" className="flex items-center">
-        <img src={LOGO_URL} alt="Gracia Camp" fetchPriority="high" className="h-12 w-auto object-contain sm:h-14"/>
+        <img src={LOGO_URL} alt="Gracia Camp" fetchPriority="high" className="h-[66px] w-auto max-w-[155px] object-contain sm:h-[76px] sm:max-w-none lg:h-[90px]"/>
       </Link>
-      <nav className="hidden items-center gap-8 text-sm font-medium text-[#49635c] lg:flex">
+      <nav className="hidden items-center gap-6 text-sm font-semibold xl:gap-8 text-[#49635c] lg:flex">
         <a href="#propositos" className="transition hover:text-[#0d493e]">Propósitos</a>
         <a href="#predicador" className="transition hover:text-[#0d493e]">Predicador</a>
         <a href="#video-completo" className="transition hover:text-[#0d493e]">Experiencia</a>
         <Link href="/reglamento" className="transition hover:text-[#0d493e]">Reglamento</Link>
       </nav>
-      <div className="flex items-center gap-4">
-        <div className="hidden xl:block"><Countdown compact/></div>
+      <div className="flex items-center gap-3 xl:gap-5">
+        <div className="hidden shrink-0 lg:block"><Countdown compact/></div>
         <Link href="/registro" className="inline-flex min-h-11 items-center rounded-full bg-[#0b493d] px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#083d34]">
           Inscribirme
         </Link>
