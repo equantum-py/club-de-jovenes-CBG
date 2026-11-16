@@ -188,7 +188,25 @@ function StickyMobileActions(){
 }
 
 export default function CampamentoPage(){
-  return <div className="min-h-screen bg-[#f7f3e9] pb-16 text-[#16322c] antialiased md:pb-0">
+  useEffect(()=>{
+    if (typeof IntersectionObserver === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const sections = Array.from(document.querySelectorAll<HTMLElement>(".camp-landing main > section"));
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach((entry)=>{
+        if (entry.isIntersecting) {
+          entry.target.classList.add("camp-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },{threshold:0.08,rootMargin:"0px 0px -30px 0px"});
+    sections.forEach((section)=>{
+      if (section.getBoundingClientRect().top < window.innerHeight * 0.85) return;
+      section.classList.add("camp-reveal");
+      observer.observe(section);
+    });
+    return ()=>observer.disconnect();
+  },[]);
+  return <div className="camp-landing min-h-screen bg-[#f7f3e9] pb-16 text-[#16322c] antialiased md:pb-0">
     <LandingHeader/>
     <main>
       <Hero/>
