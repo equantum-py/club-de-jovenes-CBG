@@ -32,90 +32,25 @@ function LandingHeader(){
 }
 
 function Hero(){
-  return <section className="overflow-hidden bg-[#f7f3e9]">
-    <div className="mx-auto grid min-h-[auto] max-w-[1240px] items-center gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:min-h-[380px] lg:grid-cols-[.88fr_1.12fr] lg:gap-10 lg:py-10 xl:min-h-[420px] xl:py-12">
-      <div className="relative z-10 max-w-2xl lg:self-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#0b493d]/15 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[.16em] text-[#0b493d]">
-          <span className="h-2 w-2 rounded-full bg-[#b39a54]"/>
-          Ministerio de Jóvenes CBG
+  return <section className="relative isolate flex min-h-[510px] items-center overflow-hidden bg-[#092f29] text-white sm:min-h-[580px]">
+    <video autoPlay muted loop playsInline preload="metadata" aria-label="Vista de Monte Aramí" className="absolute inset-0 -z-20 h-full w-full object-cover">
+      <source src="/videos/monte-arami.mp4" type="video/mp4"/>
+    </video>
+    <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(4,33,29,.94),rgba(5,40,35,.72)_55%,rgba(5,40,35,.45))]"/>
+    <div className="mx-auto w-full max-w-[1240px] px-5 py-16 sm:px-8 sm:py-20">
+      <div className="max-w-[720px]">
+        <span className="inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[.16em] text-white/90 backdrop-blur-sm">Inscripciones abiertas · Gracia Camp 2026</span>
+        <p className="mt-7 text-xs font-bold uppercase tracking-[.25em] text-[#e2c77c]">Ministerio de Jóvenes CBG</p>
+        <h1 className="mt-3 text-[clamp(3rem,10vw,6.5rem)] font-black uppercase leading-[.92] tracking-[-.055em]">Vivir es <span className="text-[#e2c77c]">Cristo</span></h1>
+        <p className="mt-5 max-w-xl text-sm leading-7 text-white/85 sm:text-lg">«Porque habéis muerto, y vuestra vida está escondida con Cristo en Dios». <strong className="text-white">Colosenses 3:3</strong></p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/registro" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 text-sm font-bold text-[#0b493d] transition hover:bg-[#f3e8c9]">Inscribirme ahora</Link>
+          <a href="#experiencia" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/40 bg-white/10 px-7 text-sm font-semibold text-white transition hover:bg-white/20">Conocer el campamento</a>
         </div>
-        <p className="mt-5 text-xs font-bold uppercase tracking-[.22em] text-[#927f43]">Tema oficial · Gracia Camp 2026</p>
-
-        <h1 className="mt-5 text-[clamp(2.8rem,11vw,4rem)] font-black uppercase leading-[.86] tracking-[-.055em] text-[#0b493d] sm:mt-5 sm:text-[clamp(3rem,5vw,4.5rem)] sm:leading-[.82] sm:tracking-[-.065em]">
-          Vivir es
-          <span className="block text-[#b39a54]">Cristo</span>
-        </h1>
-
-        <p className="mt-5 max-w-xl text-base leading-7 text-[#4e625d] sm:mt-5 sm:text-base sm:leading-7">
-          «Porque habéis muerto, y vuestra vida está escondida con Cristo en Dios». <span className="font-semibold text-[#0b493d]">Colosenses 3:3</span>
-        </p>
-
-        <div className="mt-6 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
-          <Link href="/registro" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0b493d] px-6 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#083d34] sm:min-h-13 sm:px-7">
-            Inscribirme ahora
-          </Link>
-          <a href="#experiencia" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#0b493d]/15 bg-white px-6 text-sm font-semibold text-[#0b493d] transition hover:bg-[#efe8d9] sm:min-h-13 sm:px-7">
-            Ver experiencia
-          </a>
-        </div>
-      </div>
-
-      <div className="relative">
-        <div className="absolute -left-8 -top-8 h-36 w-36 rounded-full bg-[#d8c987]/35 blur-3xl"/>
-        <div className="absolute -bottom-12 right-8 h-48 w-48 rounded-full bg-[#77a892]/25 blur-3xl"/>
-
-        <div className="relative overflow-hidden rounded-[2rem] border border-[#0b493d]/10 bg-[#0b493d] shadow-[0_40px_100px_rgba(11,73,61,.18)] sm:rounded-[2.6rem]">
-          <div className="relative aspect-[16/11] w-full overflow-hidden bg-[#0a332c] sm:aspect-[16/10] lg:min-h-[300px] xl:min-h-[340px]">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 h-full w-full object-cover"
-              aria-label="Monte Aramí, Paraguarí"
-            >
-              <source src="/videos/monte-arami.mp4" type="video/mp4"/>
-            </video>
-          </div>
-
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#071f1a]/55 via-transparent to-transparent"/>
-
-          <div className="hidden absolute bottom-0 left-0 right-0 p-3.5 sm:block sm:p-6">
-            <div className="grid grid-cols-3 gap-2 rounded-[1.4rem] border border-white/15 bg-black/45 p-4 text-white backdrop-blur-xl">
-              <div>
-                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Fecha</p>
-                <p className="mt-1 text-base font-semibold">04–06 Dic</p>
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Lugar</p>
-                <p className="mt-1 text-lg font-black leading-none text-white">Monte Aramí</p>
-                <p className="mt-1 text-xs font-medium text-white/65">Paraguarí</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[.15em] text-white/55">Precio</p>
-                <p className="mt-1 inline-flex whitespace-nowrap rounded-full bg-[#d8be70] px-3 py-1.5 text-base font-black text-[#0a332c] shadow-sm">Gs. 380.000</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 bg-[#0b493d] p-3 text-white sm:hidden">
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <p className="text-[9px] uppercase tracking-[.14em] text-white/50">Fecha</p>
-                <p className="mt-1 text-xs font-semibold">04–06 Dic</p>
-              </div>
-              <div>
-                <p className="text-[9px] uppercase tracking-[.14em] text-white/50">Lugar</p>
-                <p className="mt-1 text-xs font-black leading-tight">Monte Aramí</p>
-                <p className="mt-0.5 text-[9px] text-white/60">Paraguarí</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[9px] uppercase tracking-[.14em] text-white/50">Precio</p>
-                <p className="mt-1 inline-flex whitespace-nowrap rounded-full bg-[#d8be70] px-2 py-1 text-[11px] font-black text-[#0a332c]">Gs. 380.000</p>
-              </div>
-            </div>
-          </div>
+        <div className="mt-9 flex flex-wrap gap-x-7 gap-y-3 border-t border-white/20 pt-5 text-xs text-white/85 sm:text-sm">
+          <span><strong className="text-white">04–06 dic.</strong> · 2026</span>
+          <span><strong className="text-white">Monte Aramí</strong> · Paraguarí</span>
+          <span><strong className="text-white">Gs. 380.000</strong> · por persona</span>
         </div>
       </div>
     </div>
@@ -129,14 +64,14 @@ function KeyInfo(){
     ["03","Precio","Gs. 380.000","Por persona · nuevo valor"],
     ["04","Cupos","Limitados","Inscripciones abiertas"]
   ];
-  return <section id="experiencia" className="bg-white py-10 sm:py-12">
+  return <section id="experiencia" className="bg-[#faf9f6] py-12 sm:py-16">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
       <div className="mb-5 max-w-3xl sm:mb-10">
         <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Todo en un mismo lugar</p>
         <h2 className="mt-2 text-[1.65rem] font-semibold leading-[1.08] tracking-[-.03em] text-[#0b493d] sm:mt-4 sm:text-4xl sm:tracking-[-.045em]">Una experiencia pensada para desconectarte y encontrarte con lo esencial.</h2>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.1rem] border border-[#0b493d]/10 bg-[#f7f3e9] p-3.5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:rounded-[1.6rem] sm:p-7">
+        {items.map(([n,label,value,sub])=><article key={label} className="group rounded-[1.1rem] border border-[#0b493d]/10 bg-white p-3.5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0b493d]/8 sm:rounded-[1.6rem] sm:p-7">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#b39a54]">{n}</span>
             <span className="h-2 w-2 rounded-full bg-[#0b493d]/20 transition group-hover:bg-[#0b493d]"/>
@@ -156,7 +91,7 @@ function Pillars(){
     ["02","Predicar el evangelio",""],
     ["03","Edificar a los creyentes","con la enseñanza de Su Palabra."]
   ];
-  return <section id="propositos" className="overflow-hidden bg-[#082f29] py-10 text-white sm:py-12">
+  return <section id="propositos" className="overflow-hidden bg-[#0b493d] py-12 text-white sm:py-16">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
       <div className="grid gap-4 sm:gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
         <div>
