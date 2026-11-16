@@ -1,0 +1,10 @@
+export type PrelistaItem={id:string;nombre:string;apellido:string;iglesia:string;sexo:string;monto_pagado:number;estado:string;observaciones:string;created_at?:string};
+const fields=["nombre","apellido","iglesia","sexo","monto_pagado","estado","observaciones"] as const;
+function config(){const url=process.env.SUPABASE_URL?.replace(/\/$/,"");const key=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!key)throw Error("Base de datos no configurada");return {url,key}}
+function headers(key:string){return {apikey:key,Authorization:`Bearer ${key}`,"Content-Type":"application/json"}}
+async function request(path:string,method="GET",body?:unknown){const {url,key}=config();const response=await fetch(`${url}/rest/v1/prelista${path}`,{method,headers:{...headers(key),Prefer:"return=representation"},body:body===undefined?undefined:JSON.stringify(body),cache:"no-store"});if(!response.ok)throw Error("PRELISTA_DB_"+response.status+":"+((await response.text()).slice(0,300)));return response.status===204?[]:response.json()}
+export async function listPrelista():Promise<PrelistaItem[]>{return request("?select=*&order=created_at.desc")}
+export function cleanPrelista(value:Record<string,unknown>){const obj:Record<string,string|number>={};for(const k of fields){if(k==="monto_pagado"){const n=Number(String(value[k]??"0").replace(/\s/g,"").replace(/\./g,"").replace(",","."));if(!Number.isFinite(n)||n<0||n>1e11)throw Error("Monto inválido");obj[k]=n}else obj[k]=String(value[k]??"").trim().slice(0,250)}if(!obj.nombre||!obj.apellido)throw Error("Nombre y apellido obligatorios");if(!["","Masculino","Femenino","Otro","No especificado"].includes(String(obj.sexo)))throw Error("Sexo inválido");if(!["Pendiente","Parcial","Pagado"].includes(String(obj.estado)))throw Error("Estado inválido");return obj}
+export async function insertPrelista(rows:Record<string,unknown>[]){return request("","POST",rows.map(cleanPrelista))}
+export async function updatePrelista(id:string,row:Record<string,unknown>){return request("?id=eq."+encodeURIComponent(id),"PATCH",cleanPrelista(row))}
+export async function deletePrelista(id:string){return request("?id=eq."+encodeURIComponent(id),"DELETE")}
