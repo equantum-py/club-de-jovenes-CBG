@@ -18,15 +18,15 @@ export default function MerchSectionPublic(){
   if(!data)return null;
   const{bannerDesktopUrl,bannerMobileUrl,shirtImageUrl,capImageUrl,...settings}=data;
   return <>
-    {settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl)?<section id="merch-banner" className="bg-[#f0e9d7] py-8 sm:py-10">
-      <div className="mx-auto grid max-w-[1240px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:gap-12">
-        <Link href="/reservar-merch" aria-label="Ver merchandising oficial de Gracia Camp" className="group flex h-[215px] items-center justify-center overflow-hidden rounded-2xl bg-[#f9f6ee] sm:h-[280px] lg:h-[310px]">
-          <picture className="flex h-full w-full items-center justify-center">
+    {settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl)?<section id="merch-banner" className="bg-[#f0e9d7] py-5 sm:py-7">
+      <div className="mx-auto grid max-w-[1240px] items-center gap-4 px-5 sm:px-8 md:grid-cols-[1.15fr_.85fr] md:gap-8">
+        <Link href="/reservar-merch" aria-label="Ver merchandising oficial de Gracia Camp" className="group block h-[220px] overflow-hidden rounded-xl sm:h-[290px] lg:h-[340px]">
+          <picture className="block h-full w-full">
             {bannerMobileUrl?<source media="(max-width: 767px)" srcSet={bannerMobileUrl}/>:null}
-            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt||"Remeras y gorra oficial Gracia Camp"} className="h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-[1.025]" decoding="async"/>
+            <img src={bannerDesktopUrl||bannerMobileUrl} alt={settings.bannerAlt||"Remeras y gorra oficial Gracia Camp"} className="block h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.015]" decoding="async"/>
           </picture>
         </Link>
-        <div className="max-w-md">
+        <div className="max-w-md py-1">
           <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#9a8145]">Merch oficial · Gracia Camp 2026</p>
           <h2 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-[#0b493d] sm:text-3xl">Llevá Gracia Camp con vos.</h2>
           <p className="mt-3 text-sm leading-6 text-[#51655e]">Remera y gorra oficial de la edición 2026. Elegí tus productos y reservá antes del campamento.</p>
@@ -34,6 +34,6 @@ export default function MerchSectionPublic(){
         </div>
       </div>
     </section>:null}
-    {settings.sectionEnabled?<MerchSection settings={settings} shirtImageUrl={shirtImageUrl} capImageUrl={capImageUrl} hideIntro={Boolean(settings.bannerEnabled&&(bannerDesktopUrl||bannerMobileUrl))}/>:null}
+    {settings.sectionEnabled&&!settings.bannerEnabled?<MerchSection settings={settings} shirtImageUrl={shirtImageUrl} capImageUrl={capImageUrl}/>:null}
   </>;
 }
