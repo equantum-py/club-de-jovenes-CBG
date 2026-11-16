@@ -45,4 +45,11 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
-\n/* Base visual compartida: lectura y comportamiento responsive. */\nimg, video { max-width: 100%; }\nbutton, input, select, textarea { font: inherit; }\n@media (max-width: 639px) {\n  html { scroll-padding-top: 72px; }\n  main { min-width: 0; }\n}\n
+
+/* Base visual compartida: lectura y comportamiento responsive. */
+img, video { max-width: 100%; }
+button, input, select, textarea { font: inherit; }
+@media (max-width: 639px) {
+  html { scroll-padding-top: 72px; }
+  main { min-width: 0; }
+}
