@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import Countdown from "@/components/Countdown";
+import Footer from "@/components/Footer";
 import PreacherSection from "@/components/PreacherSection";
 import MerchSectionPublic from "@/components/MerchSectionPublic";
 
@@ -220,15 +221,6 @@ function CTA(){
       </div>
     </div>
   </section>
-}
-
-function Footer(){
-  return <footer className="bg-[#082f29] py-8 text-white">
-    <div className="mx-auto flex max-w-[1240px] flex-col gap-5 px-5 text-xs text-white/45 sm:px-8 md:flex-row md:items-center md:justify-between">
-      <div><p className="font-semibold text-white">Ministerio de Jóvenes CBG</p><p className="mt-1">Gracia Camp 2026</p></div>
-      <p>© 2026 Ministerio de Jóvenes CBG.</p>
-    </div>
-  </footer>
 }
 
 function StickyMobileActions(){
