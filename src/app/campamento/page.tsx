@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import Countdown from "@/components/Countdown";
 import Footer from "@/components/Footer";
 import PreacherSection from "@/components/PreacherSection";
@@ -115,27 +115,47 @@ function Pillars(){
 
 function ExperienceGallery(){
   const [photos,setPhotos]=useState<string[]>([]);
-  useEffect(()=>{let active=true;fetch("/api/galeria-monte-arami",{cache:"no-store"}).then(r=>r.json()).then(data=>{if(active&&Array.isArray(data.images))setPhotos(data.images)}).catch(()=>{});return()=>{active=false}},[]);
+  const [activeIndex,setActiveIndex]=useState(0);
+  const trackRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{let active=true;fetch("/api/galeria-monte-arami",{cache:"no-store"}).then(r=>r.json()).then(data=>{if(active&&Array.isArray(data.images)){setPhotos(data.images);setActiveIndex(0)}}).catch(()=>{});return()=>{active=false}},[]);
+  const goTo=(index:number)=>{
+    const track=trackRef.current;
+    if(!track||!photos.length)return;
+    const next=(index+photos.length)%photos.length;
+    const slide=track.children.item(next) as HTMLElement|null;
+    if(slide)track.scrollTo({left:slide.offsetLeft-track.offsetLeft,behavior:"smooth"});
+    setActiveIndex(next);
+  };
+  const onScroll=()=>{
+    const track=trackRef.current;
+    if(!track)return;
+    const children=Array.from(track.children) as HTMLElement[];
+    if(!children.length)return;
+    const nearest=children.reduce((best,child,index)=>Math.abs(child.offsetLeft-track.offsetLeft-track.scrollLeft)<Math.abs(children[best].offsetLeft-track.offsetLeft-track.scrollLeft)?index:best,0);
+    setActiveIndex(nearest);
+  };
   if(!photos.length)return null;
   return <section id="momentos" className="bg-white py-10 sm:py-12">
     <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
-      <div className="grid gap-5 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[.18em] text-[#b39a54]">Conocé el lugar</p>
           <h2 className="mt-2 text-[1.7rem] font-semibold leading-[1.05] tracking-[-.035em] text-[#0b493d] sm:mt-4 sm:text-3xl">Monte Aramí, Paraguarí.</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-[#667a74]">El espacio donde vamos a vivir Gracia Camp 2026 durante tres días.</p>
         </div>
-        <p className="max-w-xl text-sm leading-6 text-[#667a74] sm:justify-self-end sm:text-base sm:leading-7">El espacio donde vamos a vivir Gracia Camp 2026 durante tres días.</p>
+        <div className="flex items-center gap-2" aria-label="Controles de la galería">
+          <span className="mr-2 text-xs font-semibold text-[#667a74]">{activeIndex+1} / {photos.length}</span>
+          <button type="button" onClick={()=>goTo(activeIndex-1)} aria-label="Foto anterior" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#0b493d]/20 text-xl text-[#0b493d] transition hover:bg-[#0b493d] hover:text-white">‹</button>
+          <button type="button" onClick={()=>goTo(activeIndex+1)} aria-label="Foto siguiente" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#0b493d]/20 text-xl text-[#0b493d] transition hover:bg-[#0b493d] hover:text-white">›</button>
+        </div>
       </div>
-
-      <div className="mt-6 grid gap-3 sm:mt-6 sm:grid-cols-12">
-        {photos.map((src,index)=><article key={src} className={`overflow-hidden rounded-[1.3rem] bg-[#f7f3e9] sm:rounded-[2rem] ${index===0?"sm:col-span-7 sm:row-span-2":"sm:col-span-5"}`}><img src={src} alt={`Monte Aramí, Paraguarí — fotografía ${index+1}`} loading="lazy" decoding="async" className={`block w-full object-cover ${index===0?"aspect-[4/3] sm:h-full sm:min-h-[320px]":"aspect-[16/10]"}`}/></article>)}
-        <article className="flex items-center rounded-[1.3rem] bg-[#0b493d] p-5 text-white sm:col-span-4 sm:rounded-[2rem] sm:p-7">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#d8be70]">Monte Aramí · Paraguarí</p>
-            <p className="mt-3 text-xl font-semibold tracking-[-.03em] sm:text-2xl">Palabra, comunión y propósito.</p>
-            <p className="mt-2 text-sm leading-6 text-white/65">04–06 de diciembre · Gracia Camp 2026</p>
-          </div>
-        </article>
+      <div ref={trackRef} onScroll={onScroll} role="region" aria-roledescription="carrusel" aria-label="Fotografías de Monte Aramí" tabIndex={0} className="mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth rounded-[1.2rem] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-6 sm:gap-4">
+        {photos.map((src,index)=><div key={src+"-"+index} role="group" aria-roledescription="diapositiva" aria-label={`Foto ${index+1} de ${photos.length}`} className="w-full flex-none snap-start overflow-hidden rounded-[1.2rem] bg-[#f7f3e9] sm:rounded-[1.7rem]">
+          <img src={src} alt={`Monte Aramí, Paraguarí — fotografía ${index+1}`} loading="lazy" decoding="async" className="block aspect-[4/3] w-full object-cover sm:aspect-[16/8]"/>
+        </div>)}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-2" aria-label="Seleccionar fotografía">
+        {photos.map((_,index)=><button key={index} type="button" onClick={()=>goTo(index)} aria-label={`Ir a foto ${index+1}`} aria-current={activeIndex===index?"true":undefined} className={`h-2.5 rounded-full transition-all ${activeIndex===index?"w-7 bg-[#0b493d]":"w-2.5 bg-[#0b493d]/25 hover:bg-[#0b493d]/50"}`}/>)}
       </div>
     </div>
   </section>
