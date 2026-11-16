@@ -37,13 +37,13 @@ export default function Countdown({ compact = false }: { compact?: boolean }) {
   ];
 
   return (
-    <div className={`flex items-center ${compact ? "gap-2" : "gap-3 sm:gap-5"}`} aria-label="Cuenta regresiva para Gracia Camp 2026">
+    <div className={`flex items-center ${compact ? "gap-3 xl:gap-4" : "gap-3 sm:gap-5"}`} aria-label="Cuenta regresiva para Gracia Camp 2026">
       {items.map((item) => (
-        <div key={item.label} className="min-w-10 text-center">
-          <div className={`${compact ? "text-base" : "text-2xl sm:text-3xl"} font-semibold leading-none tabular-nums text-brand-forest`}>
+        <div key={item.label} className={`${compact ? "min-w-[42px] xl:min-w-[48px]" : "min-w-10"} text-center`}>
+          <div className={`${compact ? "text-xl xl:text-2xl" : "text-2xl sm:text-3xl"} font-semibold leading-none tabular-nums text-brand-forest`}>
             {String(item.value).padStart(2, "0")}
           </div>
-          <div className="mt-1 text-[11px] font-medium text-brand-muted">{item.label}</div>
+          <div className={`${compact ? "mt-1 text-xs" : "mt-1 text-[11px]"} font-medium text-brand-muted`}>{item.label}</div>
         </div>
       ))}
     </div>
